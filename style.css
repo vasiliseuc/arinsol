@@ -1,0 +1,530 @@
+/* --- RESET & VARIABLES --- */
+:root {
+    --primary: #2c3e50;
+    
+    /* UPDATED: New Blue Color Scheme */
+    --blue-primary: #1e3c72;   /* A deep, professional blue */
+    --blue-secondary: #2a5298; /* A slightly lighter blue for gradients */
+    --blue-accent: #4facfe;    /* A bright blue for highlights */
+    
+    /* UPDATED: Gradient using new blues */
+    --gradient-bg: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
+    
+    --text-dark: #333;
+    --text-light: #666;
+    --white: #ffffff;
+    --light-bg: #f9f9f9;
+    --font-main: 'Poppins', sans-serif;
+}
+
+/* Smooth Scroll for Anchor Links */
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--text-dark);
+    background-color: #fff;
+    line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- BUTTONS --- */
+.btn-gradient {
+    background: var(--gradient-bg);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-weight: 600;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    /* UPDATED: Blue shadow on hover */
+    box-shadow: 0 6px 20px rgba(42, 82, 152, 0.4);
+}
+
+.btn-gradient-small {
+    background: var(--gradient-bg);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient-small:hover {
+    box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+}
+
+/* --- HEADER --- */
+.site-header {
+    background: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 15px 0;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h2 {
+    /* UPDATED: Use primary blue for logo */
+    color: var(--blue-primary);
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.main-nav ul {
+    display: flex;
+    gap: 30px;
+}
+
+.main-nav a {
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+.main-nav a:hover {
+    /* UPDATED: Hover color to blue accent */
+    color: var(--blue-secondary);
+}
+
+.mobile-menu-icon { display: none; cursor: pointer; font-size: 1.5rem; color: var(--blue-primary); }
+
+/* --- HERO SECTION --- */
+.hero-section {
+    /* You can change this image to something more blue-themed */
+    background: #111 url('https://source.unsplash.com/1600x900/?technology,network,blue') center/cover no-repeat;
+    /* UPDATED: Blue-ish overlay */
+    box-shadow: inset 0 0 0 1000px rgba(15, 23, 42, 0.9); 
+    color: var(--white);
+    padding: 140px 0;
+    text-align: center;
+}
+
+.hero-content { max-width: 800px; margin: 0 auto; }
+
+.sub-badge {
+    /* UPDATED: Bright blue badge */
+    color: var(--blue-accent);
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: block;
+    letter-spacing: 1px;
+}
+
+.hero-section h1 {
+    font-size: 3.2rem;
+    line-height: 1.2;
+    margin-bottom: 25px;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- SHARED SECTION STYLES --- */
+.section {
+    padding: 100px 0;
+}
+
+.section-header {
+    margin-bottom: 60px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.sub-text {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.text-center { text-align: center; }
+
+/* --- SERVICES SECTION (Grid) --- */
+.services-section { background-color: #fff; }
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.service-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 40px 30px;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+
+.service-card:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    transform: translateY(-8px);
+    border-color: transparent;
+}
+
+.service-card .icon {
+    font-size: 2rem;
+    margin-bottom: 25px;
+}
+/* Keep other distinct colors, update the purple one */
+.icon.green { color: #2ecc71; }
+.icon.orange { color: #e67e22; }
+.icon.blue { color: #3498db; }
+.icon.pink { color: #e91e63; }
+.icon.red { color: #e74c3c; }
+/* UPDATED: New class for the 6th service item */
+.icon.blue-alt { color: var(--blue-secondary); }
+
+.service-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: var(--primary); }
+.service-card p { font-size: 1rem; color: var(--text-light); }
+
+/* --- INDUSTRIES SECTION --- */
+.industries-section { background-color: #f8faff; }
+
+.industries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.industry-card {
+    background: white;
+    border: 1px solid #eee;
+    padding: 30px 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    transition: 0.3s;
+}
+
+.industry-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    transform: translateY(-3px);
+    border-color: var(--blue-accent);
+}
+
+.industry-card i { font-size: 2.2rem; margin-bottom: 5px; }
+.industry-card span { font-weight: 600; color: #555; font-size: 1.1rem; }
+
+/* --- CASE STUDIES --- */
+.case-studies-section { background: #fff; }
+
+.case-study-row {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    margin-bottom: 100px;
+}
+
+.case-study-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.cs-content { flex: 1; }
+.cs-image { flex: 1; }
+
+.cs-box {
+    /* UPDATED: Lighter blue tint for background */
+    background: #f0f4ff;
+    padding: 50px;
+    border-radius: 20px;
+    /* UPDATED: Blue border tint */
+    border: 1px solid #dceeff;
+}
+
+.cs-box h3 { margin-bottom: 20px; font-size: 1.8rem; color: var(--primary); }
+.cs-box p { color: var(--text-light); margin-bottom: 30px; font-size: 1.05rem; }
+
+.img-placeholder {
+    width: 100%;
+    height: 400px;
+    background: #eef2f7;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #aab7c4;
+}
+
+/* --- CONTACT SECTION --- */
+.contact-section { background: #fff; }
+
+.contact-layout {
+    display: flex;
+    gap: 80px;
+    margin-top: 60px;
+}
+
+.contact-info { flex: 0 0 35%; }
+.contact-form-wrapper { flex: 1; }
+
+.big-stat { margin-bottom: 30px; }
+.big-stat .number {
+    font-size: 7rem;
+    font-weight: 800;
+    /* UPDATED: Deep blue color */
+    color: var(--blue-primary);
+    line-height: 1;
+}
+.big-stat .plus {
+    font-size: 3.5rem;
+    vertical-align: top;
+    /* UPDATED: Brighter blue for contrast */
+    color: var(--blue-accent);
+}
+.big-stat .label {
+    display: block;
+    font-size: 1rem;
+    color: #888;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.success-title { font-size: 1.8rem; margin-bottom: 40px; color: var(--primary); }
+/* UPDATED: Highlight color to blue */
+.success-title .highlight { color: var(--blue-secondary); }
+
+.stats-grid-small {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.stat-box {
+    padding: 25px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    text-align: center;
+    transition: 0.3s;
+}
+.stat-box:hover { border-color: var(--blue-accent); }
+
+.stat-box h4 { font-size: 2rem; margin-bottom: 5px; color: var(--primary); }
+.stat-box p { font-size: 0.95rem; color: #777; font-weight: 500; }
+
+/* FORM STYLES */
+.contact-form-wrapper {
+    background: white;
+    padding: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.form-group { flex: 1; margin-bottom: 25px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    /* UPDATED: Focus border color to blue */
+    border-color: var(--blue-accent);
+    background: #fbfdff;
+}
+
+.file-box {
+    border: 2px dashed #ddd;
+    padding: 15px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f9f9f9;
+}
+
+.file-box button {
+    background: #eef2f7;
+    border: 1px solid #dceeff;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--blue-secondary);
+    font-weight: 500;
+}
+
+.submit-btn {
+    width: auto;
+    padding: 15px 50px;
+    float: left;
+    font-size: 1.1rem;
+}
+
+/* --- FOOTER --- */
+.site-footer {
+    /* UPDATED: Dark blue footer background */
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 992px) {
+    .hero-section h1 { font-size: 2.5rem; }
+    .case-study-row, .case-study-row.reverse, .contact-layout {
+        flex-direction: column;
+        gap: 40px;
+    }
+    .contact-info { flex: 1; width: 100%; }
+    .big-stat { text-align: center; }
+    .success-title { text-align: center; }
+}
+
+@media (max-width: 768px) {
+    /* Ensure nav is available for the mobile toggle (JS handles open/close) */
+    .main-nav { display: block; }
+    .mobile-menu-icon { display: block; }
+    .hero-section { padding: 100px 0; }
+    .hero-section h1 { font-size: 2rem; }
+    .section-header h2 { font-size: 2rem; }
+    .form-row { flex-direction: column; gap: 0; }
+    .submit-btn { width: 100%; }
+}
+
+/* --- RESPONSIVE / MOBILE OPTIMIZATION --- */
+@media (max-width: 992px) {
+    /* General tablet adjustments */
+    .hero-section { padding: 100px 0; }
+    .hero-section h1 { font-size: 2.5rem; }
+    .case-study-row, .case-study-row.reverse, .contact-layout { flex-direction: column; gap: 40px; }
+    .contact-info { width: 100%; text-align: center; }
+    .big-stat { text-align: center; }
+    .success-title { text-align: center; }
+}
+
+@media (max-width: 768px) {
+    /* Header Adjustments for phones in portrait */
+    .header-container { padding: 0 16px; }
+
+    /* Keep primary CTA visible on tablets, hide on very small phones below */
+    .site-header .btn-gradient { display: inline-block; }
+
+    /* Mobile Menu Icon visible on small screens */
+    .mobile-menu-icon { display: block; font-size: 1.6rem; cursor: pointer; color: var(--blue-primary); transition: transform 0.25s ease; z-index: 1110; }
+
+    /* Mobile Navigation Styles */
+    .main-nav {
+        display: block; /* ensure block for mobile */
+        position: absolute; top: 100%; left: 0; right: 0; width: 100%; background: var(--white);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12); padding: 0; max-height: 0; overflow: hidden;
+        transition: max-height 0.35s ease-in-out, padding 0.2s ease; z-index: 1100;
+    }
+    .main-nav.active { max-height: 460px; border-bottom: 3px solid var(--blue-secondary); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 12px; }
+    .main-nav ul { flex-direction: column; gap: 0; padding: 10px 0; }
+    .main-nav ul li { width: 100%; text-align: center; }
+    .main-nav a { display: block; padding: 14px 18px; font-size: 1.05rem; color: var(--primary); border-bottom: 1px solid #f0f0f0; }
+    .main-nav a:hover { background-color: #f8faff; color: var(--blue-secondary); }
+
+    /* Hero text */
+    .hero-section { padding: 80px 0; }
+    .hero-section h1 { font-size: 2rem; }
+
+    /* Form adjustments */
+    .form-row { flex-direction: column; gap: 15px; }
+    .submit-btn { width: 100%; }
+
+    /* Images and placeholders scale better */
+    .img-placeholder { height: 260px; }
+    .case-study-row .cs-image, .case-study-row .cs-content { width: 100%; }
+
+    /* Slightly reduce spacing on service cards */
+    .service-card { padding: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+    /* Small phone optimizations */
+    .header-container { padding: 0 12px; }
+
+    /* Hide the largest CTA to preserve header space on tiny screens */
+    .site-header .btn-gradient { display: none; }
+
+    .hero-section { padding: 60px 0; }
+    .hero-section h1 { font-size: 1.75rem; }
+    .hero-section p { font-size: 1rem; max-width: 92%; }
+
+    /* Big stats scale down */
+    .big-stat .number { font-size: 4.5rem; }
+    .big-stat .plus { font-size: 2.2rem; }
+
+    /* Make placeholders and images shorter to avoid tall scrolls */
+    .img-placeholder { min-height: 180px; height: auto; padding: 28px; }
+
+    /* Industry and services grids collapse into single column */
+    .services-grid { grid-template-columns: 1fr; }
+    .industries-grid { grid-template-columns: 1fr; }
+
+    /* Make nav links easier to tap */
+    .main-nav a { padding: 14px; font-size: 1.05rem; }
+
+    /* Maintain comfortable input sizes */
+    .form-control { padding: 12px; }
+}
