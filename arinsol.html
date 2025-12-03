@@ -221,34 +221,5 @@
         </div>
     </footer>
 
-
-    <script>
-    const menuIcon = document.querySelector('.mobile-menu-icon');
-    const navMenu = document.querySelector('.main-nav');
-
-    menuIcon.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        
-        // Optional: Toggle icon between bars and X
-        const icon = menuIcon.querySelector('i');
-        if (navMenu.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
-    });
-
-    // Close menu when a link is clicked
-    document.querySelectorAll('.main-nav a').forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('active');
-            menuIcon.querySelector('i').classList.remove('fa-times');
-            menuIcon.querySelector('i').classList.add('fa-bars');
-        });
-    });
-</script>
-
 </body>
 </html>

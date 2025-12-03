@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arinsol.ai</title> <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading Arinsol </div>
+    </div>
+
+    <div id="main-content">
+        
+        <header class="site-header">
+            <div class="container header-container">
+                <div class="logo">
+                    <h2 id="header-logo"></h2>
+                </div>
+                <nav class="main-nav">
+                    <ul id="nav-list">
+                        </ul>
+                </nav>
+                <a href="#contact" class="btn btn-gradient" id="header-cta"></a>
+                <div class="mobile-menu-icon"><i class="fas fa-bars"></i></div>
+            </div>
+        </header>
+
+        <section class="hero-section">
+            <div class="container hero-content">
+                <span class="sub-badge" id="hero-badge"></span>
+                <h1 id="hero-title"></h1>
+                <p id="hero-desc"></p>
+                <div class="hero-buttons">
+                    <a href="" class="btn btn-gradient" id="hero-cta"></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="section services-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="services-title"></h2>
+                </div>
+                <div class="services-grid" id="services-grid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="industries" class="section industries-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="industries-title"></h2>
+                    <p class="sub-text" id="industries-subtext"></p>
+                </div>
+                <div class="industries-grid" id="industries-grid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="case-studies" class="section case-studies-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="cs-title"></h2>
+                    <p class="sub-text" id="cs-subtext"></p>
+                </div>
+                <div id="case-studies-container">
+                    </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="contact-title"></h2>
+                    <p class="sub-text" id="contact-subtext"></p>
+                </div>
+
+                <div class="contact-layout">
+                    <div class="contact-info">
+                        <div class="big-stat">
+                            <span class="number"><span id="years-exp"></span><span class="plus">+</span></span>
+                            <span class="label" id="years-label"></span>
+                        </div>
+                        <h3 class="success-title"><span id="success-title"></span> <span class="highlight" id="success-subtitle"></span></h3>
+                        
+                        <div class="stats-grid-small" id="stats-grid">
+                            </div>
+                    </div>
+
+                    <div class="contact-form-wrapper">
+                        <form action="#" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label id="lbl-name"></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label id="lbl-email"></label>
+                                    <input type="email" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label id="lbl-phone"></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label id="lbl-skype"></label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="lbl-desc"></label>
+                                <textarea class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="form-group file-upload">
+                                <label id="lbl-upload"></label>
+                                <div class="file-box">
+                                    <button type="button" id="btn-choose"></button>
+                                    <span id="txt-nofile"></span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-gradient submit-btn" id="btn-submit"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <div class="container">
+                <p id="footer-copy"></p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loader = document.getElementById('loader-overlay');
+            const content = document.getElementById('main-content');
+
+            // FETCH DATA
+            fetch('data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP error " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    populateSite(data);
+                    
+                    // Simulate a small delay for the loader effect (optional)
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        content.classList.add('visible');
+                    }, 500); 
+                })
+                .catch(err => {
+                    console.error("Error loading JSON data:", err);
+                    document.querySelector('.loader-text').innerText = "Error loading content.";
+                });
+        });
+
+        function populateSite(data) {
+            // META
+            document.title = data.siteMeta.title;
+
+            // HEADER
+            document.getElementById('header-logo').textContent = data.header.logoText;
+            document.getElementById('header-cta').textContent = data.header.ctaText;
+            
+            const navList = document.getElementById('nav-list');
+            data.header.navLinks.forEach(link => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${link.href}">${link.text}</a>`;
+                navList.appendChild(li);
+            });
+
+            // HERO
+            document.getElementById('hero-badge').textContent = data.hero.badge;
+            document.getElementById('hero-title').textContent = data.hero.title;
+            document.getElementById('hero-desc').textContent = data.hero.description;
+            const heroBtn = document.getElementById('hero-cta');
+            heroBtn.textContent = data.hero.ctaText;
+            heroBtn.href = data.hero.ctaLink;
+
+            // SERVICES
+            document.getElementById('services-title').textContent = data.services.title;
+            const servicesGrid = document.getElementById('services-grid');
+            data.services.items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'service-card';
+                div.innerHTML = `
+                    <div class="icon ${item.colorClass}"><i class="${item.iconClass}"></i></div>
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                `;
+                servicesGrid.appendChild(div);
+            });
+
+            // INDUSTRIES
+            document.getElementById('industries-title').textContent = data.industries.title;
+            document.getElementById('industries-subtext').textContent = data.industries.subText;
+            const industriesGrid = document.getElementById('industries-grid');
+            data.industries.items.forEach(ind => {
+                const div = document.createElement('div');
+                div.className = 'industry-card';
+                div.innerHTML = `<i class="${ind.iconClass}" style="color: ${ind.color};"></i> <span>${ind.name}</span>`;
+                industriesGrid.appendChild(div);
+            });
+
+            // CASE STUDIES
+            document.getElementById('cs-title').textContent = data.caseStudies.title;
+            document.getElementById('cs-subtext').textContent = data.caseStudies.subText;
+            const csContainer = document.getElementById('case-studies-container');
+            
+            data.caseStudies.items.forEach(cs => {
+                const row = document.createElement('div');
+                row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
+                
+                const contentHtml = `
+                    <div class="cs-content">
+                        <div class="cs-box">
+                            <h3>${cs.title}</h3>
+                            <p>${cs.description}</p>
+                            <a href="#" class="btn btn-gradient-small">${cs.ctaText}</a>
+                        </div>
+                    </div>`;
+                    
+                const imageHtml = `
+                    <div class="cs-image">
+                        <div class="img-placeholder">
+                            <i class="${cs.iconClass} fa-3x"></i>
+                            <p>${cs.previewText}</p>
+                        </div>
+                    </div>`;
+
+                if (cs.reverseLayout) {
+                    row.innerHTML = imageHtml + contentHtml;
+                } else {
+                    row.innerHTML = contentHtml + imageHtml;
+                }
+                csContainer.appendChild(row);
+            });
+
+            // CONTACT
+            document.getElementById('contact-title').textContent = data.contact.title;
+            document.getElementById('contact-subtext').textContent = data.contact.subText;
+            document.getElementById('years-exp').textContent = data.contact.yearsExp;
+            document.getElementById('years-label').textContent = data.contact.yearsLabel;
+            document.getElementById('success-title').textContent = data.contact.successTitle;
+            document.getElementById('success-subtitle').textContent = data.contact.successSubtitle;
+
+            const statsGrid = document.getElementById('stats-grid');
+            data.contact.stats.forEach(stat => {
+                const div = document.createElement('div');
+                div.className = 'stat-box';
+                div.innerHTML = `<h4>${stat.number}</h4><p>${stat.label}</p>`;
+                statsGrid.appendChild(div);
+            });
+
+            // Form Labels
+            const fl = data.contact.formLabels;
+            document.getElementById('lbl-name').textContent = fl.name;
+            document.getElementById('lbl-email').textContent = fl.email;
+            document.getElementById('lbl-phone').textContent = fl.phone;
+            document.getElementById('lbl-skype').textContent = fl.skype;
+            document.getElementById('lbl-desc').textContent = fl.projectDesc;
+            document.getElementById('lbl-upload').textContent = fl.upload;
+            document.getElementById('btn-choose').textContent = fl.chooseFile;
+            document.getElementById('txt-nofile').textContent = fl.noFile;
+            document.getElementById('btn-submit').textContent = fl.submit;
+
+            // FOOTER
+            document.getElementById('footer-copy').innerHTML = data.footer.copyright;
+            
+            // Re-initialize Mobile Menu Logic (since nav items were dynamic)
+            initMobileMenu();
+        }
+
+        function initMobileMenu() {
+            const menuIcon = document.querySelector('.mobile-menu-icon');
+            const navMenu = document.querySelector('.main-nav');
+
+            // Clone to remove old event listeners if any (simple reset)
+            const newMenuIcon = menuIcon.cloneNode(true);
+            menuIcon.parentNode.replaceChild(newMenuIcon, menuIcon);
+            
+            const finalMenuIcon = document.querySelector('.mobile-menu-icon');
+
+            finalMenuIcon.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = finalMenuIcon.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    finalMenuIcon.querySelector('i').classList.remove('fa-times');
+                    finalMenuIcon.querySelector('i').classList.add('fa-bars');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
