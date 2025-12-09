@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arinsol.ai</title> <link rel="stylesheet" href="style.css">
+    <title>Arinsol.ai</title>
+    <script>
+        const cacheToken = Math.random().toString(36).substring(2, 15);
+        document.write(`<link rel="stylesheet" href="style.css?v=${cacheToken}">`);
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,7 +23,7 @@
         <header class="site-header">
             <div class="container header-container">
                 <div class="logo">
-                    <h2 id="header-logo"></h2>
+                    <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img">
                 </div>
                 <nav class="main-nav">
                     <ul id="nav-list">
@@ -31,6 +35,11 @@
         </header>
 
         <section class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline>
+                <source src="assets/banner_video.mp4" type="video/mp4">
+                <!-- fallback: silent autoplay may be blocked on some browsers -->
+            </video>
+            <div class="hero-overlay" aria-hidden="true"></div>
             <div class="container hero-content">
                 <span class="sub-badge" id="hero-badge"></span>
                 <h1 id="hero-title"></h1>
@@ -96,27 +105,22 @@
                         <form action="#" class="contact-form">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label id="lbl-name"></label>
-                                    <input type="text" class="form-control">
+                                    <input id="input-name" type="text" class="form-control" aria-label="Name">
                                 </div>
                                 <div class="form-group">
-                                    <label id="lbl-email"></label>
-                                    <input type="email" class="form-control">
+                                    <input id="input-email" type="email" class="form-control" aria-label="Email">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label id="lbl-phone"></label>
-                                    <input type="text" class="form-control">
+                                    <input id="input-phone" type="text" class="form-control" aria-label="Phone">
                                 </div>
                                 <div class="form-group">
-                                    <label id="lbl-skype"></label>
-                                    <input type="text" class="form-control">
+                                    <input id="input-skype" type="text" class="form-control" aria-label="Skype">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label id="lbl-desc"></label>
-                                <textarea class="form-control" rows="4"></textarea>
+                                <textarea id="input-desc" class="form-control" rows="4" aria-label="Project Description"></textarea>
                             </div>
                             <div class="form-group file-upload">
                                 <label id="lbl-upload"></label>
@@ -143,9 +147,10 @@
         document.addEventListener("DOMContentLoaded", () => {
             const loader = document.getElementById('loader-overlay');
             const content = document.getElementById('main-content');
+            const cacheToken = Math.random().toString(36).substring(2, 15);
 
             // FETCH DATA
-            fetch('data.json')
+            fetch(`data.json?v=${cacheToken}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("HTTP error " + response.status);
@@ -172,7 +177,16 @@
             document.title = data.siteMeta.title;
 
             // HEADER
-            document.getElementById('header-logo').textContent = data.header.logoText;
+            const headerLogoEl = document.getElementById('header-logo');
+            if (headerLogoEl) {
+                if (headerLogoEl.tagName && headerLogoEl.tagName.toLowerCase() === 'img') {
+                    // Use provided asset as main logo; set alt from data if available
+                    headerLogoEl.src = 'assets/logo.png';
+                    headerLogoEl.alt = data.header.logoText || 'Arinsol.ai';
+                } else {
+                    headerLogoEl.textContent = data.header.logoText;
+                }
+            }
             document.getElementById('header-cta').textContent = data.header.ctaText;
             
             const navList = document.getElementById('nav-list');
@@ -220,7 +234,7 @@
             document.getElementById('cs-subtext').textContent = data.caseStudies.subText;
             const csContainer = document.getElementById('case-studies-container');
             
-            data.caseStudies.items.forEach(cs => {
+            data.caseStudies.items.forEach((cs, index) => {
                 const row = document.createElement('div');
                 row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
                 
@@ -232,13 +246,11 @@
                             <a href="#" class="btn btn-gradient-small">${cs.ctaText}</a>
                         </div>
                     </div>`;
-                    
+                
+                const imageFileName = index === 0 ? 'software1.jpg' : 'software1.jpg';
                 const imageHtml = `
                     <div class="cs-image">
-                        <div class="img-placeholder">
-                            <i class="${cs.iconClass} fa-3x"></i>
-                            <p>${cs.previewText}</p>
-                        </div>
+                        <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
                     </div>`;
 
                 if (cs.reverseLayout) {
@@ -265,16 +277,25 @@
                 statsGrid.appendChild(div);
             });
 
-            // Form Labels
+            // Form placeholders (labels removed visually; set accessible placeholders)
             const fl = data.contact.formLabels;
-            document.getElementById('lbl-name').textContent = fl.name;
-            document.getElementById('lbl-email').textContent = fl.email;
-            document.getElementById('lbl-phone').textContent = fl.phone;
-            document.getElementById('lbl-skype').textContent = fl.skype;
-            document.getElementById('lbl-desc').textContent = fl.projectDesc;
-            document.getElementById('lbl-upload').textContent = fl.upload;
-            document.getElementById('btn-choose').textContent = fl.chooseFile;
-            document.getElementById('txt-nofile').textContent = fl.noFile;
+            const inpName = document.getElementById('input-name');
+            const inpEmail = document.getElementById('input-email');
+            const inpPhone = document.getElementById('input-phone');
+            const inpSkype = document.getElementById('input-skype');
+            const inpDesc = document.getElementById('input-desc');
+            if (inpName) { inpName.placeholder = fl.name; inpName.setAttribute('aria-label', fl.name); }
+            if (inpEmail) { inpEmail.placeholder = fl.email; inpEmail.setAttribute('aria-label', fl.email); }
+            if (inpPhone) { inpPhone.placeholder = fl.phone; inpPhone.setAttribute('aria-label', fl.phone); }
+            if (inpSkype) { inpSkype.placeholder = fl.skype; inpSkype.setAttribute('aria-label', fl.skype); }
+            if (inpDesc) { inpDesc.placeholder = fl.projectDesc; inpDesc.setAttribute('aria-label', fl.projectDesc); }
+            // File upload labels/buttons
+            const lblUpload = document.getElementById('lbl-upload');
+            if (lblUpload) { lblUpload.textContent = fl.upload; }
+            const btnChoose = document.getElementById('btn-choose');
+            if (btnChoose) { btnChoose.textContent = fl.chooseFile; }
+            const txtNofile = document.getElementById('txt-nofile');
+            if (txtNofile) { txtNofile.textContent = fl.noFile; }
             document.getElementById('btn-submit').textContent = fl.submit;
 
             // FOOTER

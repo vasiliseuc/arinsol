@@ -66,13 +66,14 @@ ul { list-style: none; }
 .btn-gradient-small {
     background: var(--gradient-bg);
     color: white;
-    padding: 10px 20px;
+    padding: 8px 12px;
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
     display: inline-block;
     margin-top: 15px;
     transition: all 0.3s ease;
+    width: auto;
 }
 
 .btn-gradient-small:hover {
@@ -95,11 +96,17 @@ ul { list-style: none; }
     align-items: center;
 }
 
-.logo h2 {
-    /* UPDATED: Use primary blue for logo */
-    color: var(--blue-primary);
-    font-weight: 700;
-    font-size: 1.8rem;
+.logo {
+    display: flex;
+    align-items: center;
+    height: 64px; /* increased for larger logo */
+}
+
+.logo-img {
+    max-height: 100%;
+    max-width: 220px; /* increased size */
+    width: auto;
+    object-fit: contain;
 }
 
 .main-nav ul {
@@ -122,16 +129,40 @@ ul { list-style: none; }
 
 /* --- HERO SECTION --- */
 .hero-section {
-    /* You can change this image to something more blue-themed */
+    /* You can change this image to something more blue-themed (fallback) */
     background: #111 url('https://source.unsplash.com/1600x900/?technology,network,blue') center/cover no-repeat;
-    /* UPDATED: Blue-ish overlay */
-    box-shadow: inset 0 0 0 1000px rgba(15, 23, 42, 0.9); 
     color: var(--white);
     padding: 140px 0;
     text-align: center;
+    position: relative; /* allow absolute children (video, overlay) */
+    overflow: hidden;
 }
 
 .hero-content { max-width: 800px; margin: 0 auto; }
+
+/* Background video that sits behind content */
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Semi-opaque overlay to improve text contrast */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,18,34,0.75) 0%, rgba(10,18,34,0.85) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 2; }
 
 .sub-badge {
     /* UPDATED: Bright blue badge */
@@ -159,11 +190,16 @@ ul { list-style: none; }
 
 /* --- SHARED SECTION STYLES --- */
 .section {
-    padding: 100px 0;
+    padding: 20px 0;
+    border-top: 1px solid #eef6fb; /* subtle section separator */
+    background-clip: padding-box;
 }
 
+/* Remove top border for first section so page top looks clean */
+.section:first-of-type { border-top: none; }
+
 .section-header {
-    margin-bottom: 60px;
+    margin-bottom: 45px;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -195,7 +231,7 @@ ul { list-style: none; }
 .service-card {
     background: #fff;
     border: 1px solid #eee;
-    padding: 40px 30px;
+    padding: 28px 22px;
     border-radius: 12px;
     transition: all 0.3s;
 }
@@ -234,13 +270,13 @@ ul { list-style: none; }
 .industry-card {
     background: white;
     border: 1px solid #eee;
-    padding: 30px 20px;
+    padding: 22px 16px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
     transition: 0.3s;
 }
 
@@ -258,25 +294,33 @@ ul { list-style: none; }
 
 .case-study-row {
     display: flex;
-    align-items: center;
-    gap: 60px;
-    margin-bottom: 100px;
+    align-items: stretch;
+    gap: 50px;
+    margin-bottom: 40px;
 }
 
 .case-study-row.reverse {
     flex-direction: row-reverse;
 }
 
-.cs-content { flex: 1; }
+.cs-content { flex: 1; display: flex; }
 .cs-image { flex: 1; }
 
 .cs-box {
     /* UPDATED: Lighter blue tint for background */
     background: #f0f4ff;
-    padding: 50px;
+    padding: 35px;
     border-radius: 20px;
     /* UPDATED: Blue border tint */
     border: 1px solid #dceeff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.cs-box a {
+    align-self: flex-start;
 }
 
 .cs-box h3 { margin-bottom: 20px; font-size: 1.8rem; color: var(--primary); }
@@ -292,6 +336,13 @@ ul { list-style: none; }
     align-items: center;
     justify-content: center;
     color: #aab7c4;
+}
+
+.cs-image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
 }
 
 /* --- CONTACT SECTION --- */
@@ -504,12 +555,15 @@ ul { list-style: none; }
     /* Small phone optimizations */
     .header-container { padding: 0 12px; }
 
-    /* Hide the largest CTA to preserve header space on tiny screens */
-    .site-header .btn-gradient { display: none; }
+    /* Make Talk to Experts button smaller on mobile (keep visible) */
+    .site-header .btn-gradient { display: inline-block; padding: 8px 14px; font-size: 0.75rem; }
 
     .hero-section { padding: 60px 0; }
     .hero-section h1 { font-size: 1.75rem; }
     .hero-section p { font-size: 1rem; max-width: 92%; }
+
+    /* Video remains visible on mobile */
+    .hero-overlay { background: rgba(15,23,42,0.7); }
 
     /* Big stats scale down */
     .big-stat .number { font-size: 4.5rem; }
@@ -518,15 +572,75 @@ ul { list-style: none; }
     /* Make placeholders and images shorter to avoid tall scrolls */
     .img-placeholder { min-height: 180px; height: auto; padding: 28px; }
 
-    /* Industry and services grids collapse into single column */
+    /* Industry grid becomes 2 columns to save vertical space on small phones */
     .services-grid { grid-template-columns: 1fr; }
-    .industries-grid { grid-template-columns: 1fr; }
+    .industries-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
 
     /* Make nav links easier to tap */
     .main-nav a { padding: 14px; font-size: 1.05rem; }
 
     /* Maintain comfortable input sizes */
     .form-control { padding: 12px; }
+}
+
+/* --- HOVER & INTERACTION ANIMATIONS --- */
+/* Subtle lift + shadow for cards and elements */
+.service-card,
+.industry-card,
+.cs-box,
+.stat-box,
+.img-placeholder {
+    transition: transform 0.36s cubic-bezier(.2,.8,.2,1), box-shadow 0.36s ease, background-color 0.25s ease;
+    will-change: transform, box-shadow;
+}
+
+.service-card:hover,
+.service-card:focus-within {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(30,60,114,0.12);
+}
+
+.service-card .icon {
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), color 0.25s ease;
+}
+.service-card:hover .icon {
+    transform: translateY(-6px) scale(1.06);
+}
+
+.industry-card:hover,
+.industry-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(30,60,114,0.08);
+    border-color: rgba(42,82,152,0.12);
+}
+
+.cs-box:hover,
+.cs-box:focus-within {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 36px rgba(30,60,114,0.08);
+}
+
+.stat-box:hover,
+.stat-box:focus-within {
+    transform: translateY(-6px);
+    border-color: var(--blue-accent);
+    background: rgba(79,172,254,0.03);
+}
+
+.img-placeholder {
+    transition: transform 0.45s cubic-bezier(.2,.8,.2,1), box-shadow 0.36s ease;
+}
+.img-placeholder:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 30px rgba(15,23,42,0.06);
+}
+
+/* Make hover effects less intense on very small screens (touch devices) */
+@media (max-width: 480px) {
+    .service-card:hover, .industry-card:hover, .cs-box:hover, .stat-box:hover, .img-placeholder:hover {
+        transform: none;
+        box-shadow: none;
+    }
 }
 
 /* --- LOADER STYLES --- */
