@@ -1087,17 +1087,32 @@ select.form-control {
         order: 1;
         margin-right: auto;
     }
+    
+    .logo-img {
+        max-width: 150px;
+    }
 
     /* Hide text button on mobile, switch to icon */
     .site-header .btn-gradient { 
         display: none; 
     }
     
+    /* Header Social Icons - visible on mobile, inline */
+    .header-social-icons {
+        display: flex;
+        gap: 10px;
+        order: 2;
+        width: auto;
+        justify-content: flex-end;
+        margin-top: 0;
+        margin-right: 15px;
+    }
+
     .mobile-contact-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        order: 2;
+        order: 3;
         margin-right: 15px;
         z-index: 1110;
     }
@@ -1110,17 +1125,7 @@ select.form-control {
         color: var(--blue-primary); 
         transition: transform 0.25s ease; 
         z-index: 1110;
-        order: 3;
-    }
-    
-    /* Header Social Icons - visible on mobile */
-    .header-social-icons {
-        display: flex;
-        gap: 15px;
         order: 4;
-        width: 100%;
-        justify-content: center;
-        margin-top: 15px;
     }
     
     .header-social-icons .social-link {

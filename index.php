@@ -33,7 +33,7 @@
                 <div class="header-social-icons" id="header-social-icons">
                 </div>
                 <a href="#contact" class="btn btn-gradient" id="header-cta"></a>
-                <a href="#contact" class="mobile-contact-icon"><i class="fas fa-envelope"></i></a>
+                <a href="#contact" class="mobile-contact-icon"><i class="fas fa-phone"></i></a>
                 <div class="mobile-menu-icon"><i class="fas fa-bars"></i></div>
             </div>
         </header>
