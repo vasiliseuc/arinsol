@@ -168,6 +168,8 @@ ul { list-style: none; }
 }
 
 .mobile-menu-icon { display: none; cursor: pointer; font-size: 1.5rem; color: var(--blue-primary); }
+.mobile-contact-icon { display: none; font-size: 1.4rem; color: var(--blue-primary); margin-right: 15px; transition: color 0.3s; }
+.mobile-contact-icon:hover { color: var(--blue-secondary); }
 
 /* --- HERO SECTION --- */
 .hero-section {
@@ -1086,11 +1088,18 @@ select.form-control {
         margin-right: auto;
     }
 
-    /* Keep primary CTA visible on tablets */
+    /* Hide text button on mobile, switch to icon */
     .site-header .btn-gradient { 
-        display: inline-block;
+        display: none; 
+    }
+    
+    .mobile-contact-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         order: 2;
         margin-right: 15px;
+        z-index: 1110;
     }
 
     /* Mobile Menu Icon visible on small screens */
@@ -1153,8 +1162,8 @@ select.form-control {
     /* Small phone optimizations */
     .header-container { padding: 0 12px; }
 
-    /* Make Talk to Experts button smaller on mobile (keep visible) */
-    .site-header .btn-gradient { display: inline-block; padding: 8px 14px; font-size: 0.75rem; }
+    /* Make Talk to Experts button hidden on mobile */
+    .site-header .btn-gradient { display: none; }
 
     .hero-section { padding: 60px 0; }
     .hero-section h1 { font-size: 1.75rem; }
