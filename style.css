@@ -1024,8 +1024,14 @@ select.form-control {
 /* --- RESPONSIVE MEDIA QUERIES --- */
 @media (max-width: 992px) {
     .hero-section h1 { font-size: 2.5rem; }
-    .case-study-row, .case-study-row.reverse, .contact-layout {
+    .case-study-row, .contact-layout {
         flex-direction: column;
+        gap: 40px;
+    }
+    
+    /* UPDATED: Ensure image is always below text on mobile for reverse layout */
+    .case-study-row.reverse {
+        flex-direction: column-reverse;
         gap: 40px;
     }
     .contact-info { flex: 1; width: 100%; }
@@ -1069,22 +1075,43 @@ select.form-control {
 
 @media (max-width: 768px) {
     /* Header Adjustments for phones in portrait */
-    .header-container { padding: 0 16px; flex-wrap: wrap; }
+    .header-container { 
+        padding: 0 16px; 
+        flex-wrap: wrap;
+        align-items: center; 
+    }
 
-    /* Keep primary CTA visible on tablets, hide on very small phones below */
-    .site-header .btn-gradient { display: inline-block; }
+    .logo {
+        order: 1;
+        margin-right: auto;
+    }
+
+    /* Keep primary CTA visible on tablets */
+    .site-header .btn-gradient { 
+        display: inline-block;
+        order: 2;
+        margin-right: 15px;
+    }
 
     /* Mobile Menu Icon visible on small screens */
-    .mobile-menu-icon { display: block; font-size: 1.6rem; cursor: pointer; color: var(--blue-primary); transition: transform 0.25s ease; z-index: 1110; }
+    .mobile-menu-icon { 
+        display: block; 
+        font-size: 1.6rem; 
+        cursor: pointer; 
+        color: var(--blue-primary); 
+        transition: transform 0.25s ease; 
+        z-index: 1110;
+        order: 3;
+    }
     
     /* Header Social Icons - visible on mobile */
     .header-social-icons {
         display: flex;
-        gap: 8px;
-        order: 3;
+        gap: 15px;
+        order: 4;
         width: 100%;
         justify-content: center;
-        margin-top: 10px;
+        margin-top: 15px;
     }
     
     .header-social-icons .social-link {
@@ -1145,7 +1172,7 @@ select.form-control {
 
     /* Industry grid becomes 2 columns to save vertical space on small phones */
     .services-grid { grid-template-columns: 1fr; }
-    .industries-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .industries-grid { grid-template-columns: 1fr; gap: 15px; }
 
     /* Make nav links easier to tap */
     .main-nav a { padding: 14px; font-size: 1.05rem; }
