@@ -1,0 +1,14 @@
+.git/
+.vscode/
+.idea/
+terminals/
+*.log
+.DS_Store
+Thumbs.db
+vendor/
+node_modules/
+# Prevent committing local config with secrets
+config/email_config.php
+# Backups
+data-changes/
+

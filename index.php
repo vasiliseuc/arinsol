@@ -479,7 +479,6 @@
                             <h3>${cs.title}</h3>
                             <p>${cs.description}</p>
                             ${featuresHtml}
-                            <a href="#" class="btn btn-gradient-small">${cs.ctaText}</a>
                         </div>
                     </div>`;
                 
