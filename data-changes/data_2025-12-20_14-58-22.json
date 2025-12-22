@@ -105,6 +105,11 @@
         "name": "Retail",
         "iconClass": "fas fa-store",
         "color": "#16a085"
+      },
+      {
+        "name": "Entertainment",
+        "iconClass": "fas fa-film",
+        "color": "#8e44ad"
       }
     ]
   },
@@ -169,24 +174,6 @@
     }
   },
   "footer": {
-    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved.",
-    "termsLink": "terms-conditions.php",
-    "privacyLink": "privacy-policy.php"
-  },
-  "socialMedia": {
-    "facebook": "https://www.facebook.com/",
-    "twitter": "https://www.twitter.com/",
-    "linkedin": "https://www.linkedin.com/company/",
-    "instagram": "https://www.instagram.com/"
-  },
-  "chatbot": {
-    "name": "Arin"
-  },
-  "location": {
-    "address": "Your Company Address",
-    "city": "City",
-    "country": "Country",
-    "latitude": "40.7128",
-    "longitude": "-74.0060"
+    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved."
   }
 }

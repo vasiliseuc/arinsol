@@ -60,7 +60,7 @@
       },
       {
         "title": "DevOps",
-        "description": "Our DevOps solutions streamline deployment processes, foster collaboration, and accelerate product releases with continuous integration strategies.",
+        "description": "Our DevOpss solutions streamline deployment processes, foster collaboration, and accelerate product releases with continuous integration strategies.",
         "iconClass": "fas fa-sync-alt",
         "colorClass": "red"
       },
@@ -87,13 +87,18 @@
         "color": "#9b59b6"
       },
       {
-        "name": "Auditing",
-        "iconClass": "fas fa-clipboard-check",
+        "name": "Fintech",
+        "iconClass": "fas fa-coins",
+        "color": "#f1c40f"
+      },
+      {
+        "name": "Automotive",
+        "iconClass": "fas fa-car",
         "color": "#3498db"
       },
       {
-        "name": "Professional services",
-        "iconClass": "fas fa-briefcase",
+        "name": "Travel",
+        "iconClass": "fas fa-plane",
         "color": "#2980b9"
       },
       {
@@ -105,6 +110,11 @@
         "name": "Retail",
         "iconClass": "fas fa-store",
         "color": "#16a085"
+      },
+      {
+        "name": "Entertainment",
+        "iconClass": "fas fa-film",
+        "color": "#8e44ad"
       }
     ]
   },
@@ -117,8 +127,7 @@
         "description": "An AI Agent Builder Platform that leverages powerful AI models to design and deploy intelligent agents tailored for various tasks, transforming how businesses automate and scale operations. Just define the goal and get your AI agent ready.",
         "ctaText": "View Case Study",
         "iconClass": "fas fa-robot",
-        "previewText": "AI Agent Interface Preview",
-        "image": ""
+        "previewText": "AI Agent Interface Preview"
       },
       {
         "title": "AI-Powered Art Generator Platform ✨",
@@ -126,7 +135,6 @@
         "ctaText": "View Case Study",
         "iconClass": "fas fa-palette",
         "previewText": "Art Generator Interface Preview",
-        "image": "",
         "reverseLayout": true
       }
     ]
@@ -169,24 +177,6 @@
     }
   },
   "footer": {
-    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved.",
-    "termsLink": "terms-conditions.php",
-    "privacyLink": "privacy-policy.php"
-  },
-  "socialMedia": {
-    "facebook": "https://www.facebook.com/",
-    "twitter": "https://www.twitter.com/",
-    "linkedin": "https://www.linkedin.com/company/",
-    "instagram": "https://www.instagram.com/"
-  },
-  "chatbot": {
-    "name": "Arin"
-  },
-  "location": {
-    "address": "Your Company Address",
-    "city": "City",
-    "country": "Country",
-    "latitude": "40.7128",
-    "longitude": "-74.0060"
+    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved."
   }
 }

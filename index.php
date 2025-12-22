@@ -23,12 +23,16 @@
         <header class="site-header">
             <div class="container header-container">
                 <div class="logo">
-                    <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img">
+                    <a href="/" class="logo-link" title="Home">
+                        <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img">
+                    </a>
                 </div>
                 <nav class="main-nav">
                     <ul id="nav-list">
                         </ul>
                 </nav>
+                <div class="header-social-icons" id="header-social-icons">
+                </div>
                 <a href="#contact" class="btn btn-gradient" id="header-cta"></a>
                 <div class="mobile-menu-icon"><i class="fas fa-bars"></i></div>
             </div>
@@ -129,23 +133,70 @@
                                     <span id="txt-nofile"></span>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-gradient submit-btn" id="btn-submit"></button>
+                            <div class="form-group captcha-group">
+                                <label id="captcha-label">Security Question: <span id="captcha-question"></span></label>
+                                <input type="number" id="captcha-answer" class="form-control" placeholder="Your answer" required>
+                                <input type="hidden" id="captcha-value">
+                            </div>
+                            <div id="form-message" class="form-message" style="display: none;"></div>
+                            <button type="submit" class="btn btn-gradient submit-btn" id="btn-submit">
+                                <span id="submit-text"></span>
+                                <span id="submit-spinner" style="display: none;">Sending...</span>
+                            </button>
                         </form>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Location Map -->
+            <div class="container" style="margin-top: 60px;">
+                <div class="section-header text-center">
+                    <h2>Our Location</h2>
+                </div>
+                <div id="map-container" style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden; margin-top: 30px;">
+                    <iframe 
+                        id="location-map" 
+                        width="100%" 
+                        height="400" 
+                        style="border:0" 
+                        loading="lazy" 
+                        allowfullscreen
+                        src="">
+                    </iframe>
                 </div>
             </div>
         </section>
 
         <footer class="site-footer">
             <div class="container">
-                <p id="footer-copy"></p>
+                <div class="footer-content">
+                    <div class="footer-social" id="footer-social">
+                    </div>
+                    <div class="footer-links">
+                        <a href="#" id="terms-link">Terms & Conditions</a>
+                        <span class="separator">|</span>
+                        <a href="#" id="privacy-link">Privacy Policy</a>
+                    </div>
+                    <p id="footer-copy"></p>
+                </div>
             </div>
         </footer>
+
+        <!-- Cookie Consent Banner -->
+        <div id="cookie-consent" class="cookie-consent" style="display: none;">
+            <div class="cookie-content">
+                <p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept", you consent to our use of cookies. <a href="#privacy">Privacy Policy</a></p>
+                <div class="cookie-buttons">
+                    <button id="cookie-accept" class="btn btn-primary">Accept</button>
+                    <button id="cookie-decline" class="btn btn-secondary">Decline</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Chatbot Widget -->
         <div id="chatbot-widget" class="chatbot-widget">
             <div class="chatbot-header">
-                <h4>Chat with us</h4>
+                <h4>Chat with <span id="chatbot-name">Arin</span></h4>
                 <button class="chatbot-close" id="chatbot-close">×</button>
             </div>
             <div class="chatbot-messages" id="chatbot-messages">
@@ -268,7 +319,8 @@
                         </div>
                     </div>`;
                 
-                const imageFileName = index === 0 ? 'software1.jpg' : 'software1.jpg';
+                // Use image from JSON data, fallback to software1.jpg or software2.jpg
+                const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
                 const imageHtml = `
                     <div class="cs-image">
                         <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
@@ -317,10 +369,84 @@
             if (btnChoose) { btnChoose.textContent = fl.chooseFile; }
             const txtNofile = document.getElementById('txt-nofile');
             if (txtNofile) { txtNofile.textContent = fl.noFile; }
-            document.getElementById('btn-submit').textContent = fl.submit;
+            const submitBtnText = document.getElementById('submit-text');
+            if (submitBtnText) {
+                submitBtnText.textContent = fl.submit;
+            } else {
+                document.getElementById('btn-submit').textContent = fl.submit;
+            }
 
             // FOOTER
             document.getElementById('footer-copy').innerHTML = data.footer.copyright;
+            if (data.footer.termsLink) {
+                document.getElementById('terms-link').href = data.footer.termsLink;
+            }
+            if (data.footer.privacyLink) {
+                document.getElementById('privacy-link').href = data.footer.privacyLink;
+            }
+            
+            // SOCIAL MEDIA
+            if (data.socialMedia) {
+                const headerSocialIcons = document.getElementById('header-social-icons');
+                const footerSocial = document.getElementById('footer-social');
+                const socialLinks = [];
+                
+                if (data.socialMedia.facebook) {
+                    socialLinks.push({url: data.socialMedia.facebook, icon: 'fab fa-facebook-f', name: 'Facebook'});
+                }
+                if (data.socialMedia.twitter) {
+                    socialLinks.push({url: data.socialMedia.twitter, icon: 'fab fa-twitter', name: 'Twitter'});
+                }
+                if (data.socialMedia.linkedin) {
+                    socialLinks.push({url: data.socialMedia.linkedin, icon: 'fab fa-linkedin-in', name: 'LinkedIn'});
+                }
+                if (data.socialMedia.instagram) {
+                    socialLinks.push({url: data.socialMedia.instagram, icon: 'fab fa-instagram', name: 'Instagram'});
+                }
+                
+                socialLinks.forEach(link => {
+                    const a = document.createElement('a');
+                    a.href = link.url;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.className = 'social-link';
+                    a.innerHTML = `<i class="${link.icon}"></i>`;
+                    a.title = link.name;
+                    
+                    // Add to header (main navigation area)
+                    if (headerSocialIcons) {
+                        headerSocialIcons.appendChild(a.cloneNode(true));
+                    }
+                    // Add to footer
+                    if (footerSocial) {
+                        footerSocial.appendChild(a.cloneNode(true));
+                    }
+                });
+            }
+            
+            // CHATBOT NAME
+            if (data.chatbot && data.chatbot.name) {
+                const chatbotNameElements = document.querySelectorAll('#chatbot-name, #chatbot-name-msg');
+                chatbotNameElements.forEach(el => {
+                    if (el) el.textContent = data.chatbot.name;
+                });
+            }
+            
+            // LOCATION MAP
+            if (data.location) {
+                const mapFrame = document.getElementById('location-map');
+                if (mapFrame && data.location.latitude && data.location.longitude) {
+                    // Using Google Maps embed without API key (works for basic embeds)
+                    const address = encodeURIComponent(`${data.location.address || ''} ${data.location.city || ''} ${data.location.country || ''}`.trim());
+                    const mapUrl = `https://www.google.com/maps?q=${data.location.latitude},${data.location.longitude}&output=embed`;
+                    mapFrame.src = mapUrl;
+                } else if (mapFrame && data.location.address) {
+                    // Fallback to address-based search
+                    const address = encodeURIComponent(`${data.location.address} ${data.location.city} ${data.location.country}`.trim());
+                    const mapUrl = `https://www.google.com/maps?q=${address}&output=embed`;
+                    mapFrame.src = mapUrl;
+                }
+            }
             
             // Re-initialize Mobile Menu Logic (since nav items were dynamic)
             initMobileMenu();
@@ -411,6 +537,150 @@
                 sendMessage();
             }
         });
+
+        // COOKIE CONSENT
+        function showCookieConsent() {
+            const consent = localStorage.getItem('cookieConsent');
+            if (!consent) {
+                const cookieBanner = document.getElementById('cookie-consent');
+                if (cookieBanner) {
+                    cookieBanner.style.display = 'block';
+                }
+            }
+        }
+
+        function hideCookieConsent() {
+            const cookieBanner = document.getElementById('cookie-consent');
+            if (cookieBanner) {
+                cookieBanner.style.display = 'none';
+            }
+        }
+
+        const cookieAccept = document.getElementById('cookie-accept');
+        const cookieDecline = document.getElementById('cookie-decline');
+        
+        if (cookieAccept) {
+            cookieAccept.addEventListener('click', () => {
+                localStorage.setItem('cookieConsent', 'accepted');
+                hideCookieConsent();
+            });
+        }
+
+        if (cookieDecline) {
+            cookieDecline.addEventListener('click', () => {
+                localStorage.setItem('cookieConsent', 'declined');
+                hideCookieConsent();
+            });
+        }
+
+        // Show cookie consent on page load
+        showCookieConsent();
+
+        // CONTACT FORM SUBMISSION
+        const contactForm = document.querySelector('.contact-form');
+        const formMessage = document.getElementById('form-message');
+        const submitBtn = document.getElementById('btn-submit');
+        const submitText = document.getElementById('submit-text');
+        const submitSpinner = document.getElementById('submit-spinner');
+        
+        // Generate random math captcha
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const answer = num1 + num2;
+            
+            document.getElementById('captcha-question').textContent = `${num1} + ${num2} = ?`;
+            document.getElementById('captcha-value').value = answer;
+            document.getElementById('captcha-answer').value = '';
+        }
+        
+        // Generate captcha on page load
+        generateCaptcha();
+        
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = document.getElementById('input-name').value.trim();
+                const email = document.getElementById('input-email').value.trim();
+                const phone = document.getElementById('input-phone').value.trim();
+                const skype = document.getElementById('input-skype').value.trim();
+                const message = document.getElementById('input-desc').value.trim();
+                const captchaAnswer = document.getElementById('captcha-answer').value.trim();
+                const captchaValue = document.getElementById('captcha-value').value;
+                
+                // Basic validation
+                if (!name || !email || !message) {
+                    showFormMessage('Please fill in all required fields.', 'error');
+                    return;
+                }
+                
+                if (!captchaAnswer || parseInt(captchaAnswer) !== parseInt(captchaValue)) {
+                    showFormMessage('Incorrect answer to security question. Please try again.', 'error');
+                    generateCaptcha(); // Generate new captcha
+                    return;
+                }
+                
+                // Disable submit button
+                submitBtn.disabled = true;
+                submitText.style.display = 'none';
+                submitSpinner.style.display = 'inline';
+                formMessage.style.display = 'none';
+                
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('phone', phone);
+                formData.append('skype', skype);
+                formData.append('message', message);
+                formData.append('captcha_answer', captchaAnswer);
+                formData.append('captcha_value', captchaValue);
+                
+                try {
+                    const response = await fetch('email/email.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showFormMessage(result.message || 'Thank you! Your message has been sent successfully.', 'success');
+                        contactForm.reset();
+                        generateCaptcha(); // Generate new captcha
+                    } else {
+                        showFormMessage(result.error || 'Failed to send message. Please try again.', 'error');
+                        generateCaptcha(); // Generate new captcha on error
+                    }
+                } catch (error) {
+                    showFormMessage('Network error. Please check your connection and try again.', 'error');
+                    generateCaptcha();
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitText.style.display = 'inline';
+                    submitSpinner.style.display = 'none';
+                }
+            });
+        }
+        
+        function showFormMessage(message, type) {
+            formMessage.textContent = message;
+            formMessage.className = 'form-message ' + type;
+            formMessage.style.display = 'block';
+            
+            // Scroll to message
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    formMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
     </script>
 </body>
 </html>
