@@ -8,7 +8,7 @@ define('DATA_FILE', __DIR__ . '/../data.json');
 
 // Admin Credentials
 define('ADMIN_USERNAME', 'arinsol');
-define('ADMIN_PASSWORD', 'ArinSol123!');
+define('ADMIN_PASSWORD', '!ArinSol123!');
 
 // Session configuration
 ini_set('session.cookie_httponly', 1);
