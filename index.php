@@ -489,11 +489,9 @@
                         <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
                     </div>`;
 
-                if (cs.reverseLayout) {
-                    row.innerHTML = imageHtml + contentHtml;
-                } else {
+              
                     row.innerHTML = contentHtml + imageHtml;
-                }
+              
                 csContainer.appendChild(row);
             });
 
