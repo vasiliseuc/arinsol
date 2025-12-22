@@ -4,22 +4,10 @@ require_once __DIR__ . '/config/config.php';
 // Set JSON response header
 header('Content-Type: application/json');
 
-// Get key from request (can be in POST data or FormData)
-$key = null;
-if (isset($_POST['key'])) {
-    $key = $_POST['key'];
-} else {
-    $input = file_get_contents('php://input');
-    $requestData = json_decode($input, true);
-    if (isset($requestData['key'])) {
-        $key = $requestData['key'];
-    }
-}
-
-// Check if key is provided and valid
-if (!$key || !checkKey($key)) {
+// Check authentication via session
+if (!isAuthenticated()) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Invalid or missing access key']);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized. Please login first.']);
     exit;
 }
 
@@ -91,4 +79,3 @@ if (move_uploaded_file($fileTmp, $targetFile)) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Failed to move uploaded file. Check directory permissions.']);
 }
-

@@ -54,6 +54,22 @@
             </div>
         </section>
 
+        <!-- About Section -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="about-title"></h2>
+                </div>
+                <div class="about-content">
+                    <div id="about-desc"></div>
+                    <div class="principles-container">
+                        <h3 id="principles-title"></h3>
+                        <ul id="principles-list" class="principles-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="services" class="section services-section">
             <div class="container">
                 <div class="section-header text-center">
@@ -70,8 +86,18 @@
                     <h2 id="industries-title"></h2>
                     <p class="sub-text" id="industries-subtext"></p>
                 </div>
-                <div class="industries-grid" id="industries-grid">
-                    </div>
+                <div class="industries-grid" id="industries-grid"></div>
+                <p class="text-center" id="industries-footer" style="margin-top: 30px; color: #666;"></p>
+            </div>
+        </section>
+
+        <!-- Trust Section -->
+        <section class="section trust-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="trust-title"></h2>
+                </div>
+                <div class="trust-grid" id="trust-grid"></div>
             </div>
         </section>
 
@@ -86,6 +112,32 @@
             </div>
         </section>
 
+        <!-- Engagement Section -->
+        <section class="section engagement-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="eng-title"></h2>
+                </div>
+                <div class="engagement-grid" id="eng-grid"></div>
+                <div class="engagement-footer text-center">
+                    <p id="eng-subtext"></p>
+                    <a href="" class="btn btn-gradient" id="eng-cta"></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section faq-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 id="faq-title"></h2>
+                    <p class="sub-text" id="faq-subtext"></p>
+                </div>
+                <div class="faq-container" id="faq-items">
+                    <!-- Items injected here -->
+                </div>
+            </div>
+        </section>
+
         <section id="contact" class="section contact-section">
             <div class="container">
                 <div class="section-header text-center">
@@ -94,56 +146,93 @@
                 </div>
 
                 <div class="contact-layout">
-                    <div class="contact-info">
-                        <div class="big-stat">
-                            <span class="number"><span id="years-exp"></span><span class="plus">+</span></span>
-                            <span class="label" id="years-label"></span>
+                    <div class="contact-main">
+                        <!-- Product Selector -->
+                        <div class="product-selector-wrapper">
+                            <p class="selector-label">I’m interested in:</p>
+                            <div class="product-options" id="product-options"></div>
                         </div>
-                        <h3 class="success-title"><span id="success-title"></span> <span class="highlight" id="success-subtitle"></span></h3>
-                        
-                        <div class="stats-grid-small" id="stats-grid">
-                            </div>
+
+                        <div class="contact-form-wrapper">
+                            <form action="#" class="contact-form">
+                                <input type="hidden" id="input-product" name="product">
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input id="input-name" type="text" class="form-control" aria-label="Name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="input-email" type="email" class="form-control" aria-label="Work Email" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input id="input-company" type="text" class="form-control" aria-label="Company">
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="input-role" type="text" class="form-control" aria-label="Role">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <input id="input-country" type="text" class="form-control" aria-label="Country / Time zone">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <select id="input-industry" class="form-control" aria-label="Industry">
+                                            <option value="" disabled selected>Select Industry</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select id="input-companysize" class="form-control" aria-label="Company Size">
+                                            <option value="" disabled selected>Company Size</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <input id="input-bottleneck" type="text" class="form-control" aria-label="Biggest bottleneck">
+                                </div>
+
+                                <div class="form-group">
+                                    <select id="input-nextstep" class="form-control" aria-label="Preferred next step">
+                                        <option value="" disabled selected>Preferred Next Step</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <textarea id="input-message" class="form-control" rows="4" aria-label="Message"></textarea>
+                                </div>
+
+                                <div class="trust-lines" id="trust-lines"></div>
+
+                                <div class="form-group captcha-group">
+                                    <label id="captcha-label">Security Question: <span id="captcha-question"></span></label>
+                                    <input type="number" id="captcha-answer" class="form-control" placeholder="Your answer" required>
+                                    <input type="hidden" id="captcha-value">
+                                </div>
+                                <div id="form-message" class="form-message" style="display: none;"></div>
+                                <button type="submit" class="btn btn-gradient submit-btn" id="btn-submit">
+                                    <span id="submit-text">Submit Request</span>
+                                    <span id="submit-spinner" style="display: none;">Sending...</span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
-                    <div class="contact-form-wrapper">
-                        <form action="#" class="contact-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <input id="input-name" type="text" class="form-control" aria-label="Name">
-                                </div>
-                                <div class="form-group">
-                                    <input id="input-email" type="email" class="form-control" aria-label="Email">
-                                </div>
+                    <div class="contact-sidebar">
+                        <div class="what-next-box">
+                            <h3>What happens next</h3>
+                            <ol id="what-next-steps"></ol>
+                        </div>
+                        
+                        <div class="contact-info-small">
+                            <div class="stat-row" id="stats-grid">
+                                <!-- Stats will be injected here -->
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <input id="input-phone" type="text" class="form-control" aria-label="Phone">
-                                </div>
-                                <div class="form-group">
-                                    <input id="input-skype" type="text" class="form-control" aria-label="Skype">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <textarea id="input-desc" class="form-control" rows="4" aria-label="Project Description"></textarea>
-                            </div>
-                            <div class="form-group file-upload">
-                                <label id="lbl-upload"></label>
-                                <div class="file-box">
-                                    <button type="button" id="btn-choose"></button>
-                                    <span id="txt-nofile"></span>
-                                </div>
-                            </div>
-                            <div class="form-group captcha-group">
-                                <label id="captcha-label">Security Question: <span id="captcha-question"></span></label>
-                                <input type="number" id="captcha-answer" class="form-control" placeholder="Your answer" required>
-                                <input type="hidden" id="captcha-value">
-                            </div>
-                            <div id="form-message" class="form-message" style="display: none;"></div>
-                            <button type="submit" class="btn btn-gradient submit-btn" id="btn-submit">
-                                <span id="submit-text"></span>
-                                <span id="submit-spinner" style="display: none;">Sending...</span>
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -276,6 +365,39 @@
             heroBtn.textContent = data.hero.ctaText;
             heroBtn.href = data.hero.ctaLink;
 
+            // ABOUT
+            if (data.about) {
+                const aboutTitle = document.getElementById('about-title');
+                if (aboutTitle) aboutTitle.textContent = data.about.title;
+                
+                const descContainer = document.getElementById('about-desc');
+                if (descContainer) {
+                    descContainer.innerHTML = '';
+                    // Split by double newline or newline to create paragraphs
+                    const descLines = data.about.description.split(/\n\s*\n|\n/);
+                    descLines.forEach(line => {
+                        if (line.trim()) {
+                            const p = document.createElement('p');
+                            p.textContent = line.trim();
+                            descContainer.appendChild(p);
+                        }
+                    });
+                }
+                
+                const principlesTitle = document.getElementById('principles-title');
+                if (principlesTitle) principlesTitle.textContent = data.about.principlesTitle;
+                
+                const principlesList = document.getElementById('principles-list');
+                if (principlesList && data.about.principles) {
+                    principlesList.innerHTML = '';
+                    data.about.principles.forEach(p => {
+                        const li = document.createElement('li');
+                        li.textContent = p;
+                        principlesList.appendChild(li);
+                    });
+                }
+            }
+
             // SERVICES
             document.getElementById('services-title').textContent = data.services.title;
             const servicesGrid = document.getElementById('services-grid');
@@ -293,13 +415,45 @@
             // INDUSTRIES
             document.getElementById('industries-title').textContent = data.industries.title;
             document.getElementById('industries-subtext').textContent = data.industries.subText;
+            if (data.industries.footerText) {
+                const footerEl = document.getElementById('industries-footer');
+                if (footerEl) footerEl.textContent = data.industries.footerText;
+            }
+            
             const industriesGrid = document.getElementById('industries-grid');
-            data.industries.items.forEach(ind => {
-                const div = document.createElement('div');
-                div.className = 'industry-card';
-                div.innerHTML = `<i class="${ind.iconClass}" style="color: ${ind.color};"></i> <span>${ind.name}</span>`;
-                industriesGrid.appendChild(div);
-            });
+            if (industriesGrid) {
+                industriesGrid.innerHTML = '';
+                data.industries.items.forEach(ind => {
+                    const div = document.createElement('div');
+                    div.className = 'industry-card';
+                    div.innerHTML = `
+                        <div class="ind-header">
+                            <i class="${ind.iconClass}" style="color: ${ind.color};"></i>
+                            <h3>${ind.name}</h3>
+                        </div>
+                        <p>${ind.description || ''}</p>
+                        <div class="ind-fit"><strong>Best fit:</strong> ${ind.bestFit || ''}</div>
+                    `;
+                    industriesGrid.appendChild(div);
+                });
+            }
+
+            // TRUST
+            if (data.trust) {
+                const trustTitle = document.getElementById('trust-title');
+                if (trustTitle) trustTitle.textContent = data.trust.title;
+                
+                const trustGrid = document.getElementById('trust-grid');
+                if (trustGrid) {
+                    trustGrid.innerHTML = '';
+                    data.trust.items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'trust-item';
+                        div.innerHTML = `<i class="fas fa-check-circle" style="color: var(--blue-accent);"></i> <span>${item}</span>`;
+                        trustGrid.appendChild(div);
+                    });
+                }
+            }
 
             // CASE STUDIES
             document.getElementById('cs-title').textContent = data.caseStudies.title;
@@ -310,11 +464,21 @@
                 const row = document.createElement('div');
                 row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
                 
+                let featuresHtml = '';
+                if (cs.features && cs.features.length > 0) {
+                    featuresHtml = '<ul class="cs-features">';
+                    cs.features.forEach(f => {
+                        featuresHtml += `<li>${f}</li>`;
+                    });
+                    featuresHtml += '</ul>';
+                }
+                
                 const contentHtml = `
                     <div class="cs-content">
                         <div class="cs-box">
                             <h3>${cs.title}</h3>
                             <p>${cs.description}</p>
+                            ${featuresHtml}
                             <a href="#" class="btn btn-gradient-small">${cs.ctaText}</a>
                         </div>
                     </div>`;
@@ -334,46 +498,186 @@
                 csContainer.appendChild(row);
             });
 
+            // ENGAGEMENT
+            if (data.engagement) {
+                const engTitle = document.getElementById('eng-title');
+                if (engTitle) engTitle.textContent = data.engagement.title;
+                const engSubtext = document.getElementById('eng-subtext');
+                if (engSubtext) engSubtext.textContent = data.engagement.subText;
+                
+                const engBtn = document.getElementById('eng-cta');
+                if (engBtn) {
+                    engBtn.textContent = data.engagement.ctaText;
+                    engBtn.href = data.engagement.ctaLink;
+                }
+                
+                const engGrid = document.getElementById('eng-grid');
+                if (engGrid) {
+                    engGrid.innerHTML = '';
+                    data.engagement.items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'engagement-card';
+                        div.innerHTML = `
+                            <p>${item.text}</p>
+                            <a href="${item.link}" class="eng-link">${item.linkText} →</a>
+                        `;
+                        engGrid.appendChild(div);
+                    });
+                }
+            }
+
+            // FAQ
+            if (data.faq) {
+                document.getElementById('faq-title').textContent = data.faq.title;
+                document.getElementById('faq-subtext').textContent = data.faq.subText;
+                
+                const faqContainer = document.getElementById('faq-items');
+                faqContainer.innerHTML = '';
+                
+                data.faq.items.forEach(item => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item';
+                    
+                    const question = document.createElement('div');
+                    question.className = 'faq-question';
+                    question.innerHTML = `<h3>${item.question}</h3><span class="toggle-icon">+</span>`;
+                    
+                    const answer = document.createElement('div');
+                    answer.className = 'faq-answer';
+                    
+                    // Parse text content
+                    const contentHtml = parseFaqContent(item.answer);
+                    answer.innerHTML = contentHtml;
+                    
+                    faqItem.appendChild(question);
+                    faqItem.appendChild(answer);
+                    faqContainer.appendChild(faqItem);
+                    
+                    // Click Event
+                    question.addEventListener('click', () => {
+                        const isOpen = faqItem.classList.contains('active');
+                        
+                        // Close all others
+                        document.querySelectorAll('.faq-item').forEach(fi => {
+                            fi.classList.remove('active');
+                            fi.querySelector('.toggle-icon').textContent = '+';
+                            fi.querySelector('.faq-answer').style.maxHeight = null;
+                        });
+                        
+                        if (!isOpen) {
+                            faqItem.classList.add('active');
+                            question.querySelector('.toggle-icon').textContent = '-';
+                            answer.style.maxHeight = answer.scrollHeight + "px";
+                        }
+                    });
+                });
+            }
+
             // CONTACT
             document.getElementById('contact-title').textContent = data.contact.title;
             document.getElementById('contact-subtext').textContent = data.contact.subText;
-            document.getElementById('years-exp').textContent = data.contact.yearsExp;
-            document.getElementById('years-label').textContent = data.contact.yearsLabel;
-            document.getElementById('success-title').textContent = data.contact.successTitle;
-            document.getElementById('success-subtitle').textContent = data.contact.successSubtitle;
 
+            // Stats (Sidebar)
             const statsGrid = document.getElementById('stats-grid');
-            data.contact.stats.forEach(stat => {
-                const div = document.createElement('div');
-                div.className = 'stat-box';
-                div.innerHTML = `<h4>${stat.number}</h4><p>${stat.label}</p>`;
-                statsGrid.appendChild(div);
-            });
+            if (statsGrid && data.contact.stats) {
+                data.contact.stats.forEach(stat => {
+                    const div = document.createElement('div');
+                    div.className = 'stat-item-small';
+                    div.innerHTML = `<strong>${stat.number}</strong> <span>${stat.label}</span>`;
+                    statsGrid.appendChild(div);
+                });
+            }
 
-            // Form placeholders (labels removed visually; set accessible placeholders)
+            // Products Selector
+            const productOptions = document.getElementById('product-options');
+            const inputProduct = document.getElementById('input-product');
+            if (productOptions && data.contact.products) {
+                data.contact.products.forEach(prod => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'product-btn';
+                    btn.textContent = prod;
+                    btn.onclick = function() {
+                        document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        inputProduct.value = prod;
+                    };
+                    productOptions.appendChild(btn);
+                });
+            }
+
+            // Dropdowns
+            const industrySelect = document.getElementById('input-industry');
+            if (industrySelect && data.contact.industries) {
+                data.contact.industries.forEach(ind => {
+                    const opt = document.createElement('option');
+                    opt.value = ind;
+                    opt.textContent = ind;
+                    industrySelect.appendChild(opt);
+                });
+            }
+
+            const sizeSelect = document.getElementById('input-companysize');
+            if (sizeSelect && data.contact.companySizes) {
+                data.contact.companySizes.forEach(size => {
+                    const opt = document.createElement('option');
+                    opt.value = size;
+                    opt.textContent = size;
+                    sizeSelect.appendChild(opt);
+                });
+            }
+
+            const nextStepSelect = document.getElementById('input-nextstep');
+            if (nextStepSelect && data.contact.nextSteps) {
+                data.contact.nextSteps.forEach(step => {
+                    const opt = document.createElement('option');
+                    opt.value = step;
+                    opt.textContent = step;
+                    nextStepSelect.appendChild(opt);
+                });
+            }
+
+            // Trust Lines
+            const trustLines = document.getElementById('trust-lines');
+            if (trustLines && data.contact.trustLines) {
+                data.contact.trustLines.forEach(line => {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<i class="fas fa-check-circle"></i> ${line}`;
+                    trustLines.appendChild(p);
+                });
+            }
+
+            // What Next
+            const whatNext = document.getElementById('what-next-steps');
+            if (whatNext && data.contact.whatNextSteps) {
+                data.contact.whatNextSteps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.textContent = step;
+                    whatNext.appendChild(li);
+                });
+            }
+
+            // Form Labels & Placeholders
             const fl = data.contact.formLabels;
-            const inpName = document.getElementById('input-name');
-            const inpEmail = document.getElementById('input-email');
-            const inpPhone = document.getElementById('input-phone');
-            const inpSkype = document.getElementById('input-skype');
-            const inpDesc = document.getElementById('input-desc');
-            if (inpName) { inpName.placeholder = fl.name; inpName.setAttribute('aria-label', fl.name); }
-            if (inpEmail) { inpEmail.placeholder = fl.email; inpEmail.setAttribute('aria-label', fl.email); }
-            if (inpPhone) { inpPhone.placeholder = fl.phone; inpPhone.setAttribute('aria-label', fl.phone); }
-            if (inpSkype) { inpSkype.placeholder = fl.skype; inpSkype.setAttribute('aria-label', fl.skype); }
-            if (inpDesc) { inpDesc.placeholder = fl.projectDesc; inpDesc.setAttribute('aria-label', fl.projectDesc); }
-            // File upload labels/buttons
-            const lblUpload = document.getElementById('lbl-upload');
-            if (lblUpload) { lblUpload.textContent = fl.upload; }
-            const btnChoose = document.getElementById('btn-choose');
-            if (btnChoose) { btnChoose.textContent = fl.chooseFile; }
-            const txtNofile = document.getElementById('txt-nofile');
-            if (txtNofile) { txtNofile.textContent = fl.noFile; }
-            const submitBtnText = document.getElementById('submit-text');
-            if (submitBtnText) {
-                submitBtnText.textContent = fl.submit;
-            } else {
-                document.getElementById('btn-submit').textContent = fl.submit;
+            if (fl) {
+                const setPH = (id, txt) => {
+                    const el = document.getElementById(id);
+                    if (el) { el.placeholder = txt; el.setAttribute('aria-label', txt); }
+                };
+                setPH('input-name', fl.name);
+                setPH('input-email', fl.email);
+                setPH('input-company', fl.company);
+                setPH('input-role', fl.role);
+                setPH('input-country', fl.country);
+                setPH('input-bottleneck', fl.bottleneck);
+                setPH('input-message', fl.message);
+                
+                if (fl.industry && industrySelect) industrySelect.options[0].textContent = fl.industry;
+                if (fl.companySize && sizeSelect) sizeSelect.options[0].textContent = fl.companySize;
+                if (fl.nextStep && nextStepSelect) nextStepSelect.options[0].textContent = fl.nextStep;
+                
+                const sBtnText = document.getElementById('submit-text');
+                if (sBtnText) sBtnText.textContent = fl.submit;
             }
 
             // FOOTER
@@ -538,6 +842,39 @@
             }
         });
 
+        function parseFaqContent(text) {
+            if (!text) return '';
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    html += '<br>';
+                    return;
+                }
+                
+                if (line.startsWith('•')) {
+                    if (!inList) { html += '<ul class="faq-list">'; inList = true; }
+                    html += `<li>${line.substring(1).trim()}</li>`;
+                } else {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    
+                    // Simple bold detection for headings
+                    if (line.includes(':') && line.length < 60 && !line.includes('.')) {
+                         html += `<h4>${line}</h4>`;
+                    } else {
+                         html += `<p>${line}</p>`;
+                    }
+                }
+            });
+            
+            if (inList) html += '</ul>';
+            return html;
+        }
+
         // COOKIE CONSENT
         function showCookieConsent() {
             const consent = localStorage.getItem('cookieConsent');
@@ -604,15 +941,24 @@
                 // Get form values
                 const name = document.getElementById('input-name').value.trim();
                 const email = document.getElementById('input-email').value.trim();
-                const phone = document.getElementById('input-phone').value.trim();
-                const skype = document.getElementById('input-skype').value.trim();
-                const message = document.getElementById('input-desc').value.trim();
+                const product = document.getElementById('input-product').value;
+                
+                const company = document.getElementById('input-company').value.trim();
+                const role = document.getElementById('input-role').value.trim();
+                const country = document.getElementById('input-country').value.trim();
+                
+                const industry = document.getElementById('input-industry').value;
+                const companySize = document.getElementById('input-companysize').value;
+                const bottleneck = document.getElementById('input-bottleneck').value.trim();
+                const nextStep = document.getElementById('input-nextstep').value;
+                
+                const message = document.getElementById('input-message').value.trim();
                 const captchaAnswer = document.getElementById('captcha-answer').value.trim();
                 const captchaValue = document.getElementById('captcha-value').value;
                 
                 // Basic validation
-                if (!name || !email || !message) {
-                    showFormMessage('Please fill in all required fields.', 'error');
+                if (!name || !email) {
+                    showFormMessage('Name and Email are required.', 'error');
                     return;
                 }
                 
@@ -632,8 +978,14 @@
                 const formData = new FormData();
                 formData.append('name', name);
                 formData.append('email', email);
-                formData.append('phone', phone);
-                formData.append('skype', skype);
+                formData.append('product', product);
+                formData.append('company', company);
+                formData.append('role', role);
+                formData.append('country', country);
+                formData.append('industry', industry);
+                formData.append('company_size', companySize);
+                formData.append('bottleneck', bottleneck);
+                formData.append('next_step', nextStep);
                 formData.append('message', message);
                 formData.append('captcha_answer', captchaAnswer);
                 formData.append('captcha_value', captchaValue);

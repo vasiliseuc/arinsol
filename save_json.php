@@ -4,16 +4,16 @@ require_once __DIR__ . '/config/config.php';
 // Set JSON response header
 header('Content-Type: application/json');
 
+// Check authentication via session
+if (!isAuthenticated()) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized. Please login first.']);
+    exit;
+}
+
 // Get JSON data from request body
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
-
-// Check if key is provided and valid
-if (!isset($data['key']) || !checkKey($data['key'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Invalid or missing access key']);
-    exit;
-}
 
 // Check if data is provided
 if (!isset($data['data'])) {

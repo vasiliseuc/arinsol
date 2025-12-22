@@ -10,8 +10,14 @@ header('Content-Type: application/json');
 // Get POST data
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-$phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
-$skype = isset($_POST['skype']) ? trim($_POST['skype']) : '';
+$product = isset($_POST['product']) ? trim($_POST['product']) : '';
+$company = isset($_POST['company']) ? trim($_POST['company']) : '';
+$role = isset($_POST['role']) ? trim($_POST['role']) : '';
+$country = isset($_POST['country']) ? trim($_POST['country']) : '';
+$industry = isset($_POST['industry']) ? trim($_POST['industry']) : '';
+$companySize = isset($_POST['company_size']) ? trim($_POST['company_size']) : '';
+$bottleneck = isset($_POST['bottleneck']) ? trim($_POST['bottleneck']) : '';
+$nextStep = isset($_POST['next_step']) ? trim($_POST['next_step']) : '';
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 $captchaAnswer = isset($_POST['captcha_answer']) ? trim($_POST['captcha_answer']) : '';
 $captchaValue = isset($_POST['captcha_value']) ? intval($_POST['captcha_value']) : 0;
@@ -27,9 +33,8 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors[] = 'Valid email is required';
 }
 
-if (empty($message)) {
-    $errors[] = 'Message is required';
-}
+// Optional: Message validation (can be empty if other fields provide enough context, but usually good to keep)
+// if (empty($message)) { $errors[] = 'Message is required'; }
 
 // Validate captcha
 if (empty($captchaAnswer) || intval($captchaAnswer) !== $captchaValue) {
@@ -101,27 +106,35 @@ if ($usePHPMailer) {
         
         // Content
         $mail->isHTML(true);
-        $mail->Subject = 'New Contact Form Submission - Arinsol.ai';
+        $mail->Subject = 'New Lead from Arinsol.ai: ' . ($product ?: 'General Inquiry');
         
         $emailBody = "
         <html>
         <head>
             <style>
                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
-                .content { background: #f9f9f9; padding: 20px; }
-                .field { margin-bottom: 15px; }
-                .label { font-weight: bold; color: #667eea; }
-                .value { margin-top: 5px; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; }
+                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 20px; background: #fff; }
+                .section-title { font-size: 16px; font-weight: bold; color: #667eea; margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+                .field { margin-bottom: 12px; }
+                .label { font-weight: bold; font-size: 13px; color: #555; }
+                .value { margin-top: 2px; font-size: 14px; }
+                .highlight { background: #f0f7ff; padding: 10px; border-left: 3px solid #667eea; margin-bottom: 20px; }
             </style>
         </head>
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h2>New Contact Form Submission</h2>
+                    <h2>New Lead: " . htmlspecialchars($product ?: 'General Inquiry') . "</h2>
                 </div>
                 <div class='content'>
+                    <div class='highlight'>
+                        <div class='label'>Interested Product:</div>
+                        <div class='value' style='font-size: 16px; font-weight: bold;'>" . htmlspecialchars($product ?: 'Not specified') . "</div>
+                    </div>
+
+                    <div class='section-title'>Contact Details</div>
                     <div class='field'>
                         <div class='label'>Name:</div>
                         <div class='value'>" . htmlspecialchars($name) . "</div>
@@ -131,16 +144,39 @@ if ($usePHPMailer) {
                         <div class='value'>" . htmlspecialchars($email) . "</div>
                     </div>
                     <div class='field'>
-                        <div class='label'>Phone:</div>
-                        <div class='value'>" . ($phone ? htmlspecialchars($phone) : 'Not provided') . "</div>
+                        <div class='label'>Company:</div>
+                        <div class='value'>" . htmlspecialchars($company ?: 'Not provided') . "</div>
                     </div>
                     <div class='field'>
-                        <div class='label'>Skype:</div>
-                        <div class='value'>" . ($skype ? htmlspecialchars($skype) : 'Not provided') . "</div>
+                        <div class='label'>Role:</div>
+                        <div class='value'>" . htmlspecialchars($role ?: 'Not provided') . "</div>
                     </div>
                     <div class='field'>
-                        <div class='label'>Message:</div>
-                        <div class='value'>" . nl2br(htmlspecialchars($message)) . "</div>
+                        <div class='label'>Country / Timezone:</div>
+                        <div class='value'>" . htmlspecialchars($country ?: 'Not provided') . "</div>
+                    </div>
+
+                    <div class='section-title'>Qualification Details</div>
+                    <div class='field'>
+                        <div class='label'>Industry:</div>
+                        <div class='value'>" . htmlspecialchars($industry ?: 'Not selected') . "</div>
+                    </div>
+                    <div class='field'>
+                        <div class='label'>Company Size:</div>
+                        <div class='value'>" . htmlspecialchars($companySize ?: 'Not selected') . "</div>
+                    </div>
+                    <div class='field'>
+                        <div class='label'>Biggest Bottleneck:</div>
+                        <div class='value'>" . htmlspecialchars($bottleneck ?: 'Not provided') . "</div>
+                    </div>
+                    <div class='field'>
+                        <div class='label'>Preferred Next Step:</div>
+                        <div class='value'>" . htmlspecialchars($nextStep ?: 'Not selected') . "</div>
+                    </div>
+
+                    <div class='section-title'>Message</div>
+                    <div class='field'>
+                        <div class='value'>" . nl2br(htmlspecialchars($message ?: 'No message provided')) . "</div>
                     </div>
                 </div>
             </div>
@@ -148,7 +184,10 @@ if ($usePHPMailer) {
         </html>";
         
         $mail->Body = $emailBody;
-        $mail->AltBody = "New Contact Form Submission\n\nName: {$name}\nEmail: {$email}\nPhone: " . ($phone ?: 'Not provided') . "\nSkype: " . ($skype ?: 'Not provided') . "\n\nMessage:\n{$message}";
+        $mail->AltBody = "New Lead: " . ($product ?: 'General Inquiry') . "\n\n" .
+                         "Name: {$name}\nEmail: {$email}\nCompany: {$company}\nRole: {$role}\nCountry: {$country}\n\n" .
+                         "Industry: {$industry}\nSize: {$companySize}\nBottleneck: {$bottleneck}\nNext Step: {$nextStep}\n\n" .
+                         "Message:\n" . ($message ?: 'No message');
         
         $mail->send();
         
@@ -169,13 +208,20 @@ if ($usePHPMailer) {
     // Fallback: Use basic mail() function with SMTP-like headers
     // Note: This is less reliable and may not work on all servers
     $to = $smtp_to_email;
-    $subject = 'New Contact Form Submission - Arinsol.ai';
-    $emailBody = "New Contact Form Submission\n\n";
+    $subject = 'New Lead from Arinsol.ai: ' . ($product ?: 'General Inquiry');
+    $emailBody = "New Lead: " . ($product ?: 'General Inquiry') . "\n\n";
     $emailBody .= "Name: {$name}\n";
     $emailBody .= "Email: {$email}\n";
-    $emailBody .= "Phone: " . ($phone ?: 'Not provided') . "\n";
-    $emailBody .= "Skype: " . ($skype ?: 'Not provided') . "\n\n";
-    $emailBody .= "Message:\n{$message}\n";
+    $emailBody .= "Company: {$company}\n";
+    $emailBody .= "Role: {$role}\n";
+    $emailBody .= "Country: {$country}\n\n";
+    
+    $emailBody .= "Industry: {$industry}\n";
+    $emailBody .= "Size: {$companySize}\n";
+    $emailBody .= "Bottleneck: {$bottleneck}\n";
+    $emailBody .= "Next Step: {$nextStep}\n\n";
+    
+    $emailBody .= "Message:\n" . ($message ?: 'No message');
     
     $headers = "From: {$smtp_from_name} <{$smtp_from_email}>\r\n";
     $headers .= "Reply-To: {$name} <{$email}>\r\n";

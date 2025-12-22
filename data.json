@@ -31,6 +31,18 @@
     "ctaText": "Let's Discuss",
     "ctaLink": "#contact"
   },
+  "about": {
+    "title": "About ArInSol",
+    "description": "Arinsol is a small team of experienced builders working at the intersection of engineering, process design, and product execution. We turn agentic AI into professional-grade systems that organizations can rely on—systems that respect rules, handle messy reality, and deliver outcomes you can measure.\n\nWe care about accuracy because we build for environments where mistakes are expensive: regulated work, audit trails, customer-facing accountability, and multi-handover delivery.  Our systems are designed for traceability, reviewability, and human oversight so AI becomes a trusted capability, not a risky experiment.",
+    "principlesTitle": "Our principles",
+    "principles": [
+      "Precision over hype",
+      "Traceability over black boxes",
+      "Workflow-first execution",
+      "Measure → learn → improve",
+      "Huge productivity gains"
+    ]
+  },
   "services": {
     "title": "Accelerating Digital Transformation with Cutting-Edge and Creative Solutions",
     "items": [
@@ -73,67 +85,175 @@
     ]
   },
   "industries": {
-    "title": "We Provide Tailored AI Solutions for Your Industry-Specific Needs",
-    "subText": "Arinsol.ai provides top-notch AI applications and IT services to various industry verticals. Here are the industries we serve.",
+    "title": "Industries Where ArInSol Products Fit Best",
+    "subText": "ArInSol’s AI-native products help organizations thrive in the new era, using agentic AI hybrid systems that follow your rules, stay grounded in your real data, and deliver measurable operational gains.",
     "items": [
       {
-        "name": "Healthcare",
-        "iconClass": "fas fa-heartbeat",
+        "name": "Audit & Assurance Firms",
+        "description": "Shorten planning, execution, and review cycles with risk- and evidence-driven audit workflows and a defensible audit trail.",
+        "bestFit": "ArInAudit (+ ArInChat for standards/methodology access)",
+        "iconClass": "fas fa-clipboard-check",
         "color": "#e74c3c"
       },
       {
-        "name": "Logistics",
-        "iconClass": "fas fa-truck",
+        "name": "Internal Audit, Risk & Compliance",
+        "description": "Make policies, controls, and evidence easy to find and consistent to apply—reducing rework, gaps, and escalation effort.",
+        "bestFit": "ArInChat + ArInAudit",
+        "iconClass": "fas fa-shield-alt",
         "color": "#9b59b6"
       },
       {
-        "name": "Auditing",
-        "iconClass": "fas fa-clipboard-check",
+        "name": "Financial Services and Banking",
+        "description": "Reduce the friction of operating in complex governance environments—faster answers, fewer handoffs, and higher consistency across teams.",
+        "bestFit": "ArInChat (+ ArInAudit for assurance workflows)",
+        "iconClass": "fas fa-university",
         "color": "#3498db"
       },
       {
-        "name": "Professional services",
-        "iconClass": "fas fa-briefcase",
+        "name": "Government and Public Sector",
+        "description": "Turn fragmented procedures, regulations, and guidance into citation-backed answers—supporting both internal staff and external users.",
+        "bestFit": "ArInChat",
+        "iconClass": "fas fa-landmark",
         "color": "#2980b9"
       },
       {
-        "name": "Education",
-        "iconClass": "fas fa-graduation-cap",
+        "name": "Surveying and Geospatial Operations",
+        "description": "Automate project creation, task/subtask tracking, handovers, certificates, and invoicing—so delivery is predictable and margin-protected.",
+        "bestFit": "ArInProcess",
+        "iconClass": "fas fa-map-marked-alt",
         "color": "#3498db"
       },
       {
-        "name": "Retail",
-        "iconClass": "fas fa-store",
+        "name": "Civil Engineering, Architecture, Construction",
+        "description": "Improve handovers, follow-ups, and delivery visibility at subtask level—reducing delays, improving client updates, and keeping billing on time.",
+        "bestFit": "ArInProcess (+ ArInChat for internal knowledge/support)",
+        "iconClass": "fas fa-hard-hat",
         "color": "#16a085"
+      },
+      {
+        "name": "Utilities, Infrastructure, Environmental Services",
+        "description": "Run multi-stakeholder work with fewer missed steps—clear accountability, escalations, and evidence-ready documentation where required.",
+        "bestFit": "ArInProcess + ArInChat (+ ArInAudit when assurance is required)",
+        "iconClass": "fas fa-bolt",
+        "color": "#f39c12"
+      },
+      {
+        "name": "Enterprise Customer Support and Operations",
+        "description": "Provide consistent, citation-backed responses from the real internal source of truth—improving onboarding and reducing back-and-forth.",
+        "bestFit": "ArInChat",
+        "iconClass": "fas fa-headset",
+        "color": "#27ae60"
+      }
+    ],
+    "footerText": "Don’t see your sector? If your work involves complex rules, evidence, handovers, or hard-to-find internal truth—ArInSol will fit."
+  },
+  "trust": {
+    "title": "Designed for professional-grade use",
+    "items": [
+      "Source-backed answers with citations to internal documents, standards, and records",
+      "Traceability and audit trails for review, quality, and accountability",
+      "Human oversight by design (review gates, approvals, escalation paths)",
+      "Privacy and governance controls designed for regulated environments (access control, logging)"
+    ]
+  },
+  "engagement": {
+    "title": "What are you trying to improve?",
+    "ctaText": "Talk to ArInSol",
+    "ctaLink": "#contact",
+    "subText": "Not sure? Book a 20 minute scoping call and we’ll map one high-impact use case.",
+    "items": [
+      {
+        "text": "Audit efficiency & review quality",
+        "linkText": "Explore ArInAudit",
+        "link": "#case-studies"
+      },
+      {
+        "text": "Project handovers & delivery delays",
+        "linkText": "Explore ArInProcess",
+        "link": "#case-studies"
+      },
+      {
+        "text": "Internal truth & customer answers",
+        "linkText": "Explore ArInChat",
+        "link": "#case-studies"
       }
     ]
   },
   "caseStudies": {
-    "title": "Case studies that highlight our excellence",
-    "subText": "Our works that shed light on our skill-set, successful work methodology and technical proficiency.",
+    "title": "AI-Native Systems Built for Business-Critical Work",
+    "subText": "Three specialized platforms designed to manage audits, operations, and organizational knowledge. Grounded in your data, engineered for trust, and measured by operational impact.",
     "items": [
       {
-        "title": "Custom AI Agent Builder ✨",
-        "description": "An AI Agent Builder Platform that leverages powerful AI models to design and deploy intelligent agents tailored for various tasks, transforming how businesses automate and scale operations. Just define the goal and get your AI agent ready.",
-        "ctaText": "View Case Study",
-        "iconClass": "fas fa-robot",
-        "previewText": "AI Agent Interface Preview",
-        "image": ""
+        "title": "1. ARinAudit: Professional-Grade Assurance",
+        "description": "AI-native audit execution specifically engineered for the complexities of SME audits. ARinAudit replaces static, Excel-driven files with a risk-based execution system. It structures every engagement into a continuous, four-stage workflow—Engagement, Risk Assessment, Execution, and Completion—ensuring every conclusion is backed by evidence.",
+        "ctaText": "Learn More",
+        "iconClass": "fas fa-clipboard-check",
+        "previewText": "Review-Ready Audit Trail",
+        "image": "",
+        "features": [
+          "Risk-Driven Planning: Automatically links risks and assertions to specific procedures and evidence, creating a review-ready audit trail.",
+          "Defensible Documentation: Every answer and workpaper includes clear citations to standards, methodologies, and source evidence.",
+          "Governance & Oversight: Features built-in Auditor-in-Charge review gates, approval workflows, and detailed audit logs to ensure full compliance.",
+          "Efficiency Gains: Designed to unlock multi-fold productivity improvements in regulated environments without sacrificing professional skepticism."
+        ]
       },
       {
-        "title": "AI-Powered Art Generator Platform ✨",
-        "description": "An AI-Based Art Generator Platform that uses advanced AI algorithms to create unique, stunning artworks, revolutionizing the digital art creation process. Just prompt it and get your art ready.",
-        "ctaText": "View Case Study",
-        "iconClass": "fas fa-palette",
-        "previewText": "Art Generator Interface Preview",
+        "title": "2. ARinProcess: The Project & Handover Operating System",
+        "description": "Eliminate bottlenecks and gain total visibility over workflow-heavy project environments. ARinProcess automates project lifecycles at the point where delays actually happen: the handover. By tracking work at the subtask level, it makes delivery measurable and predictable.",
+        "ctaText": "Learn More",
+        "iconClass": "fas fa-tasks",
+        "previewText": "Subtask-Level Progression",
         "image": "",
-        "reverseLayout": true
+        "reverseLayout": true,
+        "features": [
+          "Intelligent Automation: Features automated project creation based on defined templates and multi-stage flows.",
+          "Precision Tracking: Tracks subtask-level progression with timestamps, owners, and complete handover histories to eliminate \"hidden\" delays.",
+          "Visual Portfolio Management: A map-first view allows you to see the real-time status of all projects across your entire portfolio instantly.",
+          "Administrative Efficiency: Includes one-click document generation from structured data and workflow-driven billing triggers to protect on-time invoicing.",
+          "Escalation Visibility: Never lose a follow-up with automatic subtask delay tracking and clear escalation paths."
+        ]
+      },
+      {
+        "title": "3. ARinChat: Citation-Backed Knowledge Access",
+        "description": "Turn scattered organizational knowledge into a reliable, professional-grade internal \"Source of Truth.\" ARinChat transforms fragmented policies, procedures, spreadsheets, and transcripts into clear answers. It is built for high-stakes environments—like banking and government—where accuracy and traceability are non-negotiable.",
+        "ctaText": "Learn More",
+        "iconClass": "fas fa-comments",
+        "previewText": "Citation-Backed Answers",
+        "image": "",
+        "features": [
+          "Verified Accuracy: Every response is citation-backed, allowing users to verify information at the original source immediately.",
+          "Information Integrity: Automatically detects and highlights outdated or conflicting information across your knowledge base.",
+          "Flexible Deployment: Available in lightweight \"use-case editions\" scoped to specific themes or document sets for rapid implementation.",
+          "Unified Support: Scalable for both internal team onboarding and external customer inquiries, all while respecting permission-aware governance."
+        ]
+      }
+    ]
+  },
+  "faq": {
+    "title": "Operational Excellence: Everything You Need to Know",
+    "subText": "Understand our approach to implementation, data integrity, and professional-grade AI.",
+    "items": [
+      {
+        "question": "1. Onboarding & Implementation",
+        "answer": "We prioritize speed and measurable value over long discovery cycles.\n\n• Zero Technical Barrier: No technical background is required to deploy our tools. We focus on configuring the system to match your specific operational reality.\n• Rapid Deployment: We typically begin with a brief scoping call to confirm product fit, followed by a demo or pilot tailored to your use case.\n• Integration over Replacement: ARINSOL is designed to complement your existing toolset, reducing reliance on fragmented spreadsheets and manual follow-ups. We only simplify your tool stack where it leads to a cleaner operational flow.\n• A Proven Path to Scale: Our implementation process includes success metric confirmation, role-based configuration, onboarding, and a pilot run with real-world cases before a full rollout. We encourage a \"pilot-first\" approach to prove value before scaling."
+      },
+      {
+        "question": "2. Data Integrity & Security",
+        "answer": "In professional environments, trust is built on privacy and transparency.\n\n• Confidentiality by Default: Your data is treated as strictly confidential and used only to deliver your specific service. We do not use customer data to train public AI models.\n• Privacy by Design: Our deployments include robust access controls, detailed audit logs, and governance structures designed to support your GDPR and compliance obligations.\n• Permission-Aware Access: For sensitive tools like ARinAudit and ARinChat, we provide granular permissions so users only see authorized information, with fully auditable usage patterns.\n• Flexible Hosting: We offer various deployment options, including hosted or private environments, depending on your organization’s security constraints."
+      },
+      {
+        "question": "3. Solution-Specific Insights",
+        "answer": "ARinChat: The Trustworthy Knowledge Base\n• Eliminating Hallucinations: Answers are generated strictly from your approved source material and include direct citations for verification.\n• Handling Complexity: It is designed for \"messy\" or evolving data, highlighting conflicts or missing information rather than inventing answers.\n• Versatile Application: Can be deployed internally for team onboarding or externally to provide customers with consistent, permission-aware support.\n\nARinAudit: Professional-Grade Assurance\n• ISA-Aligned Workflow: Built around risk-based planning and evidence-based conclusions, covering everything from engagement to completion.\n• Enhanced Oversight: Replaces static templates with an AI-native system that supports review gates, approvals, and professional skepticism under human control.\n• Defensible Results: Delivers a consistent, inspection-ready audit file with significantly reduced manual drafting cycles.\n\nARinProcess: Operational Discipline\n• Task-Level Visibility: Eliminates hidden delays by tracking projects at the subtask level, ensuring seamless handovers and billing discipline.\n• Industry Agility: While proven in surveying, the system is engineered for any workflow-heavy environment, including construction, architecture, and civil engineering."
+      },
+      {
+        "question": "4. Is ARINSOL the Right Fit?",
+        "answer": "We believe in direct communication to save our clients time.\n\nA Good Fit If You Want:\n• A proven, high-speed system you can adopt quickly.\n• Measurable gains in speed, consistency, and traceability.\n• To reduce rework, searching, and manual handovers.\n\nNot a Fit If You Need:\n• A fully custom-built platform designed from scratch.\n• A long discovery and consulting engagement before delivery.\n• An open-ended software agency for bespoke projects."
       }
     ]
   },
   "contact": {
-    "title": "Have a question or need a custom quote",
-    "subText": "Our in-depth understanding in technology and innovation can turn your aspiration into a business reality.",
+    "title": "Let’s talk about what you want to improve first",
+    "subText": "Whether you need operational control, audit rigor, or a trustworthy source-of-truth chat, we’ll help you find the fastest path to measurable impact.",
     "yearsExp": "14",
     "yearsLabel": "YEARS' EXPERIENCE IN IT",
     "successTitle": "Arinsol.ai",
@@ -156,37 +276,71 @@
         "label": "Developers"
       }
     ],
+    "products": [
+      "ArInAudit (audit execution & planning)",
+      "ArInProcess (projects, handovers, delivery visibility)",
+      "ArInChat (internal truth, citation-backed answers)",
+      "Not sure — help me choose"
+    ],
+    "industries": [
+      "Financial Services",
+      "Healthcare",
+      "Legal",
+      "Manufacturing",
+      "Retail",
+      "Technology",
+      "Other"
+    ],
+    "companySizes": [
+      "1–10",
+      "11–50",
+      "51–200",
+      "200+"
+    ],
+    "nextSteps": [
+      "Demo",
+      "Pilot",
+      "Quick call"
+    ],
+    "trustLines": [
+      "We’ll respond within 1 business day.",
+      "Please don’t submit confidential documents here—ask us for an NDA and a secure sharing method.",
+      "Your message is used only to respond to your request."
+    ],
+    "whatNextSteps": [
+      "We schedule a short call (20–30 minutes).",
+      "We confirm the use case and success metrics.",
+      "We propose the fastest path: demo, pilot, or staged rollout."
+    ],
     "formLabels": {
       "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "skype": "Skype",
-      "projectDesc": "Project Description",
-      "upload": "Upload Your File",
-      "chooseFile": "Choose File",
-      "noFile": "No file chosen",
-      "submit": "SUBMIT"
+      "email": "Work Email",
+      "company": "Company",
+      "role": "Role",
+      "country": "Country / Time zone",
+      "product": "Interested Product",
+      "message": "Message",
+      "industry": "Industry (Optional)",
+      "companySize": "Company Size (Optional)",
+      "bottleneck": "What is your biggest bottleneck? (Optional)",
+      "nextStep": "Preferred next step (Optional)",
+      "submit": "Submit Request"
     }
   },
-  "footer": {
-    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved.",
-    "termsLink": "terms-conditions.php",
-    "privacyLink": "privacy-policy.php"
-  },
   "socialMedia": {
-    "facebook": "https://www.facebook.com/",
-    "twitter": "https://www.twitter.com/",
-    "linkedin": "https://www.linkedin.com/company/",
-    "instagram": "https://www.instagram.com/"
-  },
-  "chatbot": {
-    "name": "Arin"
+    "facebook": "https://facebook.com",
+    "twitter": "https://x.com",
+    "linkedin": "",
+    "instagram": "https://instagram.com"
   },
   "location": {
-    "address": "Your Company Address",
-    "city": "City",
-    "country": "Country",
-    "latitude": "40.7128",
-    "longitude": "-74.0060"
+    "address": "Nicosia",
+    "city": "Nicosia",
+    "country": "Cyprus",
+    "latitude": "",
+    "longitude": ""
+  },
+  "footer": {
+    "copyright": "&copy; 2024 Arinsol.ai. All Rights Reserved."
   }
 }

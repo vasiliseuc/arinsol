@@ -1,21 +1,44 @@
 <?php
 /**
  * Configuration file for the JSON Editor
- * 
- * Set your access key below. Users must enter this exact key to access the editor.
  */
 
 // Path to the data.json file
 define('DATA_FILE', __DIR__ . '/../data.json');
 
-// Access key - change this to your own long random key
-// You can generate one at: https://www.random.org/strings/
-$accessKey = 'arinsol-2025-secure-key-50c0fef8e4288e2576abd2f24b7f55ad';
+// Admin Credentials
+define('ADMIN_USERNAME', 'arinsol');
+define('ADMIN_PASSWORD', 'ArinSol123!');
+
+// Session configuration
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 /**
- * Check if the provided key matches the access key
+ * Check if user is authenticated
  */
-function checkKey($providedKey) {
-    global $accessKey;
-    return trim($providedKey) === trim($accessKey);
+function isAuthenticated() {
+    return isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in'] === true;
+}
+
+/**
+ * Login user
+ */
+function login($username, $password) {
+    if ($username === ADMIN_USERNAME && $password === ADMIN_PASSWORD) {
+        $_SESSION['is_logged_in'] = true;
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Logout user
+ */
+function logout() {
+    $_SESSION = [];
+    session_destroy();
 }
