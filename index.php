@@ -155,37 +155,45 @@
 
                         <div class="contact-form-wrapper">
                             <form action="#" class="contact-form">
+                                <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
                                 <input type="hidden" id="input-product" name="product">
                                 
                                 <div class="form-row">
                                     <div class="form-group">
+                                        <label for="input-name" class="form-label">Name <span class="required-asterisk">*</span></label>
                                         <input id="input-name" type="text" class="form-control" aria-label="Name" required>
                                     </div>
                                     <div class="form-group">
+                                        <label for="input-email" class="form-label">Work Email <span class="required-asterisk">*</span></label>
                                         <input id="input-email" type="email" class="form-control" aria-label="Work Email" required>
                                     </div>
                                 </div>
                                 
                                 <div class="form-row">
                                     <div class="form-group">
+                                        <label for="input-company" class="form-label">Company</label>
                                         <input id="input-company" type="text" class="form-control" aria-label="Company">
                                     </div>
                                     <div class="form-group">
+                                        <label for="input-role" class="form-label">Role</label>
                                         <input id="input-role" type="text" class="form-control" aria-label="Role">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="input-country" class="form-label">Country / Time zone</label>
                                     <input id="input-country" type="text" class="form-control" aria-label="Country / Time zone">
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group">
+                                        <label for="input-industry" class="form-label">Industry (Optional)</label>
                                         <select id="input-industry" class="form-control" aria-label="Industry">
                                             <option value="" disabled selected>Select Industry</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label for="input-companysize" class="form-label">Company Size (Optional)</label>
                                         <select id="input-companysize" class="form-control" aria-label="Company Size">
                                             <option value="" disabled selected>Company Size</option>
                                         </select>
@@ -193,23 +201,26 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="input-bottleneck" class="form-label">What is your biggest bottleneck? (Optional)</label>
                                     <input id="input-bottleneck" type="text" class="form-control" aria-label="Biggest bottleneck">
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="input-nextstep" class="form-label">Preferred Next Step (Optional)</label>
                                     <select id="input-nextstep" class="form-control" aria-label="Preferred next step">
                                         <option value="" disabled selected>Preferred Next Step</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="input-message" class="form-label">Message</label>
                                     <textarea id="input-message" class="form-control" rows="4" aria-label="Message"></textarea>
                                 </div>
 
                                 <div class="trust-lines" id="trust-lines"></div>
 
                                 <div class="form-group captcha-group">
-                                    <label id="captcha-label">Security Question: <span id="captcha-question"></span></label>
+                                    <label id="captcha-label" class="form-label">Security Question: <span id="captcha-question"></span> <span class="required-asterisk">*</span></label>
                                     <input type="number" id="captcha-answer" class="form-control" placeholder="Your answer" required>
                                     <input type="hidden" id="captcha-value">
                                 </div>
