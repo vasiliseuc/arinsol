@@ -30,7 +30,7 @@
     "description": "From custom app development to seamless AI integration, we turn your business vision into reality.",
     "ctaText": "Let's Discuss",
     "ctaLink": "#contact"
-    
+
   },
   "about": {
     "title": "About ArInSol",
@@ -205,7 +205,6 @@
         "iconClass": "fas fa-tasks",
         "previewText": "Subtask-Level Progression",
         "image": "",
-        "reverseLayout": true,
         "features": [
           "Intelligent Automation: Features automated project creation based on defined templates and multi-stage flows.",
           "Precision Tracking: Tracks subtask-level progression with timestamps, owners, and complete handover histories to eliminate \"hidden\" delays.",
