@@ -1106,11 +1106,10 @@ select.form-control {
 
     .logo {
         order: 1;
-        margin-right: auto;
     }
     
     .logo-img {
-        max-width: 150px;
+        max-width: 120px;
     }
 
     /* Hide text button on mobile, switch to icon */
