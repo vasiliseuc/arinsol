@@ -28,7 +28,12 @@ function isAuthenticated() {
  * Login user
  */
 function login($username, $password) {
-    if ($username === ADMIN_USERNAME && $password === ADMIN_PASSWORD) {
+    // Trim input to avoid extra spaces
+    $username = trim($username);
+    $password = trim($password);
+    
+    // Case-insensitive username check, Case-sensitive password check
+    if (strtolower($username) === strtolower(ADMIN_USERNAME) && $password === ADMIN_PASSWORD) {
         $_SESSION['is_logged_in'] = true;
         return true;
     }

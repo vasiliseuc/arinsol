@@ -15,7 +15,7 @@ $smtp_username = 'arinsol.cy@gmail.com'; // Your Gmail address
 $smtp_password = 'xcfp eidd rjre mioa'; // Gmail App Password (16 characters)
 $smtp_from_email = 'arinsol.cy@gmail.com'; // Usually same as username
 $smtp_from_name = 'Arinsol.ai Website';
-$smtp_to_email = 'vasilis_av@hotmail.com'; // Where to receive contact form emails
+$smtp_to_email = 'info@arinsol.ai'; // Where to receive contact form emails
 $smtp_to_name = 'Arinsol.ai Team';
 
 // Set environment variables (alternative to hardcoding)
