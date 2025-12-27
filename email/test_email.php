@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Configuration Test Script
+ * Email Configuration Test Script (Enhanced Debugging)
  * 
  * This script helps diagnose email configuration issues.
  * Access it via: your-domain.com/email/test_email.php
@@ -8,12 +8,44 @@
  * IMPORTANT: Delete this file after testing for security!
  */
 
-// Check if config file exists
-$configFile = __DIR__ . '/../config/email_config.php';
-$configExists = file_exists($configFile);
+// Function to safely check files
+function safe_check($path) {
+    return file_exists($path) ? "YES" : "NO";
+}
 
 echo "<h1>Email Configuration Test</h1>";
 echo "<pre>";
+
+echo "=== Current Environment ===\n";
+echo "Current Directory: " . __DIR__ . "\n";
+echo "Parent Directory: " . dirname(__DIR__) . "\n";
+echo "Script Path: " . $_SERVER['SCRIPT_FILENAME'] . "\n\n";
+
+echo "=== Directory Structure Check ===\n";
+$rootDir = dirname(__DIR__);
+$vendorDir = $rootDir . '/vendor';
+echo "Checking for vendor dir at: " . $vendorDir . "\n";
+
+if (is_dir($vendorDir)) {
+    echo "Vendor directory FOUND.\n";
+    echo "Contents of vendor:\n";
+    $files = scandir($vendorDir);
+    foreach($files as $file) {
+        if($file != '.' && $file != '..') echo " - $file\n";
+    }
+} else {
+    echo "Vendor directory NOT FOUND at expected location.\n";
+    // Check current directory just in case
+    if (is_dir(__DIR__ . '/vendor')) {
+        echo "Found vendor in CURRENT directory instead.\n";
+        $vendorDir = __DIR__ . '/vendor';
+    }
+}
+echo "\n";
+
+// Check config
+$configFile = $rootDir . '/config/email_config.php';
+$configExists = file_exists($configFile);
 
 echo "=== Configuration File Check ===\n";
 echo "Config file path: " . $configFile . "\n";
@@ -40,11 +72,12 @@ echo "To Email: " . ($smtp_to_email ?: "NOT SET") . "\n\n";
 
 // Check PHPMailer
 echo "=== PHPMailer Check ===\n";
-$phpmailerPath = __DIR__ . '/../vendor/autoload.php';
+$phpmailerPath = $vendorDir . '/autoload.php';
 $phpmailerExists = file_exists($phpmailerPath);
-echo "PHPMailer path: " . $phpmailerPath . "\n";
-echo "PHPMailer exists: " . ($phpmailerExists ? "YES" : "NO") . "\n";
+echo "PHPMailer autoloader path: " . $phpmailerPath . "\n";
+echo "PHPMailer autoloader exists: " . ($phpmailerExists ? "YES" : "NO") . "\n";
 
+$usePHPMailer = false;
 if ($phpmailerExists) {
     require_once $phpmailerPath;
     if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
@@ -52,11 +85,17 @@ if ($phpmailerExists) {
         $usePHPMailer = true;
     } else {
         echo "PHPMailer class: NOT FOUND (autoload file exists but class missing)\n";
-        $usePHPMailer = false;
+        // Debug class loading
+        echo "Debug: Contents of vendor/phpmailer directory:\n";
+        if (is_dir($vendorDir . '/phpmailer')) {
+             $files = scandir($vendorDir . '/phpmailer');
+             foreach($files as $file) {
+                 if($file != '.' && $file != '..') echo " - $file\n";
+             }
+        }
     }
 } else {
     echo "PHPMailer: NOT INSTALLED\n";
-    echo "Install with: composer require phpmailer/phpmailer\n";
     $usePHPMailer = false;
 }
 echo "\n";
@@ -94,10 +133,6 @@ if ($usePHPMailer && !empty($smtp_username) && !empty($smtp_password)) {
 echo "\n=== Summary ===\n";
 if ($configExists && !empty($smtp_username) && !empty($smtp_password) && $usePHPMailer) {
     echo "✓ Configuration looks good!\n";
-    echo "If emails still don't send, check:\n";
-    echo "  1. Gmail App Password is correct (16 characters)\n";
-    echo "  2. 2-Step Verification is enabled on Gmail account\n";
-    echo "  3. Server error logs for detailed error messages\n";
 } else {
     echo "✗ Issues found:\n";
     if (!$configExists) echo "  - Config file missing\n";
@@ -108,4 +143,3 @@ if ($configExists && !empty($smtp_username) && !empty($smtp_password) && $usePHP
 
 echo "</pre>";
 echo "<p><strong>Security Note:</strong> Delete this file after testing!</p>";
-
