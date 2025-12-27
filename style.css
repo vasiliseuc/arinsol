@@ -163,7 +163,6 @@ ul { list-style: none; }
 }
 
 .main-nav a:hover {
-    /* UPDATED: Hover color to blue accent */
     color: var(--blue-secondary);
 }
 
