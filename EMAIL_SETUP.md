@@ -6,7 +6,7 @@ This guide will help you configure Gmail SMTP for the contact form.
 
 1. A Gmail account
 2. 2-Step Verification enabled on your Gmail account
-3. PHPMailer library (optional, but recommended)
+3. **PHPMailer library (REQUIRED for Gmail SMTP)** - The PHP `mail()` function cannot authenticate with Gmail
 
 ## Step 1: Enable 2-Step Verification
 
@@ -35,32 +35,62 @@ $smtp_from_email = 'your-email@gmail.com'; // Usually same as username
 $smtp_to_email = 'your-email@gmail.com'; // Where to receive contact form emails
 ```
 
-## Step 4: Install PHPMailer (Optional but Recommended)
+## Step 4: Install PHPMailer (REQUIRED)
 
-### Using Composer:
+**IMPORTANT:** PHPMailer is required for Gmail SMTP. The PHP `mail()` function cannot authenticate with Gmail's SMTP server.
+
+### Using Composer (Recommended):
+```bash
+composer install
+```
+
+Or if composer.json doesn't exist:
 ```bash
 composer require phpmailer/phpmailer
 ```
 
 ### Manual Installation:
-1. Download PHPMailer from: https://github.com/PHPMailer/PHPMailer
+1. Download PHPMailer from: https://github.com/PHPMailer/PHPMailer/releases
 2. Extract to `vendor/PHPMailer/PHPMailer/`
-3. The email handler will automatically use PHPMailer if available
+3. Ensure the autoloader is set up correctly
+4. The email handler will automatically use PHPMailer if available
 
-## Step 5: Test the Form
+## Step 5: Test Email Configuration
 
+### Option A: Use Test Script (Recommended)
+1. Access `email/test_email.php` in your browser
+2. Review the diagnostic output
+3. **Delete the test file after testing for security!**
+
+### Option B: Test via Contact Form
 1. Fill out the contact form on your website
 2. Answer the security question (math captcha)
 3. Submit the form
 4. Check your email inbox for the contact form submission
+5. Check server error logs if emails don't arrive
 
 ## Troubleshooting
 
 ### Email not sending?
-- Verify your Gmail App Password is correct (16 characters, no spaces needed)
-- Check that 2-Step Verification is enabled
-- Ensure `config/email_config.php` has correct credentials
-- Check server error logs for detailed error messages
+1. **Check if PHPMailer is installed:**
+   - Run the test script: `email/test_email.php`
+   - Or check if `vendor/autoload.php` exists
+   - If not installed, run `composer install`
+
+2. **Verify credentials:**
+   - Gmail App Password is correct (16 characters, spaces optional)
+   - 2-Step Verification is enabled on Gmail account
+   - `config/email_config.php` has correct credentials
+
+3. **Check server error logs:**
+   - Look for "Email error:" messages
+   - Check PHP error logs for SMTP connection issues
+   - Common errors: "Authentication failed" = wrong App Password
+
+4. **Common Issues:**
+   - "PHPMailer not found" → Install with `composer install`
+   - "Authentication failed" → Regenerate Gmail App Password
+   - "Connection refused" → Server firewall blocking SMTP port 587
 
 ### Using environment variables instead:
 You can also set environment variables instead of editing the config file:
@@ -76,7 +106,11 @@ You can also set environment variables instead of editing the config file:
 - Keep your App Password secure
 - The math captcha helps prevent spam submissions
 
-## Fallback
+## Important Notes
 
-If PHPMailer is not available, the system will use PHP's built-in `mail()` function, which is less reliable but will still work on most servers.
+**PHPMailer is REQUIRED for Gmail SMTP.** The PHP `mail()` function cannot authenticate with Gmail's SMTP server and will not work. If PHPMailer is not installed, the form will show an error message asking you to install it.
+
+The system will:
+- ✅ Use PHPMailer if available (recommended and required for Gmail)
+- ❌ Show an error if PHPMailer is not installed (emails will not send)
 

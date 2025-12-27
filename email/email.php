@@ -48,27 +48,29 @@ if (!empty($errors)) {
 }
 
 // Gmail SMTP Configuration
-$smtp_host = 'smtp.gmail.com';
-$smtp_port = 587;
-$smtp_username = getenv('GMAIL_USERNAME') ?: ''; // Your Gmail address
-$smtp_password = getenv('GMAIL_APP_PASSWORD') ?: ''; // Gmail App Password (not regular password)
-$smtp_from_email = getenv('GMAIL_FROM_EMAIL') ?: $smtp_username;
-$smtp_from_name = 'Arinsol.ai Website';
-$smtp_to_email = getenv('GMAIL_TO_EMAIL') ?: $smtp_username; // Where to receive emails
-$smtp_to_name = 'Arinsol.ai Team';
-
-// Check if email config file exists
+// Load config file FIRST, then check environment variables
 $configFile = __DIR__ . '/../config/email_config.php';
 if (file_exists($configFile)) {
     require_once $configFile;
 }
 
+// Now get values - environment variables take precedence, then config file variables
+$smtp_host = 'smtp.gmail.com';
+$smtp_port = 587;
+$smtp_username = getenv('GMAIL_USERNAME') ?: (isset($smtp_username) ? $smtp_username : '');
+$smtp_password = getenv('GMAIL_APP_PASSWORD') ?: (isset($smtp_password) ? $smtp_password : '');
+$smtp_from_email = getenv('GMAIL_FROM_EMAIL') ?: (isset($smtp_from_email) ? $smtp_from_email : $smtp_username);
+$smtp_from_name = isset($smtp_from_name) ? $smtp_from_name : 'Arinsol.ai Website';
+$smtp_to_email = getenv('GMAIL_TO_EMAIL') ?: (isset($smtp_to_email) ? $smtp_to_email : $smtp_username);
+$smtp_to_name = isset($smtp_to_name) ? $smtp_to_name : 'Arinsol.ai Team';
+
 // Validate SMTP credentials
 if (empty($smtp_username) || empty($smtp_password)) {
     http_response_code(500);
+    error_log('Email config check - Username: ' . (empty($smtp_username) ? 'EMPTY' : 'SET') . ', Password: ' . (empty($smtp_password) ? 'EMPTY' : 'SET'));
     echo json_encode([
         'success' => false, 
-        'error' => 'Email configuration not set. Please configure Gmail SMTP settings in config/email_config.php'
+        'error' => 'Email configuration not set. Please configure Gmail SMTP settings in config/email_config.php. Username: ' . (empty($smtp_username) ? 'NOT SET' : 'SET') . ', Password: ' . (empty($smtp_password) ? 'NOT SET' : 'SET')
     ]);
     exit;
 }
@@ -81,7 +83,12 @@ if (file_exists($phpmailerPath)) {
     require_once $phpmailerPath;
     if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
         $usePHPMailer = true;
+        error_log('Using PHPMailer for email sending');
+    } else {
+        error_log('PHPMailer autoload file exists but class not found');
     }
+} else {
+    error_log('PHPMailer not found at: ' . $phpmailerPath . ' - Using mail() fallback (unreliable for Gmail SMTP)');
 }
 
 if ($usePHPMailer) {
@@ -89,6 +96,10 @@ if ($usePHPMailer) {
     $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
     
     try {
+        // Enable verbose debug output (only in development - comment out in production)
+        // $mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
+        // $mail->Debugoutput = function($str, $level) { error_log("PHPMailer: $str"); };
+        
         // Server settings
         $mail->isSMTP();
         $mail->Host = $smtp_host;
@@ -98,6 +109,13 @@ if ($usePHPMailer) {
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = $smtp_port;
         $mail->CharSet = 'UTF-8';
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
         
         // Recipients
         $mail->setFrom($smtp_from_email, $smtp_from_name);
@@ -198,15 +216,37 @@ if ($usePHPMailer) {
         
     } catch (\Exception $e) {
         http_response_code(500);
+        $errorMessage = 'Failed to send email. Please try again later.';
+        $errorDetails = $mail->ErrorInfo;
+        
+        // Log detailed error for debugging
+        error_log('Email error: ' . $errorDetails);
+        error_log('SMTP Username: ' . (empty($smtp_username) ? 'NOT SET' : substr($smtp_username, 0, 3) . '***'));
+        error_log('SMTP Password: ' . (empty($smtp_password) ? 'NOT SET' : 'SET (' . strlen($smtp_password) . ' chars)'));
+        
+        // Provide more helpful error message
+        if (strpos($errorDetails, 'Authentication failed') !== false) {
+            $errorMessage = 'Email authentication failed. Please check your Gmail App Password in config/email_config.php';
+        } elseif (strpos($errorDetails, 'Connection refused') !== false || strpos($errorDetails, 'Could not connect') !== false) {
+            $errorMessage = 'Could not connect to Gmail SMTP server. Please check your server\'s network connection.';
+        } elseif (strpos($errorDetails, 'Invalid address') !== false) {
+            $errorMessage = 'Invalid email address. Please check the recipient email in config/email_config.php';
+        }
+        
         echo json_encode([
             'success' => false,
-            'error' => 'Failed to send email. Please try again later.'
+            'error' => $errorMessage,
+            'debug' => (defined('DEBUG_MODE') && DEBUG_MODE) ? $errorDetails : null
         ]);
-        error_log('Email error: ' . $mail->ErrorInfo);
     }
 } else {
     // Fallback: Use basic mail() function with SMTP-like headers
-    // Note: This is less reliable and may not work on all servers
+    // Note: This is less reliable and may not work on all servers, especially for Gmail SMTP
+    // The mail() function cannot use SMTP authentication, so it won't work with Gmail
+    
+    error_log('WARNING: PHPMailer not installed. mail() function cannot authenticate with Gmail SMTP.');
+    error_log('Attempting to send email to: ' . $smtp_to_email);
+    
     $to = $smtp_to_email;
     $subject = 'New Lead from Arinsol.ai: ' . ($product ?: 'General Inquiry');
     $emailBody = "New Lead: " . ($product ?: 'General Inquiry') . "\n\n";
@@ -228,10 +268,19 @@ if ($usePHPMailer) {
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
     
-    if (mail($to, $subject, $emailBody, $headers)) {
+    // Note: mail() function will likely return true but emails won't actually send via Gmail SMTP
+    // because it cannot authenticate
+    $result = @mail($to, $subject, $emailBody, $headers);
+    
+    if ($result) {
+        // Even if mail() returns true, the email likely didn't send via Gmail SMTP
+        // Log this as a warning
+        error_log('mail() function returned true, but Gmail SMTP requires PHPMailer for authentication');
+        
+        http_response_code(500);
         echo json_encode([
-            'success' => true,
-            'message' => 'Thank you! Your message has been sent successfully. We will get back to you soon.'
+            'success' => false,
+            'error' => 'PHPMailer is required for Gmail SMTP. The mail() function cannot authenticate with Gmail. Please install PHPMailer. See EMAIL_SETUP.md for instructions.'
         ]);
     } else {
         http_response_code(500);

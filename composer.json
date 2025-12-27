@@ -1,0 +1,13 @@
+{
+    "name": "arinsol/website",
+    "description": "Arinsol.ai Website",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arinsol\\": "src/"
+        }
+    }
+}
+
