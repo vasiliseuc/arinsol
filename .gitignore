@@ -12,3 +12,5 @@ config/email_config.php
 # Backups
 data-changes/
 
+# Content Data
+data.json

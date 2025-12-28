@@ -183,6 +183,20 @@ if ($jsonArray === null && json_last_error() !== JSON_ERROR_NONE) {
 
 // Ensure array structure exists to prevent errors
 $jsonArray = $jsonArray ?? [];
+
+// Get data changes history
+$changesDir = __DIR__ . '/data-changes';
+$changeFiles = [];
+if (is_dir($changesDir)) {
+    $files = scandir($changesDir);
+    foreach ($files as $file) {
+        if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
+            $changeFiles[] = $file;
+        }
+    }
+    // Sort by name descending (timestamp is in name, so this works for sorting by date)
+    rsort($changeFiles);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -479,6 +493,7 @@ $jsonArray = $jsonArray ?? [];
         <div class="header-content">
             <h1>📝 Content Editor - Arinsol.ai</h1>
             <div class="header-actions">
+                <a href="#" class="btn btn-secondary" onclick="openHistory(event)">📜 History</a>
                 <a href="/" class="btn btn-secondary" target="_blank">View Site</a>
                 <a href="?logout=1" class="btn btn-secondary">Logout</a>
             </div>
@@ -1310,6 +1325,62 @@ $jsonArray = $jsonArray ?? [];
     </div>
 
     <script>
+        function openHistory(e) {
+            e.preventDefault();
+            const historyWindow = window.open('', 'DataHistory', 'width=600,height=800,scrollbars=yes');
+            
+            const content = `
+                <html>
+                <head>
+                    <title>Data Changes History<\/title>
+                    <style>
+                        body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; background: #f5f7fa; }
+                        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
+                        table { width: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-collapse: collapse; overflow: hidden; }
+                        th { background: #f8f9fa; padding: 12px 15px; text-align: left; border-bottom: 2px solid #e9ecef; color: #555; }
+                        td { padding: 10px 15px; border-bottom: 1px solid #eee; color: #333; }
+                        tr:last-child td { border-bottom: none; }
+                        tr:hover { background: #f8f9fa; }
+                        .filename { font-family: monospace; color: #666; }
+                    <\/style>
+                <\/head>
+                <body>
+                    <h1>📜 Data Changes History<\/h1>
+                    <?php if (empty($changeFiles)): ?>
+                        <p>No history found.<\/p>
+                    <?php else: ?>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time<\/th>
+                                    <th>Filename<\/th>
+                                </tr>
+                            <\/thead>
+                            <tbody>
+                                <?php foreach ($changeFiles as $file): 
+                                    $displayDate = 'Unknown';
+                                    if (preg_match('/data_(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})\.json/', $file, $matches)) {
+                                        $date = $matches[1];
+                                        $time = str_replace('-', ':', $matches[2]);
+                                        $displayDate = date('M d, Y H:i:s', strtotime("$date $time"));
+                                    }
+                                ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($displayDate); ?><\/td>
+                                        <td class="filename"><?php echo htmlspecialchars($file); ?><\/td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <\/tbody>
+                        <\/table>
+                    <?php endif; ?>
+                <\/body>
+                <\/html>
+            `;
+            
+            historyWindow.document.write(content);
+            historyWindow.document.close();
+        }
+
         // Accordion functionality
         document.addEventListener('DOMContentLoaded', function() {
             const sectionHeaders = document.querySelectorAll('.section-header');
