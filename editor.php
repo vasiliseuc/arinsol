@@ -1101,6 +1101,42 @@ $jsonArray = $jsonArray ?? [];
                     </div>
 
                     <div class="form-group">
+                        <label>Trust Lines (Contact Form)</label>
+                        <div id="contact-trustLines-container">
+                            <?php foreach ($jsonArray['contact']['trustLines'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Line #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[trustLines][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('trustLines')">+ Add Trust Line</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What Next Steps (Sidebar)</label>
+                        <div id="contact-whatNextSteps-container">
+                            <?php foreach ($jsonArray['contact']['whatNextSteps'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Step #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[whatNextSteps][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('whatNextSteps')">+ Add Step</button>
+                    </div>
+
+                    <div class="form-group">
                         <label>Stats</label>
                         <div id="stats-container">
                             <?php foreach ($jsonArray['contact']['stats'] ?? [] as $index => $stat): ?>
@@ -1320,6 +1356,8 @@ $jsonArray = $jsonArray ?? [];
         let contactIndustriesIndex = <?php echo count($jsonArray['contact']['industries'] ?? []); ?>;
         let contactNextStepsIndex = <?php echo count($jsonArray['contact']['nextSteps'] ?? []); ?>;
         let contactProductsIndex = <?php echo count($jsonArray['contact']['products'] ?? []); ?>;
+        let contactTrustLinesIndex = <?php echo count($jsonArray['contact']['trustLines'] ?? []); ?>;
+        let contactWhatNextStepsIndex = <?php echo count($jsonArray['contact']['whatNextSteps'] ?? []); ?>;
 
         function removeArrayItem(btn) {
             if (confirm('Are you sure you want to remove this item?')) {
@@ -1594,6 +1632,14 @@ $jsonArray = $jsonArray ?? [];
                 index = contactProductsIndex++;
                 containerId = 'contact-products-container';
                 label = 'Product';
+            } else if (type === 'trustLines') {
+                index = contactTrustLinesIndex++;
+                containerId = 'contact-trustLines-container';
+                label = 'Line';
+            } else if (type === 'whatNextSteps') {
+                index = contactWhatNextStepsIndex++;
+                containerId = 'contact-whatNextSteps-container';
+                label = 'Step';
             }
 
             const container = document.getElementById(containerId);

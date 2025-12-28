@@ -282,6 +282,16 @@
       "ArInChat (internal truth, citation-backed answers)",
       "Not sure – help me choose"
     ],
+    "trustLines": [
+      "We’ll respond within 1 business day.",
+      "Please don’t submit confidential documents here—ask us for an NDA and a secure sharing method.",
+      "Your message is used only to respond to your request."
+    ],
+    "whatNextSteps": [
+      "We schedule a short call (20–30 minutes).",
+      "We confirm the use case and success metrics.",
+      "We propose the fastest path: demo, pilot, or staged rollout."
+    ],
     "stats": [
       {
         "number": "500+",
