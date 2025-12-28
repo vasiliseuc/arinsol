@@ -1029,6 +1029,78 @@ $jsonArray = $jsonArray ?? [];
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>Company Sizes</label>
+                        <div id="contact-companySizes-container">
+                            <?php foreach ($jsonArray['contact']['companySizes'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Size #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[companySizes][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('companySizes')">+ Add Size</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Industries List</label>
+                        <div id="contact-industries-container">
+                            <?php foreach ($jsonArray['contact']['industries'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Industry #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[industries][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('industries')">+ Add Industry</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Next Steps</label>
+                        <div id="contact-nextSteps-container">
+                            <?php foreach ($jsonArray['contact']['nextSteps'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Step #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[nextSteps][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('nextSteps')">+ Add Step</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Products List</label>
+                        <div id="contact-products-container">
+                            <?php foreach ($jsonArray['contact']['products'] ?? [] as $index => $item): ?>
+                                <div class="array-item" data-index="<?php echo $index; ?>">
+                                    <div class="array-item-header">
+                                        <span class="array-item-title">Product #<?php echo $index + 1; ?></span>
+                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="contact[products][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addContactItem('products')">+ Add Product</button>
+                    </div>
+
+                    <div class="form-group">
                         <label>Stats</label>
                         <div id="stats-container">
                             <?php foreach ($jsonArray['contact']['stats'] ?? [] as $index => $stat): ?>
@@ -1066,37 +1138,51 @@ $jsonArray = $jsonArray ?? [];
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Phone Label</label>
-                                <input type="text" name="contact[formLabels][phone]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['phone'] ?? ''); ?>">
+                                <label>Company Label</label>
+                                <input type="text" name="contact[formLabels][company]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['company'] ?? ''); ?>">
                             </div>
                             <div class="form-group">
-                                <label>Skype Label</label>
-                                <input type="text" name="contact[formLabels][skype]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['skype'] ?? ''); ?>">
+                                <label>Role Label</label>
+                                <input type="text" name="contact[formLabels][role]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['role'] ?? ''); ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Label</label>
+                                <input type="text" name="contact[formLabels][product]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['product'] ?? ''); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Industry Label</label>
+                                <input type="text" name="contact[formLabels][industry]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['industry'] ?? ''); ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Company Size Label</label>
+                                <input type="text" name="contact[formLabels][companySize]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['companySize'] ?? ''); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Country Label</label>
+                                <input type="text" name="contact[formLabels][country]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['country'] ?? ''); ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Bottleneck Label</label>
+                                <input type="text" name="contact[formLabels][bottleneck]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['bottleneck'] ?? ''); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Next Step Label</label>
+                                <input type="text" name="contact[formLabels][nextStep]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['nextStep'] ?? ''); ?>">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Project Description Label</label>
-                            <input type="text" name="contact[formLabels][projectDesc]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['projectDesc'] ?? ''); ?>">
+                            <label>Message Label</label>
+                            <input type="text" name="contact[formLabels][message]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['message'] ?? ''); ?>">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Upload Label</label>
-                                <input type="text" name="contact[formLabels][upload]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['upload'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Choose File Label</label>
-                                <input type="text" name="contact[formLabels][chooseFile]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['chooseFile'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>No File Label</label>
-                                <input type="text" name="contact[formLabels][noFile]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['noFile'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Submit Label</label>
-                                <input type="text" name="contact[formLabels][submit]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['submit'] ?? ''); ?>">
-                            </div>
+                        <div class="form-group">
+                            <label>Submit Button Label</label>
+                            <input type="text" name="contact[formLabels][submit]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['submit'] ?? ''); ?>">
                         </div>
                     </div>
                 </div>
@@ -1229,6 +1315,11 @@ $jsonArray = $jsonArray ?? [];
         let caseStudyIndex = <?php echo count($jsonArray['caseStudies']['items'] ?? []); ?>;
         let statIndex = <?php echo count($jsonArray['contact']['stats'] ?? []); ?>;
         let faqIndex = <?php echo count($jsonArray['faq']['items'] ?? []); ?>;
+        
+        let contactCompanySizesIndex = <?php echo count($jsonArray['contact']['companySizes'] ?? []); ?>;
+        let contactIndustriesIndex = <?php echo count($jsonArray['contact']['industries'] ?? []); ?>;
+        let contactNextStepsIndex = <?php echo count($jsonArray['contact']['nextSteps'] ?? []); ?>;
+        let contactProductsIndex = <?php echo count($jsonArray['contact']['products'] ?? []); ?>;
 
         function removeArrayItem(btn) {
             if (confirm('Are you sure you want to remove this item?')) {
@@ -1483,6 +1574,41 @@ $jsonArray = $jsonArray ?? [];
             `;
             container.appendChild(item);
             statIndex++;
+        }
+
+        function addContactItem(type) {
+            let index, containerId, label;
+            if (type === 'companySizes') {
+                index = contactCompanySizesIndex++;
+                containerId = 'contact-companySizes-container';
+                label = 'Size';
+            } else if (type === 'industries') {
+                index = contactIndustriesIndex++;
+                containerId = 'contact-industries-container';
+                label = 'Industry';
+            } else if (type === 'nextSteps') {
+                index = contactNextStepsIndex++;
+                containerId = 'contact-nextSteps-container';
+                label = 'Step';
+            } else if (type === 'products') {
+                index = contactProductsIndex++;
+                containerId = 'contact-products-container';
+                label = 'Product';
+            }
+
+            const container = document.getElementById(containerId);
+            const item = document.createElement('div');
+            item.className = 'array-item';
+            item.innerHTML = `
+                <div class="array-item-header">
+                    <span class="array-item-title">${label} #${index + 1}</span>
+                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="contact[${type}][${index}]" value="">
+                </div>
+            `;
+            container.appendChild(item);
         }
 
         function addFaqItem() {
