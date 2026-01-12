@@ -346,36 +346,50 @@ foreach ($keysToRender as $key) {
             </div>
         </div>
         <?php
-    } else {
-        // RENDER CUSTOM SECTION
-        ?>
-        <div class="form-section content-section" id="section-<?php echo $key; ?>">
-            <div class="section-header">
-                <h2><span class="drag-handle">☰</span> <span class="section-label"><?php echo htmlspecialchars($label); ?> (Custom)</span></h2>
-                <div class="header-controls">
-                    <?php echo renderToggle($key, $data); ?>
-                    <button type="button" class="btn-icon" onclick="renameSection('<?php echo $key; ?>')" title="Rename">✏️</button>
-                    <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('<?php echo $key; ?>')" title="Remove">🗑️</button>
+        } else {
+            // RENDER CUSTOM SECTION
+            $type = $data['type'] ?? 'generic';
+            ?>
+            <div class="form-section content-section" id="section-<?php echo $key; ?>">
+                <div class="section-header">
+                    <h2><span class="drag-handle">☰</span> <span class="section-label"><?php echo htmlspecialchars($label); ?> (<?php echo ucfirst($type); ?>)</span></h2>
+                    <div class="header-controls">
+                        <?php echo renderToggle($key, $data); ?>
+                        <button type="button" class="btn-icon" onclick="renameSection('<?php echo $key; ?>')" title="Rename">✏️</button>
+                        <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('<?php echo $key; ?>')" title="Remove">🗑️</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <!-- Hidden Type Field -->
+                    <input type="hidden" name="<?php echo $key; ?>[type]" value="<?php echo htmlspecialchars($type); ?>">
+                    
+                    <div class="form-group"><label>Section Title</label><input type="text" name="<?php echo $key; ?>[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    
+                    <?php if ($type === 'richtext'): ?>
+                        <div class="form-group">
+                            <label>Content (HTML Allowed)</label>
+                            <textarea name="<?php echo $key; ?>[content]" rows="10" class="code-editor"><?php echo htmlspecialchars($data['content'] ?? ''); ?></textarea>
+                        </div>
+                    <?php elseif ($type === 'video'): ?>
+                         <div class="form-group"><label>Video URL (YouTube/Vimeo)</label><input type="text" name="<?php echo $key; ?>[videoUrl]" value="<?php echo htmlspecialchars($data['videoUrl'] ?? ''); ?>"></div>
+                         <div class="form-group"><label>Caption</label><input type="text" name="<?php echo $key; ?>[caption]" value="<?php echo htmlspecialchars($data['caption'] ?? ''); ?>"></div>
+                    <?php else: // Generic ?>
+                        <div class="form-group"><label>Sub Title</label><input type="text" name="<?php echo $key; ?>[subText]" value="<?php echo htmlspecialchars($data['subText'] ?? ''); ?>"></div>
+                        <div class="form-group"><label>Items</label><div id="<?php echo $key; ?>-container">
+                            <?php foreach ($data['items'] ?? [] as $i => $item): 
+                                $iTitle = is_array($item) ? ($item['title'] ?? '') : '';
+                                $iDesc = is_array($item) ? ($item['description'] ?? '') : (is_string($item) ? $item : '');
+                            ?>
+                                <div class="array-item"><div class="array-item-header"><span>Item #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                                <div class="form-group"><label>Item Title</label><input type="text" name="<?php echo $key; ?>[items][<?php echo $i; ?>][title]" value="<?php echo htmlspecialchars($iTitle); ?>"></div>
+                                <div class="form-group"><label>Item Description</label><textarea name="<?php echo $key; ?>[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($iDesc); ?></textarea></div></div>
+                            <?php endforeach; ?>
+                        </div><button type="button" class="btn-add" onclick="addCustomItem('<?php echo $key; ?>')">+ Add Item</button></div>
+                    <?php endif; ?>
                 </div>
             </div>
-            <div class="section-content">
-                <div class="form-group"><label>Section Title</label><input type="text" name="<?php echo $key; ?>[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
-                <div class="form-group"><label>Sub Title</label><input type="text" name="<?php echo $key; ?>[subText]" value="<?php echo htmlspecialchars($data['subText'] ?? ''); ?>"></div>
-                <div class="form-group"><label>Items</label><div id="<?php echo $key; ?>-container">
-                    <?php foreach ($data['items'] ?? [] as $i => $item): 
-                        // Handle simple strings or objects
-                        $iTitle = is_array($item) ? ($item['title'] ?? '') : '';
-                        $iDesc = is_array($item) ? ($item['description'] ?? '') : (is_string($item) ? $item : '');
-                    ?>
-                        <div class="array-item"><div class="array-item-header"><span>Item #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
-                        <div class="form-group"><label>Item Title</label><input type="text" name="<?php echo $key; ?>[items][<?php echo $i; ?>][title]" value="<?php echo htmlspecialchars($iTitle); ?>"></div>
-                        <div class="form-group"><label>Item Description</label><textarea name="<?php echo $key; ?>[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($iDesc); ?></textarea></div></div>
-                    <?php endforeach; ?>
-                </div><button type="button" class="btn-add" onclick="addCustomItem('<?php echo $key; ?>')">+ Add Item</button></div>
-            </div>
-        </div>
-        <?php
-    }
+            <?php
+        }
     
     $renderedSections[$key] = ob_get_clean();
 }
@@ -632,8 +646,7 @@ ob_start(); ?>
         /* Image Preview */
         .image-preview-container { text-align: center; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 8px; }
         
-        /* Hide delete and restore UI elements for now */
-        .btn-remove-section { display: none !important; }
+        /* Hide restore UI elements for now */
         #restore-controls { display: none !important; }
         #add-section-container h4:first-child { display: none; } /* "Restore Removed Section" header */
     </style>
@@ -717,6 +730,24 @@ ob_start(); ?>
     </form>
 
     <script>
+        // Force hide remove buttons for standard sections only
+        document.addEventListener('DOMContentLoaded', function() {
+            // We want to hide .btn-remove-section ONLY if it's inside a standard section
+            // Standard sections are: hero, about, services, industries, trust, caseStudies, engagement, faq, contact, location
+            const standardKeys = <?php echo json_encode($defaultContentKeys); ?>;
+            
+            // Add style to hide restore controls
+            const style = document.createElement('style');
+            style.innerHTML = '#restore-controls, #add-section-container h4:first-child { display: none !important; }';
+            document.head.appendChild(style);
+
+            // Hide buttons for standard sections
+            standardKeys.forEach(key => {
+                const btn = document.querySelector(`#section-${key} .btn-remove-section`);
+                if(btn) btn.style.display = 'none';
+            });
+        });
+
         // Sortable
         const contentSections = document.getElementById('content-sections');
         new Sortable(contentSections, {
@@ -900,51 +931,127 @@ ob_start(); ?>
                     const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
                     
                     Swal.fire({
-                        title: 'Section Title',
-                        input: 'text',
-                        inputValue: 'New Section',
-                        text: 'Enter display title:'
-                    }).then((titleResult) => {
-                        if (titleResult.isConfirmed) {
-                            const title = titleResult.value || 'New Section';
-                            
-                            // Create DOM elements for new custom section
-                            const html = `
-                            <div class="form-section content-section active" id="section-${cleanId}">
-                                <div class="section-header">
-                                    <h2><span class="drag-handle">☰</span> <span class="section-label">${title} (Custom)</span></h2>
-                                    <div class="header-controls">
-                                        <div class="toggle-wrapper" title="Enable/Disable Section">
-                                            <label class="toggle-switch">
-                                                <input type="checkbox" name="${cleanId}[disabled]" value="1">
-                                                <span class="slider"></span>
-                                            </label>
-                                            <span class="toggle-label">Disabled</span>
+                        title: 'Section Type',
+                        input: 'select',
+                        inputOptions: {
+                            'generic': 'Generic (Title, Subtitle, Items Grid)',
+                            'richtext': 'Rich Text (HTML Content)',
+                            'video': 'Video Embed',
+                            'testimonials': 'Testimonials Slider',
+                            'cta': 'CTA Banner',
+                            'team': 'Team Members Grid'
+                        },
+                        inputPlaceholder: 'Select a type',
+                        showCancelButton: true
+                    }).then((typeResult) => {
+                         if (typeResult.isConfirmed) {
+                            const type = typeResult.value || 'generic';
+
+                            Swal.fire({
+                                title: 'Section Title',
+                                input: 'text',
+                                inputValue: 'New Section',
+                                text: 'Enter display title:'
+                            }).then((titleResult) => {
+                                if (titleResult.isConfirmed) {
+                                    const title = titleResult.value || 'New Section';
+                                    
+                                    // Generate HTML based on Type
+                                    let contentHtml = '';
+                                    
+                                    if (type === 'richtext') {
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="richtext">
+                                            <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group">
+                                                <label>Content (HTML Allowed)</label>
+                                                <textarea name="${cleanId}[content]" rows="10" class="code-editor"></textarea>
+                                            </div>
+                                        `;
+                                    } else if (type === 'video') {
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="video">
+                                            <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group"><label>Video URL</label><input type="text" name="${cleanId}[videoUrl]" value=""></div>
+                                            <div class="form-group"><label>Caption</label><input type="text" name="${cleanId}[caption]" value=""></div>
+                                        `;
+                                    } else if (type === 'testimonials') {
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="testimonials">
+                                            <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group"><label>Items</label>
+                                                <div id="${cleanId}-container"></div>
+                                                <button type="button" class="btn-add" onclick="addTestimonialItem('${cleanId}')">+ Add Testimonial</button>
+                                            </div>
+                                        `;
+                                    } else if (type === 'cta') {
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="cta">
+                                            <div class="form-group"><label>Heading</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group"><label>Sub Text</label><textarea name="${cleanId}[subText]"></textarea></div>
+                                            <div class="form-row">
+                                                <div class="form-group"><label>Button Text</label><input type="text" name="${cleanId}[btnText]" value="Learn More"></div>
+                                                <div class="form-group"><label>Button Link</label><input type="text" name="${cleanId}[btnLink]" value="#"></div>
+                                            </div>
+                                            <div class="form-group"><label>Background Color (Hex)</label><input type="text" name="${cleanId}[bgColor]" value="#f3f4f6"></div>
+                                        `;
+                                    } else if (type === 'team') {
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="team">
+                                            <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
+                                            <div class="form-group"><label>Team Members</label>
+                                                <div id="${cleanId}-container"></div>
+                                                <button type="button" class="btn-add" onclick="addTeamMember('${cleanId}')">+ Add Member</button>
+                                            </div>
+                                        `;
+                                    } else {
+                                        // Generic
+                                        contentHtml = `
+                                            <input type="hidden" name="${cleanId}[type]" value="generic">
+                                            <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                            <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
+                                            <div class="form-group"><label>Items</label>
+                                                <div id="${cleanId}-container"></div>
+                                                <button type="button" class="btn-add" onclick="addCustomItem('${cleanId}')">+ Add Item</button>
+                                            </div>
+                                        `;
+                                    }
+                                    
+                                    const html = `
+                                    <div class="form-section content-section active" id="section-${cleanId}">
+                                        <div class="section-header">
+                                            <h2><span class="drag-handle">☰</span> <span class="section-label">${title} (${type.charAt(0).toUpperCase() + type.slice(1)})</span></h2>
+                                            <div class="header-controls">
+                                                <div class="toggle-wrapper" title="Enable/Disable Section">
+                                                    <label class="toggle-switch">
+                                                        <input type="checkbox" name="${cleanId}[disabled]" value="1">
+                                                        <span class="slider"></span>
+                                                    </label>
+                                                    <span class="toggle-label">Disabled</span>
+                                                </div>
+                                                <button type="button" class="btn-icon" onclick="renameSection('${cleanId}')" title="Rename">✏️</button>
+                                                <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('${cleanId}')" title="Remove">🗑️</button>
+                                            </div>
                                         </div>
-                                        <button type="button" class="btn-icon" onclick="renameSection('${cleanId}')" title="Rename">✏️</button>
-                                        <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('${cleanId}')" title="Remove">🗑️</button>
+                                        <div class="section-content" style="display:block">
+                                            ${contentHtml}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="section-content" style="display:block">
-                                    <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
-                                    <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
-                                    <div class="form-group"><label>Items</label>
-                                        <div id="${cleanId}-container"></div>
-                                        <button type="button" class="btn-add" onclick="addCustomItem('${cleanId}')">+ Add Item</button>
-                                    </div>
-                                </div>
-                            </div>
-                            `;
-                            
-                            document.getElementById('content-sections').insertAdjacentHTML('beforeend', html);
-                            // Add label input
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = `sectionLabels[${cleanId}]`;
-                            input.id = `label-${cleanId}`;
-                            input.value = title;
-                            document.getElementById('labels-container').appendChild(input);
-                        }
+                                    `;
+                                    
+                                    document.getElementById('content-sections').insertAdjacentHTML('beforeend', html);
+                                    
+                                    // Add label input
+                                    const input = document.createElement('input');
+                                    input.type = 'hidden';
+                                    input.name = `sectionLabels[${cleanId}]`;
+                                    input.id = `label-${cleanId}`;
+                                    input.value = title;
+                                    document.getElementById('labels-container').appendChild(input);
+                                }
+                            });
+                         }
                     });
                 }
             });
@@ -960,6 +1067,41 @@ ob_start(); ?>
                     <div class="array-item-header"><span>Item (New)</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
                     <div class="form-group"><label>Item Title</label><input type="text" name="${sectionKey}[items][${i}][title]"></div>
                     <div class="form-group"><label>Item Description</label><textarea name="${sectionKey}[items][${i}][description]"></textarea></div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addTestimonialItem(sectionKey) {
+            const container = document.getElementById(`${sectionKey}-container`);
+            const i = container.children.length + Math.floor(Math.random() * 1000);
+            const html = `
+                <div class="array-item">
+                    <div class="array-item-header"><span>Testimonial</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Name</label><input type="text" name="${sectionKey}[items][${i}][name]"></div>
+                        <div class="form-group"><label>Role/Company</label><input type="text" name="${sectionKey}[items][${i}][role]"></div>
+                    </div>
+                    <div class="form-group"><label>Quote</label><textarea name="${sectionKey}[items][${i}][quote]" rows="3"></textarea></div>
+                    <div class="form-group"><label>Image URL (Optional)</label><input type="text" name="${sectionKey}[items][${i}][image]"></div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addTeamMember(sectionKey) {
+            const container = document.getElementById(`${sectionKey}-container`);
+            const i = container.children.length + Math.floor(Math.random() * 1000);
+            const html = `
+                <div class="array-item">
+                    <div class="array-item-header"><span>Member</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Name</label><input type="text" name="${sectionKey}[items][${i}][name]"></div>
+                        <div class="form-group"><label>Role</label><input type="text" name="${sectionKey}[items][${i}][role]"></div>
+                    </div>
+                    <div class="form-group"><label>Bio</label><textarea name="${sectionKey}[items][${i}][bio]" rows="2"></textarea></div>
+                    <div class="form-group"><label>Photo URL</label><input type="text" name="${sectionKey}[items][${i}][photo]"></div>
+                    <div class="form-group"><label>LinkedIn URL</label><input type="text" name="${sectionKey}[items][${i}][linkedin]"></div>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', html);

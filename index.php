@@ -982,22 +982,106 @@
                         // Custom Section Rendering
                         const el = document.getElementById(key);
                         if (el) {
-                            el.innerHTML = `
-                                <div class="container">
-                                    <div class="section-header text-center">
-                                        <h2>${sectionData.title || ''}</h2>
-                                        <p class="sub-text">${sectionData.subText || ''}</p>
+                            // Check type
+                            const type = sectionData.type || 'generic';
+                            
+                            if (type === 'richtext') {
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div class="section-header text-center">
+                                            <h2>${sectionData.title || ''}</h2>
+                                        </div>
+                                        <div class="custom-richtext" style="max-width:800px;margin:0 auto;line-height:1.6">
+                                            ${sectionData.content || ''}
+                                        </div>
                                     </div>
-                                    <div class="custom-grid">
-                                        ${(sectionData.items || []).map(item => `
-                                            <div class="custom-card">
-                                                <h3>${item.title || ''}</h3>
-                                                <p>${item.description || ''}</p>
+                                `;
+                            } else if (type === 'video') {
+                                // Simple video embed
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div class="section-header text-center">
+                                            <h2>${sectionData.title || ''}</h2>
+                                        </div>
+                                        <div class="custom-video" style="max-width:800px;margin:0 auto;text-align:center">
+                                            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000">
+                                                <iframe src="${sectionData.videoUrl || ''}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe>
                                             </div>
-                                        `).join('')}
+                                            <p style="margin-top:15px;color:#666">${sectionData.caption || ''}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            `;
+                                `;
+                            } else if (type === 'testimonials') {
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div class="section-header text-center">
+                                            <h2>${sectionData.title || ''}</h2>
+                                        </div>
+                                        <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                                            ${(sectionData.items || []).map(item => `
+                                                <div class="custom-card" style="text-align:center; padding:30px; background:#f9f9f9;">
+                                                    ${item.image ? `<img src="${item.image}" alt="${item.name || ''}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;object-fit:cover;">` : ''}
+                                                    <p style="font-style:italic;font-size:1.1rem;color:#555;margin-bottom:20px;">"${item.quote || ''}"</p>
+                                                    <h4 style="margin:0;color:#333;font-weight:700;">${item.name || ''}</h4>
+                                                    <span style="color:#777;font-size:0.9rem;">${item.role || ''}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (type === 'cta') {
+                                const bgColor = sectionData.bgColor || '#f3f4f6';
+                                const textColor = (parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2) ? '#111' : '#fff'; // simple contrast check
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div style="background:${bgColor}; color:${textColor}; padding:60px 30px; border-radius:16px; text-align:center;">
+                                            <h2 style="margin:0 0 15px; color:${textColor}; font-size:2rem;">${sectionData.title || ''}</h2>
+                                            <p style="margin:0 0 30px; opacity:0.9; max-width:600px; margin-left:auto; margin-right:auto;">${sectionData.subText || ''}</p>
+                                            <a href="${sectionData.btnLink || '#'}" class="btn" style="background:${textColor}; color:${bgColor}; padding:12px 30px; border-radius:30px; text-decoration:none; font-weight:600; display:inline-block;">${sectionData.btnText || 'Learn More'}</a>
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (type === 'team') {
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div class="section-header text-center">
+                                            <h2>${sectionData.title || ''}</h2>
+                                            <p class="sub-text">${sectionData.subText || ''}</p>
+                                        </div>
+                                        <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                                            ${(sectionData.items || []).map(item => `
+                                                <div class="custom-card" style="text-align:center;">
+                                                    <div style="width:100%;height:250px;background:#eee;border-radius:8px;margin-bottom:15px;overflow:hidden;">
+                                                        ${item.photo ? `<img src="${item.photo}" alt="${item.name || ''}" style="width:100%;height:100%;object-fit:cover;">` : ''}
+                                                    </div>
+                                                    <h3 style="margin:10px 0 5px;font-size:1.2rem;">${item.name || ''}</h3>
+                                                    <p style="color:var(--primary);font-weight:600;margin-bottom:10px;">${item.role || ''}</p>
+                                                    <p style="font-size:0.9rem;color:#666;margin-bottom:15px;">${item.bio || ''}</p>
+                                                    ${item.linkedin ? `<a href="${item.linkedin}" target="_blank" style="color:#0077b5;font-size:1.2rem;"><i class="fab fa-linkedin"></i></a>` : ''}
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                // Generic (existing)
+                                el.innerHTML = `
+                                    <div class="container">
+                                        <div class="section-header text-center">
+                                            <h2>${sectionData.title || ''}</h2>
+                                            <p class="sub-text">${sectionData.subText || ''}</p>
+                                        </div>
+                                        <div class="custom-grid">
+                                            ${(sectionData.items || []).map(item => `
+                                                <div class="custom-card">
+                                                    <h3>${item.title || ''}</h3>
+                                                    <p>${item.description || ''}</p>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }
                         }
                         break;
                 }
