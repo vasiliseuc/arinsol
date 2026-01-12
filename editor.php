@@ -514,6 +514,11 @@ if (is_dir($changesDir)) {
                         <label for="siteMeta_title">Site Title</label>
                         <input type="text" id="siteMeta_title" name="siteMeta[title]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['title'] ?? ''); ?>">
                     </div>
+                    <div class="form-group">
+                        <label for="siteMeta_googleAnalytics">Google Analytics Script ID (e.g. G-XXXXXXXXXX)</label>
+                        <input type="text" id="siteMeta_googleAnalytics" name="siteMeta[googleAnalytics]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['googleAnalytics'] ?? ''); ?>" placeholder="G-XXXXXXXXXX">
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Leave empty to disable. Enter only the measurement ID.</p>
+                    </div>
                 </div>
             </div>
 

@@ -347,6 +347,27 @@
         function populateSite(data) {
             // META
             document.title = data.siteMeta.title;
+            
+            // GOOGLE ANALYTICS
+            if (data.siteMeta.googleAnalytics) {
+                const gaId = data.siteMeta.googleAnalytics;
+                
+                // Add Google Tag Manager script
+                const script1 = document.createElement('script');
+                script1.async = true;
+                script1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+                document.head.appendChild(script1);
+                
+                // Add configuration script
+                const script2 = document.createElement('script');
+                script2.innerHTML = `
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${gaId}');
+                `;
+                document.head.appendChild(script2);
+            }
 
             // HEADER
             const headerLogoEl = document.getElementById('header-logo');
