@@ -1,4 +1,7 @@
-{
+import json
+import sys
+
+json_content = r'''{
   "siteMeta": {
     "title": "Arinsol.ai - AI-Powered Workflow Automation Software Solutions"
   },
@@ -274,7 +277,7 @@
     ],
     "formLabels": {
       "name": "Name",
-      "email ": "Work Email",
+      "email": "Work Email",
       "company": "Company",
       "role": "Role",
       "product": "Interested Product",
@@ -303,4 +306,10 @@
   "footer": {
     "copyright": "&copy; 2025 Arinsol.ai. All Rights Reserved."
   }
-}
+}'''
+
+try:
+    json.loads(json_content)
+    print("Valid JSON")
+except json.JSONDecodeError as e:
+    print(f"Invalid JSON: {e}")

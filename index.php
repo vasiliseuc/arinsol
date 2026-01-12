@@ -412,16 +412,18 @@
             // SERVICES
             document.getElementById('services-title').textContent = data.services.title;
             const servicesGrid = document.getElementById('services-grid');
-            data.services.items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'service-card';
-                div.innerHTML = `
-                    <div class="icon ${item.colorClass}"><i class="${item.iconClass}"></i></div>
-                    <h3>${item.title}</h3>
-                    <p>${item.description}</p>
-                `;
-                servicesGrid.appendChild(div);
-            });
+            if (data.services.items) {
+                data.services.items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'service-card';
+                    div.innerHTML = `
+                        <div class="icon ${item.colorClass}"><i class="${item.iconClass}"></i></div>
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                    `;
+                    servicesGrid.appendChild(div);
+                });
+            }
 
             // INDUSTRIES
             document.getElementById('industries-title').textContent = data.industries.title;
@@ -432,7 +434,7 @@
             }
             
             const industriesGrid = document.getElementById('industries-grid');
-            if (industriesGrid) {
+            if (industriesGrid && data.industries.items) {
                 industriesGrid.innerHTML = '';
                 data.industries.items.forEach(ind => {
                     const div = document.createElement('div');
@@ -455,7 +457,7 @@
                 if (trustTitle) trustTitle.textContent = data.trust.title;
                 
                 const trustGrid = document.getElementById('trust-grid');
-                if (trustGrid) {
+                if (trustGrid && data.trust.items) {
                     trustGrid.innerHTML = '';
                     data.trust.items.forEach(item => {
                         const div = document.createElement('div');
@@ -471,40 +473,42 @@
             document.getElementById('cs-subtext').textContent = data.caseStudies.subText;
             const csContainer = document.getElementById('case-studies-container');
             
-            data.caseStudies.items.forEach((cs, index) => {
-                const row = document.createElement('div');
-                row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
-                
-                let featuresHtml = '';
-                if (cs.features && cs.features.length > 0) {
-                    featuresHtml = '<ul class="cs-features">';
-                    cs.features.forEach(f => {
-                        featuresHtml += `<li>${f}</li>`;
-                    });
-                    featuresHtml += '</ul>';
-                }
-                
-                const contentHtml = `
-                    <div class="cs-content">
-                        <div class="cs-box">
-                            <h3>${cs.title}</h3>
-                            <p>${cs.description}</p>
-                            ${featuresHtml}
-                        </div>
-                    </div>`;
-                
-                // Use image from JSON data, fallback to software1.jpg or software2.jpg
-                const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
-                const imageHtml = `
-                    <div class="cs-image">
-                        <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
-                    </div>`;
-
-              
-                    row.innerHTML = contentHtml + imageHtml;
-              
-                csContainer.appendChild(row);
-            });
+            if (data.caseStudies.items) {
+                data.caseStudies.items.forEach((cs, index) => {
+                    const row = document.createElement('div');
+                    row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
+                    
+                    let featuresHtml = '';
+                    if (cs.features && cs.features.length > 0) {
+                        featuresHtml = '<ul class="cs-features">';
+                        cs.features.forEach(f => {
+                            featuresHtml += `<li>${f}</li>`;
+                        });
+                        featuresHtml += '</ul>';
+                    }
+                    
+                    const contentHtml = `
+                        <div class="cs-content">
+                            <div class="cs-box">
+                                <h3>${cs.title}</h3>
+                                <p>${cs.description}</p>
+                                ${featuresHtml}
+                            </div>
+                        </div>`;
+                    
+                    // Use image from JSON data, fallback to software1.jpg or software2.jpg
+                    const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
+                    const imageHtml = `
+                        <div class="cs-image">
+                            <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
+                        </div>`;
+  
+                  
+                        row.innerHTML = contentHtml + imageHtml;
+                  
+                    csContainer.appendChild(row);
+                });
+            }
 
             // ENGAGEMENT
             if (data.engagement) {
@@ -520,7 +524,7 @@
                 }
                 
                 const engGrid = document.getElementById('eng-grid');
-                if (engGrid) {
+                if (engGrid && data.engagement.items) {
                     engGrid.innerHTML = '';
                     data.engagement.items.forEach(item => {
                         const div = document.createElement('div');
@@ -542,7 +546,8 @@
                 const faqContainer = document.getElementById('faq-items');
                 faqContainer.innerHTML = '';
                 
-                data.faq.items.forEach(item => {
+                if (data.faq.items) {
+                    data.faq.items.forEach(item => {
                     const faqItem = document.createElement('div');
                     faqItem.className = 'faq-item';
                     
@@ -579,6 +584,7 @@
                         }
                     });
                 });
+                }
             }
 
             // CONTACT
