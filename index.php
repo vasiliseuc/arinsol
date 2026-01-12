@@ -10,6 +10,36 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Section Styles */
+        .custom-section { background: #fff; }
+        .custom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .custom-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .custom-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .custom-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
     <div id="loader-overlay">
@@ -38,7 +68,7 @@
             </div>
         </header>
 
-        <section class="hero-section">
+        <section id="hero" class="hero-section">
             <video class="hero-video" autoplay muted loop playsinline>
                 <source src="assets/banner_video.mp4" type="video/mp4">
                 <!-- fallback: silent autoplay may be blocked on some browsers -->
@@ -92,7 +122,7 @@
         </section>
 
         <!-- Trust Section -->
-        <section class="section trust-section">
+        <section id="trust" class="section trust-section">
             <div class="container">
                 <div class="section-header text-center">
                     <h2 id="trust-title"></h2>
@@ -101,7 +131,7 @@
             </div>
         </section>
 
-        <section id="case-studies" class="section case-studies-section">
+        <section id="caseStudies" class="section case-studies-section">
             <div class="container">
                 <div class="section-header text-center">
                     <h2 id="cs-title"></h2>
@@ -113,7 +143,7 @@
         </section>
 
         <!-- Engagement Section -->
-        <section class="section engagement-section">
+        <section id="engagement" class="section engagement-section">
             <div class="container">
                 <div class="section-header text-center">
                     <h2 id="eng-title"></h2>
@@ -247,11 +277,13 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Location Map -->
-            <div class="container" style="margin-top: 60px;">
+        </section>
+
+        <!-- Location Map -->
+        <section id="location" class="section location-section">
+            <div class="container">
                 <div class="section-header text-center">
-                    <h2>Our Location</h2>
+                    <h2 id="location-title">Our Location</h2>
                 </div>
                 <div id="map-container" style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden; margin-top: 30px;">
                     <iframe 
@@ -340,18 +372,74 @@
                 })
                 .catch(err => {
                     console.error("Error loading JSON data:", err);
-                    document.querySelector('.loader-text').innerText = "Error loading content.";
+                    document.querySelector('.loader-text').innerText = "Error loading content. Please check console.";
                 });
         });
 
         function populateSite(data) {
+            // Safety: Ensure critical objects exist
+            data.siteMeta = data.siteMeta || {};
+            data.header = data.header || {};
+            data.footer = data.footer || {};
+            
+            // --- CUSTOM CODE INJECTION ---
+            if (data.customCode) {
+                // Helper to insert and execute scripts
+                const injectHTML = (html, target, prepend = false) => {
+                    if (!html) return;
+                    const temp = document.createElement('div');
+                    temp.innerHTML = html;
+                    
+                    const nodes = Array.from(temp.childNodes);
+                    if (prepend) nodes.reverse();
+                    
+                    nodes.forEach(node => {
+                        let newNode;
+                        if (node.tagName === 'SCRIPT') {
+                            newNode = document.createElement('script');
+                            Array.from(node.attributes).forEach(attr => newNode.setAttribute(attr.name, attr.value));
+                            newNode.text = node.textContent;
+                        } else {
+                            newNode = node.cloneNode(true);
+                        }
+                        
+                        if (prepend) {
+                            target.insertBefore(newNode, target.firstChild);
+                        } else {
+                            target.appendChild(newNode);
+                        }
+                    });
+                };
+
+                // Head Code
+                if (data.customCode.head) {
+                     injectHTML(data.customCode.head, document.head);
+                }
+                
+                // CSS
+                if (data.customCode.css) {
+                    const style = document.createElement('style');
+                    style.textContent = data.customCode.css;
+                    document.head.appendChild(style);
+                }
+                
+                // Body Start
+                if (data.customCode.bodyStart) {
+                    injectHTML(data.customCode.bodyStart, document.body, true);
+                }
+                
+                // Body End
+                if (data.customCode.bodyEnd) {
+                    injectHTML(data.customCode.bodyEnd, document.body);
+                }
+            }
+            
             // META
-            document.title = data.siteMeta.title;
+            if (data.siteMeta.title) document.title = data.siteMeta.title;
             
             // GOOGLE ANALYTICS
             if (data.siteMeta.googleAnalytics) {
                 const gaId = data.siteMeta.googleAnalytics;
-                
                 // Add Google Tag Manager script
                 const script1 = document.createElement('script');
                 script1.async = true;
@@ -370,398 +458,158 @@
             }
 
             // HEADER
-            const headerLogoEl = document.getElementById('header-logo');
-            if (headerLogoEl) {
-                if (headerLogoEl.tagName && headerLogoEl.tagName.toLowerCase() === 'img') {
-                    // Use provided asset as main logo; set alt from data if available
-                    headerLogoEl.src = 'assets/logo.png';
-                    headerLogoEl.alt = data.header.logoText || 'Arinsol.ai';
-                } else {
-                    headerLogoEl.textContent = data.header.logoText;
+            try {
+                const headerLogoEl = document.getElementById('header-logo');
+                if (headerLogoEl) {
+                    if (headerLogoEl.tagName && headerLogoEl.tagName.toLowerCase() === 'img') {
+                        headerLogoEl.src = 'assets/logo.png';
+                        headerLogoEl.alt = data.header.logoText || 'Arinsol.ai';
+                    } else {
+                        headerLogoEl.textContent = data.header.logoText;
+                    }
                 }
-            }
-            document.getElementById('header-cta').textContent = data.header.ctaText;
+                const cta = document.getElementById('header-cta');
+                if (cta) cta.textContent = data.header.ctaText;
+                
+                const navList = document.getElementById('nav-list');
+                if (navList && data.header.navLinks) {
+                    navList.innerHTML = ''; // Clear existing
+                    data.header.navLinks.forEach(link => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="${link.href}">${link.text}</a>`;
+                        navList.appendChild(li);
+                    });
+                }
+            } catch (e) { console.warn("Error rendering header:", e); }
+
+            // CONTENT SECTIONS REORDERING
+            // Define default order if not provided in JSON
+            const defaultOrder = ['hero', 'about', 'services', 'industries', 'trust', 'caseStudies', 'engagement', 'faq', 'contact', 'location'];
+            // If data has sectionOrder, use it. But we must include custom sections that might be in data but not in default order list.
+            let sectionOrder = data.sectionOrder || defaultOrder;
             
-            const navList = document.getElementById('nav-list');
-            data.header.navLinks.forEach(link => {
-                const li = document.createElement('li');
-                li.innerHTML = `<a href="${link.href}">${link.text}</a>`;
-                navList.appendChild(li);
+            // Filter out disabled sections
+            // We iterate sectionOrder. If a key is not in data, we skip. If disabled, we skip.
+            // But we also need to render Custom Sections that are in data but might not be in DOM yet.
+            // For custom sections, we create DOM elements on the fly.
+            
+            const mainContent = document.getElementById('main-content');
+            const header = document.querySelector('.site-header');
+            
+            // Map keys to existing IDs for standard sections
+            const keyToId = {
+                'hero': 'hero',
+                'about': 'about',
+                'services': 'services',
+                'industries': 'industries',
+                'trust': 'trust',
+                'caseStudies': 'caseStudies',
+                'engagement': 'engagement',
+                'faq': 'faq',
+                'contact': 'contact',
+                'location': 'location'
+            };
+
+            // Existing sections in DOM
+            const sectionsMap = {};
+            for (const [key, id] of Object.entries(keyToId)) {
+                const el = document.getElementById(id);
+                if (el) sectionsMap[key] = el;
+            }
+
+            // Hide all standard sections first
+            Object.values(sectionsMap).forEach(el => el.style.display = 'none');
+
+            // Re-insert in order after header
+            let lastNode = header;
+            sectionOrder.forEach(key => {
+                const sectionData = data[key];
+                
+                // Skip if disabled
+                if (sectionData && sectionData.disabled === true) return;
+                
+                // Standard Section
+                if (sectionsMap[key]) {
+                    const el = sectionsMap[key];
+                    if (sectionData) {
+                        el.style.display = 'block';
+                        lastNode.parentNode.insertBefore(el, lastNode.nextSibling);
+                        lastNode = el;
+                        renderSection(key, data);
+                    }
+                } 
+                // Custom Section (Create dynamically)
+                else if (sectionData) {
+                    let el = document.getElementById(key); // Check if already created (e.g. static html?)
+                    if (!el) {
+                        el = document.createElement('section');
+                        el.id = key;
+                        el.className = 'section custom-section';
+                        // Insert
+                        lastNode.parentNode.insertBefore(el, lastNode.nextSibling);
+                    }
+                    lastNode = el;
+                    renderSection(key, data);
+                }
             });
 
-            // HERO
-            document.getElementById('hero-badge').textContent = data.hero.badge;
-            document.getElementById('hero-title').textContent = data.hero.title;
-            document.getElementById('hero-desc').textContent = data.hero.description;
-            const heroBtn = document.getElementById('hero-cta');
-            heroBtn.textContent = data.hero.ctaText;
-            heroBtn.href = data.hero.ctaLink;
-
-            // ABOUT
-            if (data.about) {
-                const aboutTitle = document.getElementById('about-title');
-                if (aboutTitle) aboutTitle.textContent = data.about.title;
-                
-                const descContainer = document.getElementById('about-desc');
-                if (descContainer) {
-                    descContainer.innerHTML = '';
-                    // Split by double newline or newline to create paragraphs
-                    const descLines = data.about.description.split(/\n\s*\n|\n/);
-                    descLines.forEach(line => {
-                        if (line.trim()) {
-                            const p = document.createElement('p');
-                            p.textContent = line.trim();
-                            descContainer.appendChild(p);
-                        }
-                    });
+            // Handle Footer rendering
+            try {
+                 document.getElementById('footer-copy').innerHTML = data.footer.copyright || '';
+                if (data.footer.termsLink) {
+                    const el = document.getElementById('terms-link');
+                    if (el) el.href = data.footer.termsLink;
                 }
-                
-                const principlesTitle = document.getElementById('principles-title');
-                if (principlesTitle) principlesTitle.textContent = data.about.principlesTitle;
-                
-                const principlesList = document.getElementById('principles-list');
-                if (principlesList && data.about.principles) {
-                    principlesList.innerHTML = '';
-                    data.about.principles.forEach(p => {
-                        const li = document.createElement('li');
-                        li.textContent = p;
-                        principlesList.appendChild(li);
-                    });
+                if (data.footer.privacyLink) {
+                    const el = document.getElementById('privacy-link');
+                    if (el) el.href = data.footer.privacyLink;
                 }
-            }
-
-            // SERVICES
-            document.getElementById('services-title').textContent = data.services.title;
-            const servicesGrid = document.getElementById('services-grid');
-            if (data.services.items) {
-                data.services.items.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'service-card';
-                    div.innerHTML = `
-                        <div class="icon ${item.colorClass}"><i class="${item.iconClass}"></i></div>
-                        <h3>${item.title}</h3>
-                        <p>${item.description}</p>
-                    `;
-                    servicesGrid.appendChild(div);
-                });
-            }
-
-            // INDUSTRIES
-            document.getElementById('industries-title').textContent = data.industries.title;
-            document.getElementById('industries-subtext').textContent = data.industries.subText;
-            if (data.industries.footerText) {
-                const footerEl = document.getElementById('industries-footer');
-                if (footerEl) footerEl.textContent = data.industries.footerText;
-            }
-            
-            const industriesGrid = document.getElementById('industries-grid');
-            if (industriesGrid && data.industries.items) {
-                industriesGrid.innerHTML = '';
-                data.industries.items.forEach(ind => {
-                    const div = document.createElement('div');
-                    div.className = 'industry-card';
-                    div.innerHTML = `
-                        <div class="ind-header">
-                            <i class="${ind.iconClass}" style="color: ${ind.color};"></i>
-                            <h3>${ind.name}</h3>
-                        </div>
-                        <p>${ind.description || ''}</p>
-                        <div class="ind-fit"><strong>Best fit:</strong> ${ind.bestFit || ''}</div>
-                    `;
-                    industriesGrid.appendChild(div);
-                });
-            }
-
-            // TRUST
-            if (data.trust) {
-                const trustTitle = document.getElementById('trust-title');
-                if (trustTitle) trustTitle.textContent = data.trust.title;
-                
-                const trustGrid = document.getElementById('trust-grid');
-                if (trustGrid && data.trust.items) {
-                    trustGrid.innerHTML = '';
-                    data.trust.items.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'trust-item';
-                        div.innerHTML = `<i class="fas fa-check-circle" style="color: var(--blue-accent);"></i> <span>${item}</span>`;
-                        trustGrid.appendChild(div);
-                    });
-                }
-            }
-
-            // CASE STUDIES
-            document.getElementById('cs-title').textContent = data.caseStudies.title;
-            document.getElementById('cs-subtext').textContent = data.caseStudies.subText;
-            const csContainer = document.getElementById('case-studies-container');
-            
-            if (data.caseStudies.items) {
-                data.caseStudies.items.forEach((cs, index) => {
-                    const row = document.createElement('div');
-                    row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
-                    
-                    let featuresHtml = '';
-                    if (cs.features && cs.features.length > 0) {
-                        featuresHtml = '<ul class="cs-features">';
-                        cs.features.forEach(f => {
-                            featuresHtml += `<li>${f}</li>`;
-                        });
-                        featuresHtml += '</ul>';
-                    }
-                    
-                    const contentHtml = `
-                        <div class="cs-content">
-                            <div class="cs-box">
-                                <h3>${cs.title}</h3>
-                                <p>${cs.description}</p>
-                                ${featuresHtml}
-                            </div>
-                        </div>`;
-                    
-                    // Use image from JSON data, fallback to software1.jpg or software2.jpg
-                    const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
-                    const imageHtml = `
-                        <div class="cs-image">
-                            <img src="assets/${imageFileName}" alt="${cs.title}" class="cs-image-img">
-                        </div>`;
-  
-                  
-                        row.innerHTML = contentHtml + imageHtml;
-                  
-                    csContainer.appendChild(row);
-                });
-            }
-
-            // ENGAGEMENT
-            if (data.engagement) {
-                const engTitle = document.getElementById('eng-title');
-                if (engTitle) engTitle.textContent = data.engagement.title;
-                const engSubtext = document.getElementById('eng-subtext');
-                if (engSubtext) engSubtext.textContent = data.engagement.subText;
-                
-                const engBtn = document.getElementById('eng-cta');
-                if (engBtn) {
-                    engBtn.textContent = data.engagement.ctaText;
-                    engBtn.href = data.engagement.ctaLink;
-                }
-                
-                const engGrid = document.getElementById('eng-grid');
-                if (engGrid && data.engagement.items) {
-                    engGrid.innerHTML = '';
-                    data.engagement.items.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'engagement-card';
-                        div.innerHTML = `
-                            <p>${item.text}</p>
-                            <a href="${item.link}" class="eng-link">${item.linkText} →</a>
-                        `;
-                        engGrid.appendChild(div);
-                    });
-                }
-            }
-
-            // FAQ
-            if (data.faq) {
-                document.getElementById('faq-title').textContent = data.faq.title;
-                document.getElementById('faq-subtext').textContent = data.faq.subText;
-                
-                const faqContainer = document.getElementById('faq-items');
-                faqContainer.innerHTML = '';
-                
-                if (data.faq.items) {
-                    data.faq.items.forEach(item => {
-                    const faqItem = document.createElement('div');
-                    faqItem.className = 'faq-item';
-                    
-                    const question = document.createElement('div');
-                    question.className = 'faq-question';
-                    question.innerHTML = `<h3>${item.question}</h3><span class="toggle-icon">+</span>`;
-                    
-                    const answer = document.createElement('div');
-                    answer.className = 'faq-answer';
-                    
-                    // Parse text content
-                    const contentHtml = parseFaqContent(item.answer);
-                    answer.innerHTML = contentHtml;
-                    
-                    faqItem.appendChild(question);
-                    faqItem.appendChild(answer);
-                    faqContainer.appendChild(faqItem);
-                    
-                    // Click Event
-                    question.addEventListener('click', () => {
-                        const isOpen = faqItem.classList.contains('active');
-                        
-                        // Close all others
-                        document.querySelectorAll('.faq-item').forEach(fi => {
-                            fi.classList.remove('active');
-                            fi.querySelector('.toggle-icon').textContent = '+';
-                            fi.querySelector('.faq-answer').style.maxHeight = null;
-                        });
-                        
-                        if (!isOpen) {
-                            faqItem.classList.add('active');
-                            question.querySelector('.toggle-icon').textContent = '-';
-                            answer.style.maxHeight = answer.scrollHeight + "px";
-                        }
-                    });
-                });
-                }
-            }
-
-            // CONTACT
-            document.getElementById('contact-title').textContent = data.contact.title;
-            document.getElementById('contact-subtext').textContent = data.contact.subText;
-
-            // Stats (Sidebar)
-            const statsGrid = document.getElementById('stats-grid');
-            if (statsGrid && data.contact.stats) {
-                data.contact.stats.forEach(stat => {
-                    const div = document.createElement('div');
-                    div.className = 'stat-item-small';
-                    div.innerHTML = `<strong>${stat.number}</strong> <span>${stat.label}</span>`;
-                    statsGrid.appendChild(div);
-                });
-            }
-
-            // Products Selector
-            const productOptions = document.getElementById('product-options');
-            const inputProduct = document.getElementById('input-product');
-            if (productOptions && data.contact.products) {
-                data.contact.products.forEach(prod => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'product-btn';
-                    btn.textContent = prod;
-                    btn.onclick = function() {
-                        document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
-                        this.classList.add('selected');
-                        inputProduct.value = prod;
-                    };
-                    productOptions.appendChild(btn);
-                });
-            }
-
-            // Dropdowns
-            const industrySelect = document.getElementById('input-industry');
-            if (industrySelect && data.contact.industries) {
-                data.contact.industries.forEach(ind => {
-                    const opt = document.createElement('option');
-                    opt.value = ind;
-                    opt.textContent = ind;
-                    industrySelect.appendChild(opt);
-                });
-            }
-
-            const sizeSelect = document.getElementById('input-companysize');
-            if (sizeSelect && data.contact.companySizes) {
-                data.contact.companySizes.forEach(size => {
-                    const opt = document.createElement('option');
-                    opt.value = size;
-                    opt.textContent = size;
-                    sizeSelect.appendChild(opt);
-                });
-            }
-
-            const nextStepSelect = document.getElementById('input-nextstep');
-            if (nextStepSelect && data.contact.nextSteps) {
-                data.contact.nextSteps.forEach(step => {
-                    const opt = document.createElement('option');
-                    opt.value = step;
-                    opt.textContent = step;
-                    nextStepSelect.appendChild(opt);
-                });
-            }
-
-            // Trust Lines
-            const trustLines = document.getElementById('trust-lines');
-            if (trustLines && data.contact.trustLines) {
-                data.contact.trustLines.forEach(line => {
-                    const p = document.createElement('p');
-                    p.innerHTML = `<i class="fas fa-check-circle"></i> ${line}`;
-                    trustLines.appendChild(p);
-                });
-            }
-
-            // What Next
-            const whatNext = document.getElementById('what-next-steps');
-            if (whatNext && data.contact.whatNextSteps) {
-                data.contact.whatNextSteps.forEach(step => {
-                    const li = document.createElement('li');
-                    li.textContent = step;
-                    whatNext.appendChild(li);
-                });
-            }
-
-            // Form Labels & Placeholders
-            const fl = data.contact.formLabels;
-            if (fl) {
-                const setPH = (id, txt) => {
-                    const el = document.getElementById(id);
-                    if (el) { el.placeholder = txt; el.setAttribute('aria-label', txt); }
-                };
-                setPH('input-name', fl.name);
-                setPH('input-email', fl.email);
-                setPH('input-company', fl.company);
-                setPH('input-role', fl.role);
-                setPH('input-country', fl.country);
-                setPH('input-bottleneck', fl.bottleneck);
-                setPH('input-message', fl.message);
-                
-                if (fl.industry && industrySelect) industrySelect.options[0].textContent = fl.industry;
-                if (fl.companySize && sizeSelect) sizeSelect.options[0].textContent = fl.companySize;
-                if (fl.nextStep && nextStepSelect) nextStepSelect.options[0].textContent = fl.nextStep;
-                
-                const sBtnText = document.getElementById('submit-text');
-                if (sBtnText) sBtnText.textContent = fl.submit;
-            }
-
-            // FOOTER
-            document.getElementById('footer-copy').innerHTML = data.footer.copyright;
-            if (data.footer.termsLink) {
-                document.getElementById('terms-link').href = data.footer.termsLink;
-            }
-            if (data.footer.privacyLink) {
-                document.getElementById('privacy-link').href = data.footer.privacyLink;
-            }
+            } catch (e) { console.warn("Error rendering footer:", e); }
             
             // SOCIAL MEDIA
-            if (data.socialMedia) {
-                const headerSocialIcons = document.getElementById('header-social-icons');
-                const footerSocial = document.getElementById('footer-social');
-                const socialLinks = [];
-                
-                if (data.socialMedia.facebook) {
-                    socialLinks.push({url: data.socialMedia.facebook, icon: 'fab fa-facebook-f', name: 'Facebook'});
-                }
-                if (data.socialMedia.twitter) {
-                    socialLinks.push({url: data.socialMedia.twitter, icon: 'fab fa-twitter', name: 'Twitter'});
-                }
-                if (data.socialMedia.linkedin) {
-                    socialLinks.push({url: data.socialMedia.linkedin, icon: 'fab fa-linkedin-in', name: 'LinkedIn'});
-                }
-                if (data.socialMedia.instagram) {
-                    socialLinks.push({url: data.socialMedia.instagram, icon: 'fab fa-instagram', name: 'Instagram'});
-                }
-                
-                socialLinks.forEach(link => {
-                    const a = document.createElement('a');
-                    a.href = link.url;
-                    a.target = '_blank';
-                    a.rel = 'noopener noreferrer';
-                    a.className = 'social-link';
-                    a.innerHTML = `<i class="${link.icon}"></i>`;
-                    a.title = link.name;
+            try {
+                if (data.socialMedia) {
+                    const headerSocialIcons = document.getElementById('header-social-icons');
+                    const footerSocial = document.getElementById('footer-social');
+                    const socialLinks = [];
                     
-                    // Add to header (main navigation area)
-                    if (headerSocialIcons) {
-                        headerSocialIcons.appendChild(a.cloneNode(true));
+                    if (data.socialMedia.facebook) {
+                        socialLinks.push({url: data.socialMedia.facebook, icon: 'fab fa-facebook-f', name: 'Facebook'});
                     }
-                    // Add to footer
-                    if (footerSocial) {
-                        footerSocial.appendChild(a.cloneNode(true));
+                    if (data.socialMedia.twitter) {
+                        socialLinks.push({url: data.socialMedia.twitter, icon: 'fab fa-twitter', name: 'Twitter'});
                     }
-                });
-            }
+                    if (data.socialMedia.linkedin) {
+                        socialLinks.push({url: data.socialMedia.linkedin, icon: 'fab fa-linkedin-in', name: 'LinkedIn'});
+                    }
+                    if (data.socialMedia.instagram) {
+                        socialLinks.push({url: data.socialMedia.instagram, icon: 'fab fa-instagram', name: 'Instagram'});
+                    }
+                    
+                    // Clear existing
+                    if (headerSocialIcons) headerSocialIcons.innerHTML = '';
+                    if (footerSocial) footerSocial.innerHTML = '';
+
+                    socialLinks.forEach(link => {
+                        const a = document.createElement('a');
+                        a.href = link.url;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        a.className = 'social-link';
+                        a.innerHTML = `<i class="${link.icon}"></i>`;
+                        a.title = link.name;
+                        
+                        // Add to header (main navigation area)
+                        if (headerSocialIcons) {
+                            headerSocialIcons.appendChild(a.cloneNode(true));
+                        }
+                        // Add to footer
+                        if (footerSocial) {
+                            footerSocial.appendChild(a.cloneNode(true));
+                        }
+                    });
+                }
+            } catch (e) { console.warn("Error rendering social media:", e); }
             
             // CHATBOT NAME
             if (data.chatbot && data.chatbot.name) {
@@ -771,24 +619,391 @@
                 });
             }
             
-            // LOCATION MAP
-            if (data.location) {
-                const mapFrame = document.getElementById('location-map');
-                if (mapFrame && data.location.latitude && data.location.longitude) {
-                    // Using Google Maps embed without API key (works for basic embeds)
-                    const address = encodeURIComponent(`${data.location.address || ''} ${data.location.city || ''} ${data.location.country || ''}`.trim());
-                    const mapUrl = `https://www.google.com/maps?q=${data.location.latitude},${data.location.longitude}&output=embed`;
-                    mapFrame.src = mapUrl;
-                } else if (mapFrame && data.location.address) {
-                    // Fallback to address-based search
-                    const address = encodeURIComponent(`${data.location.address} ${data.location.city} ${data.location.country}`.trim());
-                    const mapUrl = `https://www.google.com/maps?q=${address}&output=embed`;
-                    mapFrame.src = mapUrl;
-                }
-            }
-            
-            // Re-initialize Mobile Menu Logic (since nav items were dynamic)
+            // Re-initialize Mobile Menu Logic
             initMobileMenu();
+        }
+
+        function renderSection(key, data) {
+            try {
+                const sectionData = data[key];
+                if (!sectionData) return;
+
+                switch (key) {
+                    case 'hero':
+                        document.getElementById('hero-badge').textContent = sectionData.badge;
+                        document.getElementById('hero-title').textContent = sectionData.title;
+                        document.getElementById('hero-desc').textContent = sectionData.description;
+                        const heroBtn = document.getElementById('hero-cta');
+                        heroBtn.textContent = sectionData.ctaText;
+                        heroBtn.href = sectionData.ctaLink;
+                        break;
+                    
+                    case 'about':
+                        const aboutTitle = document.getElementById('about-title');
+                        if (aboutTitle) aboutTitle.textContent = sectionData.title;
+                        
+                        const descContainer = document.getElementById('about-desc');
+                        if (descContainer) {
+                            descContainer.innerHTML = '';
+                            if (sectionData.description) {
+                                const descLines = sectionData.description.split(/\n\s*\n|\n/);
+                                descLines.forEach(line => {
+                                    if (line.trim()) {
+                                        const p = document.createElement('p');
+                                        p.textContent = line.trim();
+                                        descContainer.appendChild(p);
+                                    }
+                                });
+                            }
+                        }
+                        
+                        const principlesTitle = document.getElementById('principles-title');
+                        if (principlesTitle) principlesTitle.textContent = sectionData.principlesTitle;
+                        
+                        const principlesList = document.getElementById('principles-list');
+                        if (principlesList && sectionData.principles) {
+                            principlesList.innerHTML = '';
+                            sectionData.principles.forEach(p => {
+                                const li = document.createElement('li');
+                                li.textContent = p;
+                                principlesList.appendChild(li);
+                            });
+                        }
+                        break;
+
+                    case 'services':
+                        document.getElementById('services-title').textContent = sectionData.title;
+                        const servicesGrid = document.getElementById('services-grid');
+                        if (servicesGrid && sectionData.items) {
+                            servicesGrid.innerHTML = '';
+                            sectionData.items.forEach(item => {
+                                const div = document.createElement('div');
+                                div.className = 'service-card';
+                                div.innerHTML = `
+                                    <div class="icon ${item.colorClass || ''}"><i class="${item.iconClass || ''}"></i></div>
+                                    <h3>${item.title || ''}</h3>
+                                    <p>${item.description || ''}</p>
+                                `;
+                                servicesGrid.appendChild(div);
+                            });
+                        }
+                        break;
+
+                    case 'industries':
+                        document.getElementById('industries-title').textContent = sectionData.title;
+                        document.getElementById('industries-subtext').textContent = sectionData.subText;
+                        if (sectionData.footerText) {
+                            const footerEl = document.getElementById('industries-footer');
+                            if (footerEl) footerEl.textContent = sectionData.footerText;
+                        }
+                        
+                        const industriesGrid = document.getElementById('industries-grid');
+                        if (industriesGrid && sectionData.items) {
+                            industriesGrid.innerHTML = '';
+                            sectionData.items.forEach(ind => {
+                                const div = document.createElement('div');
+                                div.className = 'industry-card';
+                                div.innerHTML = `
+                                    <div class="ind-header">
+                                        <i class="${ind.iconClass || ''}" style="color: ${ind.color || ''};"></i>
+                                        <h3>${ind.name || ''}</h3>
+                                    </div>
+                                    <p>${ind.description || ''}</p>
+                                    <div class="ind-fit"><strong>Best fit:</strong> ${ind.bestFit || ''}</div>
+                                `;
+                                industriesGrid.appendChild(div);
+                            });
+                        }
+                        break;
+                    
+                    case 'trust':
+                        const trustTitle = document.getElementById('trust-title');
+                        if (trustTitle) trustTitle.textContent = sectionData.title;
+                        
+                        const trustGrid = document.getElementById('trust-grid');
+                        if (trustGrid && sectionData.items) {
+                            trustGrid.innerHTML = '';
+                            sectionData.items.forEach(item => {
+                                const div = document.createElement('div');
+                                div.className = 'trust-item';
+                                div.innerHTML = `<i class="fas fa-check-circle" style="color: var(--blue-accent);"></i> <span>${item}</span>`;
+                                trustGrid.appendChild(div);
+                            });
+                        }
+                        break;
+
+                    case 'caseStudies':
+                        document.getElementById('cs-title').textContent = sectionData.title;
+                        document.getElementById('cs-subtext').textContent = sectionData.subText;
+                        const csContainer = document.getElementById('case-studies-container');
+                        
+                        if (csContainer && sectionData.items) {
+                            csContainer.innerHTML = '';
+                            sectionData.items.forEach((cs, index) => {
+                                const row = document.createElement('div');
+                                row.className = cs.reverseLayout ? 'case-study-row reverse' : 'case-study-row';
+                                
+                                let featuresHtml = '';
+                                if (cs.features && cs.features.length > 0) {
+                                    featuresHtml = '<ul class="cs-features">';
+                                    cs.features.forEach(f => {
+                                        featuresHtml += `<li>${f}</li>`;
+                                    });
+                                    featuresHtml += '</ul>';
+                                }
+                                
+                                const contentHtml = `
+                                    <div class="cs-content">
+                                        <div class="cs-box">
+                                            <h3>${cs.title || ''}</h3>
+                                            <p>${cs.description || ''}</p>
+                                            ${featuresHtml}
+                                        </div>
+                                    </div>`;
+                                
+                                const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
+                                const imageHtml = `
+                                    <div class="cs-image">
+                                        <img src="assets/${imageFileName}" alt="${cs.title || ''}" class="cs-image-img">
+                                    </div>`;
+            
+                                    row.innerHTML = contentHtml + imageHtml;
+                            
+                                csContainer.appendChild(row);
+                            });
+                        }
+                        break;
+
+                    case 'engagement':
+                        const engTitle = document.getElementById('eng-title');
+                        if (engTitle) engTitle.textContent = sectionData.title;
+                        const engSubtext = document.getElementById('eng-subtext');
+                        if (engSubtext) engSubtext.textContent = sectionData.subText;
+                        
+                        const engBtn = document.getElementById('eng-cta');
+                        if (engBtn) {
+                            engBtn.textContent = sectionData.ctaText;
+                            engBtn.href = sectionData.ctaLink;
+                        }
+                        
+                        const engGrid = document.getElementById('eng-grid');
+                        if (engGrid && sectionData.items) {
+                            engGrid.innerHTML = '';
+                            sectionData.items.forEach(item => {
+                                const div = document.createElement('div');
+                                div.className = 'engagement-card';
+                                div.innerHTML = `
+                                    <p>${item.text || ''}</p>
+                                    <a href="${item.link || '#'}" class="eng-link">${item.linkText || ''} →</a>
+                                `;
+                                engGrid.appendChild(div);
+                            });
+                        }
+                        break;
+
+                    case 'faq':
+                        document.getElementById('faq-title').textContent = sectionData.title;
+                        document.getElementById('faq-subtext').textContent = sectionData.subText;
+                        
+                        const faqContainer = document.getElementById('faq-items');
+                        if (faqContainer && sectionData.items) {
+                            faqContainer.innerHTML = '';
+                            sectionData.items.forEach(item => {
+                                const faqItem = document.createElement('div');
+                                faqItem.className = 'faq-item';
+                                
+                                const question = document.createElement('div');
+                                question.className = 'faq-question';
+                                question.innerHTML = `<h3>${item.question || ''}</h3><span class="toggle-icon">+</span>`;
+                                
+                                const answer = document.createElement('div');
+                                answer.className = 'faq-answer';
+                                const contentHtml = parseFaqContent(item.answer);
+                                answer.innerHTML = contentHtml;
+                                
+                                faqItem.appendChild(question);
+                                faqItem.appendChild(answer);
+                                faqContainer.appendChild(faqItem);
+                                
+                                question.addEventListener('click', () => {
+                                    const isOpen = faqItem.classList.contains('active');
+                                    document.querySelectorAll('.faq-item').forEach(fi => {
+                                        fi.classList.remove('active');
+                                        fi.querySelector('.toggle-icon').textContent = '+';
+                                        fi.querySelector('.faq-answer').style.maxHeight = null;
+                                    });
+                                    if (!isOpen) {
+                                        faqItem.classList.add('active');
+                                        question.querySelector('.toggle-icon').textContent = '-';
+                                        answer.style.maxHeight = answer.scrollHeight + "px";
+                                    }
+                                });
+                            });
+                        }
+                        break;
+
+                    case 'contact':
+                        document.getElementById('contact-title').textContent = sectionData.title;
+                        document.getElementById('contact-subtext').textContent = sectionData.subText;
+            
+                        // Stats (Sidebar)
+                        const statsGrid = document.getElementById('stats-grid');
+                        if (statsGrid && sectionData.stats) {
+                            statsGrid.innerHTML = ''; // Clear existing
+                            sectionData.stats.forEach(stat => {
+                                const div = document.createElement('div');
+                                div.className = 'stat-item-small';
+                                div.innerHTML = `<strong>${stat.number || ''}</strong> <span>${stat.label || ''}</span>`;
+                                statsGrid.appendChild(div);
+                            });
+                        }
+            
+                        // Products Selector
+                        const productOptions = document.getElementById('product-options');
+                        const inputProduct = document.getElementById('input-product');
+                        if (productOptions && sectionData.products) {
+                            productOptions.innerHTML = '';
+                            sectionData.products.forEach(prod => {
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'product-btn';
+                                btn.textContent = prod;
+                                btn.onclick = function() {
+                                    document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('selected'));
+                                    this.classList.add('selected');
+                                    inputProduct.value = prod;
+                                };
+                                productOptions.appendChild(btn);
+                            });
+                        }
+            
+                        // Dropdowns
+                        const industrySelect = document.getElementById('input-industry');
+                        if (industrySelect && sectionData.industries) {
+                            industrySelect.innerHTML = '<option value="" disabled selected>Select Industry</option>';
+                            sectionData.industries.forEach(ind => {
+                                const opt = document.createElement('option');
+                                opt.value = ind;
+                                opt.textContent = ind;
+                                industrySelect.appendChild(opt);
+                            });
+                        }
+            
+                        const sizeSelect = document.getElementById('input-companysize');
+                        if (sizeSelect && sectionData.companySizes) {
+                            sizeSelect.innerHTML = '<option value="" disabled selected>Company Size</option>';
+                            sectionData.companySizes.forEach(size => {
+                                const opt = document.createElement('option');
+                                opt.value = size;
+                                opt.textContent = size;
+                                sizeSelect.appendChild(opt);
+                            });
+                        }
+            
+                        const nextStepSelect = document.getElementById('input-nextstep');
+                        if (nextStepSelect && sectionData.nextSteps) {
+                            nextStepSelect.innerHTML = '<option value="" disabled selected>Preferred Next Step</option>';
+                            sectionData.nextSteps.forEach(step => {
+                                const opt = document.createElement('option');
+                                opt.value = step;
+                                opt.textContent = step;
+                                nextStepSelect.appendChild(opt);
+                            });
+                        }
+            
+                        // Trust Lines
+                        const trustLines = document.getElementById('trust-lines');
+                        if (trustLines && sectionData.trustLines) {
+                            trustLines.innerHTML = '';
+                            sectionData.trustLines.forEach(line => {
+                                const p = document.createElement('p');
+                                p.innerHTML = `<i class="fas fa-check-circle"></i> ${line}`;
+                                trustLines.appendChild(p);
+                            });
+                        }
+            
+                        // What Next
+                        const whatNext = document.getElementById('what-next-steps');
+                        if (whatNext && sectionData.whatNextSteps) {
+                            whatNext.innerHTML = '';
+                            sectionData.whatNextSteps.forEach(step => {
+                                const li = document.createElement('li');
+                                li.textContent = step;
+                                whatNext.appendChild(li);
+                            });
+                        }
+            
+                        // Form Labels
+                        const fl = sectionData.formLabels;
+                        if (fl) {
+                            const setPH = (id, txt) => {
+                                const el = document.getElementById(id);
+                                if (el) { el.placeholder = txt; el.setAttribute('aria-label', txt); }
+                            };
+                            setPH('input-name', fl.name);
+                            setPH('input-email', fl.email);
+                            setPH('input-company', fl.company);
+                            setPH('input-role', fl.role);
+                            setPH('input-country', fl.country);
+                            setPH('input-bottleneck', fl.bottleneck);
+                            setPH('input-message', fl.message);
+                            
+                            if (fl.industry && industrySelect && industrySelect.options.length > 0) industrySelect.options[0].textContent = fl.industry;
+                            if (fl.companySize && sizeSelect && sizeSelect.options.length > 0) sizeSelect.options[0].textContent = fl.companySize;
+                            if (fl.nextStep && nextStepSelect && nextStepSelect.options.length > 0) nextStepSelect.options[0].textContent = fl.nextStep;
+                            
+                            const sBtnText = document.getElementById('submit-text');
+                            if (sBtnText) sBtnText.textContent = fl.submit;
+                        }
+                        break;
+
+                    case 'location':
+                        if (sectionData) {
+                             const mapFrame = document.getElementById('location-map');
+                             if (mapFrame) {
+                                 if (sectionData.latitude && sectionData.longitude) {
+                                     const mapUrl = `https://www.google.com/maps?q=${sectionData.latitude},${sectionData.longitude}&output=embed`;
+                                     mapFrame.src = mapUrl;
+                                 } else if (sectionData.address) {
+                                     const address = encodeURIComponent(`${sectionData.address} ${sectionData.city || ''} ${sectionData.country || ''}`.trim());
+                                     const mapUrl = `https://www.google.com/maps?q=${address}&output=embed`;
+                                     mapFrame.src = mapUrl;
+                                 }
+                             }
+                             // Update title if exists in data (it's not in original json but good for consistency)
+                             if (sectionData.title) {
+                                 const locTitle = document.getElementById('location-title');
+                                 if (locTitle) locTitle.textContent = sectionData.title;
+                             }
+                        }
+                        break;
+                    
+                    default:
+                        // Custom Section Rendering
+                        const el = document.getElementById(key);
+                        if (el) {
+                            el.innerHTML = `
+                                <div class="container">
+                                    <div class="section-header text-center">
+                                        <h2>${sectionData.title || ''}</h2>
+                                        <p class="sub-text">${sectionData.subText || ''}</p>
+                                    </div>
+                                    <div class="custom-grid">
+                                        ${(sectionData.items || []).map(item => `
+                                            <div class="custom-card">
+                                                <h3>${item.title || ''}</h3>
+                                                <p>${item.description || ''}</p>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        break;
+                }
+            } catch (e) {
+                console.error(`Error rendering section ${key}:`, e);
+            }
         }
 
         function initMobileMenu() {

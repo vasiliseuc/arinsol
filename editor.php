@@ -1,5 +1,5 @@
 <?php
-// DEBUG: Enable error reporting to diagnose 500 error
+// DEBUG: Enable error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -33,12 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // Check authentication
 if (!isAuthenticated()) {
-    // Generate new captcha
     $num1 = rand(1, 10);
     $num2 = rand(1, 10);
     $captchaValue = $num1 + $num2;
-    
-    // Show login form
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -47,142 +44,39 @@ if (!isAuthenticated()) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>JSON Editor - Login</title>
         <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-            .login-container {
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                padding: 40px;
-                max-width: 400px;
-                width: 100%;
-            }
-            .login-container h1 {
-                color: #333;
-                margin-bottom: 10px;
-                font-size: 28px;
-            }
-            .login-container p {
-                color: #666;
-                margin-bottom: 30px;
-                font-size: 14px;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            .form-group label {
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-                font-weight: 500;
-            }
-            .form-group input {
-                width: 100%;
-                padding: 12px;
-                border: 2px solid #e0e0e0;
-                border-radius: 6px;
-                font-size: 16px;
-                transition: border-color 0.3s;
-            }
-            .form-group input:focus {
-                outline: none;
-                border-color: #667eea;
-            }
-            .captcha-group label span {
-                color: #667eea;
-                font-weight: 700;
-            }
-            .btn {
-                width: 100%;
-                padding: 12px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                border-radius: 6px;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            .error {
-                background: #fee;
-                color: #c33;
-                padding: 12px;
-                border-radius: 6px;
-                margin-bottom: 20px;
-                border-left: 4px solid #c33;
-            }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+            .login-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); width: 100%; max-width: 400px; }
+            .login-container h1 { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; color: #111827; }
+            .form-group { margin-bottom: 1rem; }
+            label { display: block; margin-bottom: 0.5rem; color: #374151; font-size: 0.875rem; font-weight: 500; }
+            input { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box; }
+            input:focus { outline: none; border-color: #3b82f6; ring: 2px solid #3b82f6; }
+            .btn { width: 100%; background: #2563eb; color: white; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
+            .btn:hover { background: #1d4ed8; }
+            .error { background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.875rem; }
         </style>
     </head>
     <body>
         <div class="login-container">
-            <h1>🔐 Editor Login</h1>
-            <p>Enter your credentials to continue</p>
-            <?php if ($error): ?>
-                <div class="error"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            <form method="POST" action="">
+            <h1>Editor Login</h1>
+            <?php if ($error): ?><div class="error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
+            <form method="POST">
                 <input type="hidden" name="action" value="login">
                 <input type="hidden" name="captcha_value" value="<?php echo $captchaValue; ?>">
-                
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required autofocus>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                
-                <div class="form-group captcha-group">
-                    <label for="captcha">Security Question: <span><?php echo $num1; ?> + <?php echo $num2; ?> = ?</span></label>
-                    <input type="number" id="captcha" name="captcha_answer" required placeholder="Your answer">
-                </div>
-                
+                <div class="form-group"><label>Username</label><input type="text" name="username" required autofocus></div>
+                <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+                <div class="form-group"><label>Question: <?php echo $num1; ?> + <?php echo $num2; ?> = ?</label><input type="number" name="captcha_answer" required></div>
                 <button type="submit" class="btn">Login</button>
             </form>
         </div>
     </body>
     </html>
-    <?php
-    exit;
+    <?php exit;
 }
 
-// User is authenticated - show editor
-if (!file_exists(DATA_FILE)) {
-    die('Error: data.json file not found at ' . htmlspecialchars(DATA_FILE));
-}
-
+if (!file_exists(DATA_FILE)) die('Error: data.json not found');
 $jsonData = file_get_contents(DATA_FILE);
-if ($jsonData === false) {
-    die('Error: Unable to read data.json file');
-}
-
-$jsonArray = json_decode($jsonData, true);
-
-if ($jsonArray === null && json_last_error() !== JSON_ERROR_NONE) {
-    die('Error: Invalid JSON in data.json: ' . json_last_error_msg());
-}
-
-// Ensure array structure exists to prevent errors
-$jsonArray = $jsonArray ?? [];
+$jsonArray = json_decode($jsonData, true) ?? [];
 
 // Get data changes history
 $changesDir = __DIR__ . '/data-changes';
@@ -194,9 +88,317 @@ if (is_dir($changesDir)) {
             $changeFiles[] = $file;
         }
     }
-    // Sort by name descending (timestamp is in name, so this works for sorting by date)
     rsort($changeFiles);
 }
+
+// SECTION KEYS
+$defaultContentKeys = ['hero', 'about', 'services', 'industries', 'trust', 'caseStudies', 'engagement', 'faq', 'contact', 'location'];
+$globalKeys = ['siteMeta', 'header', 'footer', 'socialMedia', 'sectionOrder', 'sectionLabels', 'chatbot', 'customCode']; // Reserved
+
+// Determine Current Order
+$currentOrder = $jsonArray['sectionOrder'] ?? $defaultContentKeys;
+
+// Identify Custom Sections (Keys in data that are not global and not in default list)
+$allKeys = array_keys($jsonArray);
+$customKeys = array_diff($allKeys, $defaultContentKeys, $globalKeys);
+
+// Merge Custom Keys into Order if not already present
+foreach ($customKeys as $k) {
+    if (!in_array($k, $currentOrder)) {
+        $currentOrder[] = $k;
+    }
+}
+
+// SECTION LABELS
+$sectionLabels = $jsonArray['sectionLabels'] ?? [];
+function getLabel($key, $default) {
+    global $sectionLabels;
+    return $sectionLabels[$key] ?? $default;
+}
+
+// RENDER HELPERS
+function renderToggle($key, $data) {
+    $checked = isset($data['disabled']) && $data['disabled'] === true ? 'checked' : '';
+    // Use hidden input to ensure false is sent if unchecked, but here we handle via JS mostly
+    // We'll use a specific naming convention: [disabled]
+    return '
+    <div class="toggle-wrapper" title="Enable/Disable Section">
+        <label class="toggle-switch">
+            <input type="checkbox" name="'.$key.'[disabled]" value="1" '.$checked.'>
+            <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Disabled</span>
+    </div>';
+}
+
+// CAPTURE SECTIONS
+$renderedSections = [];
+
+// --- SITE META ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>🌐 Site Meta</h2></div>
+    <div class="section-content">
+        <div class="form-group"><label>Site Title</label><input type="text" name="siteMeta[title]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['title'] ?? ''); ?>"></div>
+        <div class="form-group"><label>Google Analytics ID</label><input type="text" name="siteMeta[googleAnalytics]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['googleAnalytics'] ?? ''); ?>"></div>
+    </div>
+</div>
+<?php $renderedSections['siteMeta'] = ob_get_clean();
+
+// --- CUSTOM CODE ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>💻 Custom Code & Scripts</h2></div>
+    <div class="section-content">
+        <div class="form-group">
+            <label>Head Code (Meta tags, Analytics, Verification)</label>
+            <textarea name="customCode[head]" rows="5" class="code-editor" placeholder="<meta name='...' content='...'>
+<script>...</script>"><?php echo htmlspecialchars($jsonArray['customCode']['head'] ?? ''); ?></textarea>
+        </div>
+        <div class="form-group">
+            <label>Custom CSS (Style overrides)</label>
+            <textarea name="customCode[css]" rows="5" class="code-editor" placeholder=".my-class { color: red; }"><?php echo htmlspecialchars($jsonArray['customCode']['css'] ?? ''); ?></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Body Start (After &lt;body&gt; tag)</label>
+                <textarea name="customCode[bodyStart]" rows="4" class="code-editor"><?php echo htmlspecialchars($jsonArray['customCode']['bodyStart'] ?? ''); ?></textarea>
+            </div>
+            <div class="form-group">
+                <label>Body End (Before &lt;/body&gt; tag)</label>
+                <textarea name="customCode[bodyEnd]" rows="4" class="code-editor"><?php echo htmlspecialchars($jsonArray['customCode']['bodyEnd'] ?? ''); ?></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $renderedSections['customCode'] = ob_get_clean();
+
+// --- HEADER ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>📋 Header</h2></div>
+    <div class="section-content">
+        <div class="form-row">
+            <div class="form-group"><label>Logo Text</label><input type="text" name="header[logoText]" value="<?php echo htmlspecialchars($jsonArray['header']['logoText'] ?? ''); ?>"></div>
+            <div class="form-group"><label>CTA Text</label><input type="text" name="header[ctaText]" value="<?php echo htmlspecialchars($jsonArray['header']['ctaText'] ?? ''); ?>"></div>
+        </div>
+        <div class="form-group"><label>Navigation Links</label><div id="navLinks-container">
+            <?php foreach ($jsonArray['header']['navLinks'] ?? [] as $i => $link): ?>
+                <div class="array-item"><div class="array-item-header"><span>Link #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                <div class="form-row"><div class="form-group"><label>Text</label><input type="text" name="header[navLinks][<?php echo $i; ?>][text]" value="<?php echo htmlspecialchars($link['text'] ?? ''); ?>"></div>
+                <div class="form-group"><label>URL</label><input type="text" name="header[navLinks][<?php echo $i; ?>][href]" value="<?php echo htmlspecialchars($link['href'] ?? ''); ?>"></div></div></div>
+            <?php endforeach; ?>
+        </div><button type="button" class="btn-add" onclick="addNavLink()">+ Add Link</button></div>
+    </div>
+</div>
+<?php $renderedSections['header'] = ob_get_clean();
+
+// --- CONTENT SECTIONS ---
+foreach ($currentOrder as $key) {
+    if (!isset($jsonArray[$key])) continue; // Skip if no data
+    
+    ob_start();
+    $data = $jsonArray[$key];
+    $label = getLabel($key, ucfirst($key));
+    
+    // Check if Standard or Custom
+    if (in_array($key, $defaultContentKeys)) {
+        // RENDER STANDARD SECTIONS
+        ?>
+        <div class="form-section content-section" id="section-<?php echo $key; ?>">
+            <div class="section-header">
+                <h2><span class="drag-handle">☰</span> <span class="section-label"><?php echo htmlspecialchars($label); ?></span></h2>
+                <div class="header-controls">
+                    <?php echo renderToggle($key, $data); ?>
+                    <button type="button" class="btn-icon" onclick="renameSection('<?php echo $key; ?>')" title="Rename">✏️</button>
+                    <!-- Standard sections can't be deleted entirely, only disabled or moved to unused list (simulated remove) -->
+                    <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('<?php echo $key; ?>')" title="Remove from list">🗑️</button>
+                </div>
+            </div>
+            <div class="section-content">
+                <?php if ($key === 'hero'): ?>
+                    <div class="form-group"><label>Badge</label><input type="text" name="hero[badge]" value="<?php echo htmlspecialchars($data['badge'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Title</label><input type="text" name="hero[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Description</label><textarea name="hero[description]"><?php echo htmlspecialchars($data['description'] ?? ''); ?></textarea></div>
+                    <div class="form-row"><div class="form-group"><label>CTA Text</label><input type="text" name="hero[ctaText]" value="<?php echo htmlspecialchars($data['ctaText'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>CTA Link</label><input type="text" name="hero[ctaLink]" value="<?php echo htmlspecialchars($data['ctaLink'] ?? ''); ?>"></div></div>
+                <?php elseif ($key === 'about'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="about[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Description</label><textarea name="about[description]" style="min-height: 200px;"><?php echo htmlspecialchars($data['description'] ?? ''); ?></textarea></div>
+                    <div class="form-group"><label>Principles Title</label><input type="text" name="about[principlesTitle]" value="<?php echo htmlspecialchars($data['principlesTitle'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Principles</label><div id="about-principles-container">
+                        <?php foreach ($data['principles'] ?? [] as $i => $p): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Principle #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><input type="text" name="about[principles][<?php echo $i; ?>]" value="<?php echo htmlspecialchars($p); ?>"></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addPrinciple()">+ Add Principle</button></div>
+                <?php elseif ($key === 'services'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="services[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Items</label><div id="services-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Service #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><label>Title</label><input type="text" name="services[items][<?php echo $i; ?>][title]" value="<?php echo htmlspecialchars($item['title'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Description</label><textarea name="services[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea></div>
+                            <div class="form-row"><div class="form-group"><label>Icon</label><input type="text" name="services[items][<?php echo $i; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Color Class</label><input type="text" name="services[items][<?php echo $i; ?>][colorClass]" value="<?php echo htmlspecialchars($item['colorClass'] ?? ''); ?>"></div></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addService()">+ Add Service</button></div>
+                <?php elseif ($key === 'industries'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="industries[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Sub Text</label><textarea name="industries[subText]"><?php echo htmlspecialchars($data['subText'] ?? ''); ?></textarea></div>
+                    <div class="form-group"><label>Items</label><div id="industries-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Industry #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-row"><div class="form-group"><label>Name</label><input type="text" name="industries[items][<?php echo $i; ?>][name]" value="<?php echo htmlspecialchars($item['name'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Icon</label><input type="text" name="industries[items][<?php echo $i; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>"></div></div>
+                            <div class="form-group"><label>Description</label><textarea name="industries[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea></div>
+                            <div class="form-group"><label>Best Fit</label><input type="text" name="industries[items][<?php echo $i; ?>][bestFit]" value="<?php echo htmlspecialchars($item['bestFit'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Color</label><input type="text" name="industries[items][<?php echo $i; ?>][color]" value="<?php echo htmlspecialchars($item['color'] ?? ''); ?>"></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addIndustry()">+ Add Industry</button></div>
+                <?php elseif ($key === 'trust'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="trust[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Items</label><div id="trust-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Item #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><input type="text" name="trust[items][<?php echo $i; ?>]" value="<?php echo htmlspecialchars($item); ?>"></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addTrustItem()">+ Add Item</button></div>
+                <?php elseif ($key === 'caseStudies'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="caseStudies[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Sub Text</label><textarea name="caseStudies[subText]"><?php echo htmlspecialchars($data['subText'] ?? ''); ?></textarea></div>
+                    <div class="form-group"><label>Items</label><div id="caseStudies-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>CS #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><label>Title</label><input type="text" name="caseStudies[items][<?php echo $i; ?>][title]" value="<?php echo htmlspecialchars($item['title'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Description</label><textarea name="caseStudies[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea></div>
+                            <div class="form-row"><div class="form-group"><label>CTA Text</label><input type="text" name="caseStudies[items][<?php echo $i; ?>][ctaText]" value="<?php echo htmlspecialchars($item['ctaText'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Icon</label><input type="text" name="caseStudies[items][<?php echo $i; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>"></div></div>
+                            <div class="form-group"><label>Preview Text</label><input type="text" name="caseStudies[items][<?php echo $i; ?>][previewText]" value="<?php echo htmlspecialchars($item['previewText'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Features</label><div id="cs-features-container-<?php echo $i; ?>">
+                                <?php foreach ($item['features'] ?? [] as $fi => $f): ?>
+                                    <div class="array-item" style="padding:5px"><div class="form-row" style="margin:0"><textarea name="caseStudies[items][<?php echo $i; ?>][features][<?php echo $fi; ?>]" rows="1" style="flex:1"><?php echo htmlspecialchars($f); ?></textarea><button type="button" class="btn-remove" onclick="removeArrayItem(this)">x</button></div></div>
+                                <?php endforeach; ?>
+                            </div><button type="button" class="btn-add" onclick="addCaseStudyFeature(<?php echo $i; ?>)">+ Add Feature</button></div>
+                            <div class="form-group"><div class="checkbox-group"><input type="checkbox" name="caseStudies[items][<?php echo $i; ?>][reverseLayout]" value="1" <?php echo ($item['reverseLayout'] ?? false) ? 'checked' : ''; ?>><label>Reverse Layout</label></div></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addCaseStudy()">+ Add Case Study</button></div>
+                <?php elseif ($key === 'engagement'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="engagement[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Sub Text</label><input type="text" name="engagement[subText]" value="<?php echo htmlspecialchars($data['subText'] ?? ''); ?>"></div>
+                    <div class="form-row"><div class="form-group"><label>CTA Text</label><input type="text" name="engagement[ctaText]" value="<?php echo htmlspecialchars($data['ctaText'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>CTA Link</label><input type="text" name="engagement[ctaLink]" value="<?php echo htmlspecialchars($data['ctaLink'] ?? ''); ?>"></div></div>
+                    <div class="form-group"><label>Tiles</label><div id="eng-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Tile #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><label>Text</label><input type="text" name="engagement[items][<?php echo $i; ?>][text]" value="<?php echo htmlspecialchars($item['text'] ?? ''); ?>"></div>
+                            <div class="form-row"><div class="form-group"><label>Link Text</label><input type="text" name="engagement[items][<?php echo $i; ?>][linkText]" value="<?php echo htmlspecialchars($item['linkText'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>URL</label><input type="text" name="engagement[items][<?php echo $i; ?>][link]" value="<?php echo htmlspecialchars($item['link'] ?? ''); ?>"></div></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addEngItem()">+ Add Tile</button></div>
+                <?php elseif ($key === 'faq'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="faq[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Sub Text</label><textarea name="faq[subText]"><?php echo htmlspecialchars($data['subText'] ?? ''); ?></textarea></div>
+                    <div class="form-group"><label>Items</label><div id="faq-container">
+                        <?php foreach ($data['items'] ?? [] as $i => $item): ?>
+                            <div class="array-item"><div class="array-item-header"><span>Item #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                            <div class="form-group"><label>Question</label><input type="text" name="faq[items][<?php echo $i; ?>][question]" value="<?php echo htmlspecialchars($item['question'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Answer</label><textarea name="faq[items][<?php echo $i; ?>][answer]"><?php echo htmlspecialchars($item['answer'] ?? ''); ?></textarea></div></div>
+                        <?php endforeach; ?>
+                    </div><button type="button" class="btn-add" onclick="addFaqItem()">+ Add FAQ Item</button></div>
+                <?php elseif ($key === 'contact'): ?>
+                    <div class="form-group"><label>Title</label><input type="text" name="contact[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Sub Text</label><textarea name="contact[subText]"><?php echo htmlspecialchars($data['subText'] ?? ''); ?></textarea></div>
+                    <div class="form-row"><div class="form-group"><label>Years</label><input type="text" name="contact[yearsExp]" value="<?php echo htmlspecialchars($data['yearsExp'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Years Label</label><input type="text" name="contact[yearsLabel]" value="<?php echo htmlspecialchars($data['yearsLabel'] ?? ''); ?>"></div></div>
+                    <div class="form-row"><div class="form-group"><label>Success Title</label><input type="text" name="contact[successTitle]" value="<?php echo htmlspecialchars($data['successTitle'] ?? ''); ?>"></div>
+                    <div class="form-group"><label>Subtitle</label><input type="text" name="contact[successSubtitle]" value="<?php echo htmlspecialchars($data['successSubtitle'] ?? ''); ?>"></div></div>
+                <?php elseif ($key === 'location'): ?>
+                    <div class="form-row">
+                        <div class="form-group"><label>Address</label><input type="text" name="location[address]" value="<?php echo htmlspecialchars($data['address'] ?? ''); ?>"></div>
+                        <div class="form-group"><label>City</label><input type="text" name="location[city]" value="<?php echo htmlspecialchars($data['city'] ?? ''); ?>"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Country</label><input type="text" name="location[country]" value="<?php echo htmlspecialchars($data['country'] ?? ''); ?>"></div>
+                        <div class="form-group"><label>Coords</label><div style="display:flex;gap:10px">
+                            <input type="text" name="location[latitude]" placeholder="Lat" value="<?php echo htmlspecialchars($data['latitude'] ?? ''); ?>">
+                            <input type="text" name="location[longitude]" placeholder="Long" value="<?php echo htmlspecialchars($data['longitude'] ?? ''); ?>">
+                        </div></div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+    } else {
+        // RENDER CUSTOM SECTION
+        ?>
+        <div class="form-section content-section" id="section-<?php echo $key; ?>">
+            <div class="section-header">
+                <h2><span class="drag-handle">☰</span> <span class="section-label"><?php echo htmlspecialchars($label); ?> (Custom)</span></h2>
+                <div class="header-controls">
+                    <?php echo renderToggle($key, $data); ?>
+                    <button type="button" class="btn-icon" onclick="renameSection('<?php echo $key; ?>')" title="Rename">✏️</button>
+                    <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('<?php echo $key; ?>')" title="Remove">🗑️</button>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="form-group"><label>Section Title</label><input type="text" name="<?php echo $key; ?>[title]" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>"></div>
+                <div class="form-group"><label>Sub Title</label><input type="text" name="<?php echo $key; ?>[subText]" value="<?php echo htmlspecialchars($data['subText'] ?? ''); ?>"></div>
+                <div class="form-group"><label>Items</label><div id="<?php echo $key; ?>-container">
+                    <?php foreach ($data['items'] ?? [] as $i => $item): 
+                        // Handle simple strings or objects
+                        $iTitle = is_array($item) ? ($item['title'] ?? '') : '';
+                        $iDesc = is_array($item) ? ($item['description'] ?? '') : (is_string($item) ? $item : '');
+                    ?>
+                        <div class="array-item"><div class="array-item-header"><span>Item #<?php echo $i+1; ?></span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                        <div class="form-group"><label>Item Title</label><input type="text" name="<?php echo $key; ?>[items][<?php echo $i; ?>][title]" value="<?php echo htmlspecialchars($iTitle); ?>"></div>
+                        <div class="form-group"><label>Item Description</label><textarea name="<?php echo $key; ?>[items][<?php echo $i; ?>][description]"><?php echo htmlspecialchars($iDesc); ?></textarea></div></div>
+                    <?php endforeach; ?>
+                </div><button type="button" class="btn-add" onclick="addCustomItem('<?php echo $key; ?>')">+ Add Item</button></div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    $renderedSections[$key] = ob_get_clean();
+}
+
+// --- IMAGES (Global) ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>🖼️ Image Management (Global)</h2></div>
+    <div class="section-content">
+         <div class="form-group"><label>Logo</label><div class="image-upload-wrapper"><div class="image-preview-container"><img src="assets/logo.png" style="max-height:100px;max-width:100%"></div></div></div>
+    </div>
+</div>
+<?php $renderedSections['images'] = ob_get_clean();
+
+// --- SOCIAL ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>📱 Social Media</h2></div>
+    <div class="section-content">
+        <div class="form-row">
+            <div class="form-group"><label>Facebook</label><input type="text" name="socialMedia[facebook]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['facebook'] ?? ''); ?>"></div>
+            <div class="form-group"><label>Twitter</label><input type="text" name="socialMedia[twitter]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['twitter'] ?? ''); ?>"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>LinkedIn</label><input type="text" name="socialMedia[linkedin]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['linkedin'] ?? ''); ?>"></div>
+            <div class="form-group"><label>Instagram</label><input type="text" name="socialMedia[instagram]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['instagram'] ?? ''); ?>"></div>
+        </div>
+    </div>
+</div>
+<?php $renderedSections['socialMedia'] = ob_get_clean();
+
+// --- FOOTER ---
+ob_start(); ?>
+<div class="form-section">
+    <div class="section-header"><h2>📄 Footer</h2></div>
+    <div class="section-content">
+        <div class="form-group"><label>Copyright</label><input type="text" name="footer[copyright]" value="<?php echo htmlspecialchars($jsonArray['footer']['copyright'] ?? ''); ?>"></div>
+    </div>
+</div>
+<?php $renderedSections['footer'] = ob_get_clean();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -204,1613 +406,537 @@ if (is_dir($changesDir)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Editor - Arinsol.ai</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            font-size: 24px;
-        }
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
+        /* Modern & Compact Editor Styles */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; color: #111827; margin: 0; padding-bottom: 80px; font-size: 14px; }
+        
+        .header { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 12px 20px; position: sticky; top: 0; z-index: 50; }
+        .header-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.25rem; font-weight: 600; margin: 0; color: #111827; }
+        
+        .container { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+        
+        /* Section Dividers */
+        h3 { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            color: #6b7280; 
+            margin: 32px 0 12px; 
+            border-bottom: 1px solid #e5e7eb; 
+            padding-bottom: 8px; 
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-block;
         }
-        .btn-primary {
-            background: white;
-            color: #667eea;
+        
+        /* Form Sections (Cards) */
+        .form-section { 
+            background: #fff; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 6px; 
+            margin-bottom: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02); 
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        
+        .section-header { 
+            background: #f9fafb; 
+            padding: 10px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer; 
+            user-select: none;
+            transition: background 0.15s;
         }
-        .btn-secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
+        .section-header:hover { background: #f3f4f6; }
+        
+        .section-header h2 { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            margin: 0; 
+            color: #374151; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
         }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.3);
+        
+        .section-content { 
+            padding: 20px; 
+            display: none; 
+            border-top: 1px solid #e5e7eb;
         }
-        .btn-success {
-            background: #28a745;
-            color: white;
-            padding: 12px 30px;
-            font-size: 16px;
+        .form-section.active .section-content { display: block; }
+        
+        /* Inputs */
+        .form-group { margin-bottom: 16px; }
+        .form-group:last-child { margin-bottom: 0; }
+        
+        .form-group label { 
+            display: block; 
+            margin-bottom: 4px; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+            color: #4b5563; 
         }
-        .btn-success:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        
+        .form-group input, .form-group textarea, .form-control { 
+            width: 100%; 
+            padding: 8px 12px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 4px; 
+            font-size: 0.9rem; 
+            box-sizing: border-box; 
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px 100px 20px; /* Added bottom padding for sticky footer */
+        
+        .form-group input:focus, .form-group textarea:focus { 
+            outline: none; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); 
         }
-        .form-section {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 15px; /* Reduced margin */
-            overflow: hidden;
-            transition: all 0.3s ease;
+        
+        .code-editor { font-family: 'Consolas', 'Monaco', monospace; background: #fafafa; font-size: 0.85rem; color: #333; }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
+        /* Array Items */
+        .array-item { 
+            background: #f9fafb; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 4px; 
+            padding: 12px; 
+            margin-bottom: 10px; 
         }
-        .section-header {
-            background: #f8f9fa;
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef; /* Thinner border */
-            cursor: pointer;
-            transition: background 0.2s;
+        
+        .array-item-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 8px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            color: #9ca3af; 
+            text-transform: uppercase;
         }
-        .section-header:hover {
-            background: #e9ecef;
+        
+        /* Buttons */
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 6px 12px; 
+            border-radius: 4px; 
+            font-size: 0.85rem; 
+            font-weight: 500; 
+            cursor: pointer; 
+            border: 1px solid transparent; 
+            text-decoration: none; 
+            transition: all 0.15s;
         }
-        .section-header h2 {
-            font-size: 18px; /* Slightly smaller */
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Push arrow to right */
-            gap: 10px;
-            margin: 0;
+        
+        .btn-secondary { background: #fff; border-color: #d1d5db; color: #374151; }
+        .btn-secondary:hover { background: #f9fafb; border-color: #9ca3af; }
+        
+        .btn-primary { background: #3b82f6; color: #fff; border: none; }
+        .btn-primary:hover { background: #2563eb; }
+        
+        .btn-success { background: #10b981; color: #fff; border: none; }
+        .btn-success:hover { background: #059669; }
+        
+        .btn-add { 
+            background: #eff6ff; 
+            color: #2563eb; 
+            border: 1px dashed #bfdbfe; 
+            width: 100%; 
+            margin-top: 8px; 
         }
-        .section-header h2::after {
-            content: '▼';
-            font-size: 12px;
-            color: #666;
-            transition: transform 0.3s ease;
+        .btn-add:hover { background: #dbeafe; border-color: #93c5fd; }
+        
+        .btn-remove { 
+            background: transparent; 
+            color: #ef4444; 
+            padding: 2px 6px; 
+            font-size: 0.75rem; 
         }
-        .form-section.active .section-header h2::after {
-            transform: rotate(180deg);
+        .btn-remove:hover { background: #fee2e2; border-radius: 2px; }
+        
+        /* Header Controls */
+        .header-controls { display: flex; align-items: center; gap: 8px; }
+        .btn-icon { background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.5; padding: 4px; border-radius: 4px; }
+        .btn-icon:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+        .btn-remove-section { color: #dc2626; }
+        
+        .drag-handle { color: #d1d5db; margin-right: 8px; cursor: grab; font-size: 1.1rem; }
+        .drag-handle:hover { color: #9ca3af; }
+        
+        /* Toggle Switch */
+        .toggle-wrapper { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #f3f4f6; border-radius: 4px; border: 1px solid #e5e7eb; }
+        .toggle-switch { position: relative; display: inline-block; width: 28px; height: 16px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: .3s; border-radius: 16px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #ef4444; }
+        input:checked + .slider:before { transform: translateX(12px); }
+        .toggle-label { font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; }
+        
+        /* Add Section Area */
+        #add-section-container { 
+            background: #f9fafb; 
+            border: 2px dashed #e5e7eb; 
+            border-radius: 8px; 
+            padding: 32px; 
+            text-align: center; 
+            margin-top: 32px; 
         }
-        .section-content {
-            padding: 30px;
-            display: none; /* Collapsed by default */
+        #add-section-container h4 { margin: 0 0 16px; color: #6b7280; font-size: 0.9rem; }
+        
+        /* Footer Actions */
+        .footer-actions { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); 
+            padding: 16px; text-align: center; border-top: 1px solid #e5e7eb; 
+            z-index: 40;
         }
-        .form-section.active .section-content {
-            display: block; /* Expanded when active */
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .form-group {
-            margin-bottom: 25px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .array-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .array-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .array-item-title {
-            font-weight: 600;
-            color: #333;
-        }
-        .btn-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .btn-remove:hover {
-            background: #c82333;
-        }
-        .btn-add {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-        .btn-add:hover {
-            background: #218838;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-        }
-        .image-upload-wrapper {
-            border: 2px dashed #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-        .image-preview-container {
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .image-placeholder {
-            padding: 40px;
-            background: #e9ecef;
-            border-radius: 6px;
-            color: #6c757d;
-            font-size: 14px;
-        }
-        .image-upload-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .image-file-input {
-            display: none;
-        }
-        .image-upload-controls .btn {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        .footer-actions {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            padding: 15px;
-            text-align: center;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-        .status-message {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
+        .footer-actions .btn-success { padding: 8px 32px; font-size: 1rem; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); }
+        
+        /* Image Preview */
+        .image-preview-container { text-align: center; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 8px; }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>📝 Content Editor - Arinsol.ai</h1>
+            <h1>📝 Content Editor</h1>
             <div class="header-actions">
                 <a href="#" class="btn btn-secondary" onclick="openHistory(event)">📜 History</a>
-                <a href="/" class="btn btn-secondary" target="_blank">View Site</a>
+                <a href="/" target="_blank" class="btn btn-secondary">View Site</a>
                 <a href="?logout=1" class="btn btn-secondary">Logout</a>
             </div>
         </div>
     </div>
-
-    <div class="container">
-        <div id="status-message" class="status-message"></div>
-
-        <form id="editor-form">
-            <!-- Site Meta -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🌐 Site Meta</h2>
+    
+    <form id="editor-form">
+        <div class="container">
+            <!-- Global Settings Zone -->
+            <h3>Global Settings</h3>
+            <?php echo $renderedSections['siteMeta']; ?>
+            <?php echo $renderedSections['customCode']; ?>
+            <?php echo $renderedSections['header']; ?>
+            <?php echo $renderedSections['footer']; ?>
+            <?php echo $renderedSections['socialMedia']; ?>
+            <?php echo $renderedSections['images']; ?>
+            
+            <!-- Page Content Zone -->
+            <h3>Page Content (Drag to Reorder)</h3>
+            <div id="content-sections">
+                <?php 
+                foreach ($currentOrder as $key) {
+                    if (isset($renderedSections[$key])) {
+                        echo $renderedSections[$key];
+                    }
+                }
+                ?>
+            </div>
+            
+            <!-- Add Section Area -->
+            <div id="add-section-container">
+                <div id="restore-controls" style="<?php echo empty($availableKeys) ? 'display:none' : 'margin-bottom:20px'; ?>">
+                    <h4>Restore Removed Section</h4>
+                    <select id="add-section-select" class="form-control" style="width:auto; display:inline-block; margin-right:8px;">
+                        <option value="">-- Select Section --</option>
+                        <?php foreach ($availableKeys as $key): ?>
+                            <option value="<?php echo $key; ?>"><?php echo ucfirst($key); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="button" class="btn btn-success" onclick="restoreSection()">+ Restore</button>
                 </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="siteMeta_title">Site Title</label>
-                        <input type="text" id="siteMeta_title" name="siteMeta[title]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="siteMeta_googleAnalytics">Google Analytics Script ID (e.g. G-XXXXXXXXXX)</label>
-                        <input type="text" id="siteMeta_googleAnalytics" name="siteMeta[googleAnalytics]" value="<?php echo htmlspecialchars($jsonArray['siteMeta']['googleAnalytics'] ?? ''); ?>" placeholder="G-XXXXXXXXXX">
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Leave empty to disable. Enter only the measurement ID.</p>
-                    </div>
+                
+                <div id="add-custom-container">
+                    <h4>Create New Content Block</h4>
+                    <button type="button" class="btn btn-primary" onclick="createNewSection()">+ Create Custom Section</button>
                 </div>
             </div>
+        </div>
+        
+        <!-- Hidden Inputs -->
+        <input type="hidden" name="sectionOrder" id="input-sectionOrder" value="">
+        <div id="labels-container">
+            <?php foreach ($sectionLabels as $k => $v): ?>
+                <input type="hidden" name="sectionLabels[<?php echo $k; ?>]" id="label-<?php echo $k; ?>" value="<?php echo htmlspecialchars($v); ?>">
+            <?php endforeach; ?>
+        </div>
+        
+        <div id="section-store" style="display:none">
+            <?php 
+            foreach ($availableKeys as $key) {
+                if (isset($renderedSections[$key])) {
+                    echo $renderedSections[$key];
+                }
+            }
+            ?>
+        </div>
 
-            <!-- Header -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📋 Header</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="header_logoText">Logo Text</label>
-                            <input type="text" id="header_logoText" name="header[logoText]" value="<?php echo htmlspecialchars($jsonArray['header']['logoText'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="header_ctaText">CTA Button Text</label>
-                            <input type="text" id="header_ctaText" name="header[ctaText]" value="<?php echo htmlspecialchars($jsonArray['header']['ctaText'] ?? ''); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Navigation Links</label>
-                        <div id="navLinks-container">
-                            <?php foreach ($jsonArray['header']['navLinks'] ?? [] as $index => $link): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Link #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>Link Text</label>
-                                            <input type="text" name="header[navLinks][<?php echo $index; ?>][text]" value="<?php echo htmlspecialchars($link['text'] ?? ''); ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Link URL</label>
-                                            <input type="text" name="header[navLinks][<?php echo $index; ?>][href]" value="<?php echo htmlspecialchars($link['href'] ?? ''); ?>">
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addNavLink()">+ Add Navigation Link</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🎯 Hero Section</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="hero_badge">Badge Text</label>
-                        <input type="text" id="hero_badge" name="hero[badge]" value="<?php echo htmlspecialchars($jsonArray['hero']['badge'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="hero_title">Title</label>
-                        <input type="text" id="hero_title" name="hero[title]" value="<?php echo htmlspecialchars($jsonArray['hero']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="hero_description">Description</label>
-                        <textarea id="hero_description" name="hero[description]"><?php echo htmlspecialchars($jsonArray['hero']['description'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="hero_ctaText">CTA Button Text</label>
-                            <input type="text" id="hero_ctaText" name="hero[ctaText]" value="<?php echo htmlspecialchars($jsonArray['hero']['ctaText'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="hero_ctaLink">CTA Link</label>
-                            <input type="text" id="hero_ctaLink" name="hero[ctaLink]" value="<?php echo htmlspecialchars($jsonArray['hero']['ctaLink'] ?? ''); ?>">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- About -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>ℹ️ About ArInSol</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="about_title">Section Title</label>
-                        <input type="text" id="about_title" name="about[title]" value="<?php echo htmlspecialchars($jsonArray['about']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="about_description">Description (Paragraphs separated by blank lines)</label>
-                        <textarea id="about_description" name="about[description]" style="min-height: 200px;"><?php echo htmlspecialchars($jsonArray['about']['description'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="about_principlesTitle">Principles Title</label>
-                        <input type="text" id="about_principlesTitle" name="about[principlesTitle]" value="<?php echo htmlspecialchars($jsonArray['about']['principlesTitle'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label>Principles List</label>
-                        <div id="about-principles-container">
-                            <?php foreach ($jsonArray['about']['principles'] ?? [] as $index => $principle): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Principle #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="about[principles][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($principle); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addPrinciple()">+ Add Principle</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Services -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>⚙️ Services</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="services_title">Services Title</label>
-                        <input type="text" id="services_title" name="services[title]" value="<?php echo htmlspecialchars($jsonArray['services']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label>Service Items</label>
-                        <div id="services-container">
-                            <?php foreach ($jsonArray['services']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Service #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Title</label>
-                                        <input type="text" name="services[items][<?php echo $index; ?>][title]" value="<?php echo htmlspecialchars($item['title'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea name="services[items][<?php echo $index; ?>][description]"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>Icon Class (Font Awesome)</label>
-                                            <input type="text" name="services[items][<?php echo $index; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>" placeholder="fas fa-mobile-alt">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Color Class</label>
-                                            <input type="text" name="services[items][<?php echo $index; ?>][colorClass]" value="<?php echo htmlspecialchars($item['colorClass'] ?? ''); ?>" placeholder="green">
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addService()">+ Add Service</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Industries -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🏭 Industries</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="industries_title">Industries Title</label>
-                        <input type="text" id="industries_title" name="industries[title]" value="<?php echo htmlspecialchars($jsonArray['industries']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="industries_subText">Sub Text</label>
-                        <textarea id="industries_subText" name="industries[subText]"><?php echo htmlspecialchars($jsonArray['industries']['subText'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Industry Items</label>
-                        <div id="industries-container">
-                            <?php foreach ($jsonArray['industries']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Industry #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>Name</label>
-                                            <input type="text" name="industries[items][<?php echo $index; ?>][name]" value="<?php echo htmlspecialchars($item['name'] ?? ''); ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Icon Class</label>
-                                            <input type="text" name="industries[items][<?php echo $index; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea name="industries[items][<?php echo $index; ?>][description]" rows="3"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Best Fit</label>
-                                        <input type="text" name="industries[items][<?php echo $index; ?>][bestFit]" value="<?php echo htmlspecialchars($item['bestFit'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Color (Hex)</label>
-                                        <input type="text" name="industries[items][<?php echo $index; ?>][color]" value="<?php echo htmlspecialchars($item['color'] ?? ''); ?>" placeholder="#e74c3c">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addIndustry()">+ Add Industry</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Trust -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🛡️ Trust & Governance</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="trust_title">Title</label>
-                        <input type="text" id="trust_title" name="trust[title]" value="<?php echo htmlspecialchars($jsonArray['trust']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label>Trust Items</label>
-                        <div id="trust-container">
-                            <?php foreach ($jsonArray['trust']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Item #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="trust[items][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addTrustItem()">+ Add Item</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Engagement -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🚀 Engagement Block</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="eng_title">Title</label>
-                        <input type="text" id="eng_title" name="engagement[title]" value="<?php echo htmlspecialchars($jsonArray['engagement']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="eng_subText">Sub Text</label>
-                        <input type="text" id="eng_subText" name="engagement[subText]" value="<?php echo htmlspecialchars($jsonArray['engagement']['subText'] ?? ''); ?>">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="eng_ctaText">CTA Text</label>
-                            <input type="text" id="eng_ctaText" name="engagement[ctaText]" value="<?php echo htmlspecialchars($jsonArray['engagement']['ctaText'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="eng_ctaLink">CTA Link</label>
-                            <input type="text" id="eng_ctaLink" name="engagement[ctaLink]" value="<?php echo htmlspecialchars($jsonArray['engagement']['ctaLink'] ?? ''); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Engagement Tiles</label>
-                        <div id="eng-container">
-                            <?php foreach ($jsonArray['engagement']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Tile #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Text</label>
-                                        <input type="text" name="engagement[items][<?php echo $index; ?>][text]" value="<?php echo htmlspecialchars($item['text'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>Link Text</label>
-                                            <input type="text" name="engagement[items][<?php echo $index; ?>][linkText]" value="<?php echo htmlspecialchars($item['linkText'] ?? ''); ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Link URL</label>
-                                            <input type="text" name="engagement[items][<?php echo $index; ?>][link]" value="<?php echo htmlspecialchars($item['link'] ?? ''); ?>">
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addEngItem()">+ Add Tile</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Images Management -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>🖼️ Image Management</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label>Logo Image</label>
-                        <div class="image-upload-wrapper">
-                            <input type="hidden" id="logo_image" value="logo.png">
-                            <div class="image-preview-container" id="logo_preview">
-                                <?php if (file_exists('assets/logo.png')): ?>
-                                    <img src="assets/logo.png" alt="Logo" class="image-preview">
-                                <?php else: ?>
-                                    <div class="image-placeholder">No image</div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="image-upload-controls">
-                                <input type="file" accept="image/*" class="image-file-input" data-target="logo_image" data-preview="logo_preview" data-filename="logo.png" onchange="handleImageUpload(this, 'logo.png')">
-                                <button type="button" class="btn btn-primary" onclick="this.previousElementSibling.click()">Upload Logo</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Software Image 1</label>
-                        <div class="image-upload-wrapper">
-                            <input type="hidden" id="software1_image" value="software1.jpg">
-                            <div class="image-preview-container" id="software1_preview">
-                                <?php if (file_exists('assets/software1.jpg')): ?>
-                                    <img src="assets/software1.jpg" alt="Software 1" class="image-preview">
-                                <?php else: ?>
-                                    <div class="image-placeholder">No image</div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="image-upload-controls">
-                                <input type="file" accept="image/*" class="image-file-input" data-target="software1_image" data-preview="software1_preview" data-filename="software1.jpg" onchange="handleImageUpload(this, 'software1.jpg')">
-                                <button type="button" class="btn btn-primary" onclick="this.previousElementSibling.click()">Upload Software 1</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Software Image 2</label>
-                        <div class="image-upload-wrapper">
-                            <input type="hidden" id="software2_image" value="software2.jpg">
-                            <div class="image-preview-container" id="software2_preview">
-                                <?php if (file_exists('assets/software2.jpg')): ?>
-                                    <img src="assets/software2.jpg" alt="Software 2" class="image-preview">
-                                <?php else: ?>
-                                    <div class="image-placeholder">No image</div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="image-upload-controls">
-                                <input type="file" accept="image/*" class="image-file-input" data-target="software2_image" data-preview="software2_preview" data-filename="software2.jpg" onchange="handleImageUpload(this, 'software2.jpg')">
-                                <button type="button" class="btn btn-primary" onclick="this.previousElementSibling.click()">Upload Software 2</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Case Studies -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📚 Case Studies</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="caseStudies_title">Case Studies Title</label>
-                        <input type="text" id="caseStudies_title" name="caseStudies[title]" value="<?php echo htmlspecialchars($jsonArray['caseStudies']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="caseStudies_subText">Sub Text</label>
-                        <textarea id="caseStudies_subText" name="caseStudies[subText]"><?php echo htmlspecialchars($jsonArray['caseStudies']['subText'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Case Study Items</label>
-                        <div id="caseStudies-container">
-                            <?php foreach ($jsonArray['caseStudies']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Case Study #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Title</label>
-                                        <input type="text" name="caseStudies[items][<?php echo $index; ?>][title]" value="<?php echo htmlspecialchars($item['title'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea name="caseStudies[items][<?php echo $index; ?>][description]"><?php echo htmlspecialchars($item['description'] ?? ''); ?></textarea>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>CTA Text</label>
-                                            <input type="text" name="caseStudies[items][<?php echo $index; ?>][ctaText]" value="<?php echo htmlspecialchars($item['ctaText'] ?? ''); ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Icon Class</label>
-                                            <input type="text" name="caseStudies[items][<?php echo $index; ?>][iconClass]" value="<?php echo htmlspecialchars($item['iconClass'] ?? ''); ?>">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Preview Text</label>
-                                        <input type="text" name="caseStudies[items][<?php echo $index; ?>][previewText]" value="<?php echo htmlspecialchars($item['previewText'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Key Features</label>
-                                        <div id="cs-features-container-<?php echo $index; ?>">
-                                            <?php foreach ($item['features'] ?? [] as $fIndex => $feature): ?>
-                                                <div class="array-item feature-item" style="padding: 10px; margin-bottom: 10px; background: #fff;">
-                                                    <div class="form-row" style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 10px;">
-                                                        <textarea name="caseStudies[items][<?php echo $index; ?>][features][<?php echo $fIndex; ?>]" rows="2" style="flex: 1;"><?php echo htmlspecialchars($feature); ?></textarea>
-                                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">×</button>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                        <button type="button" class="btn-add" style="padding: 6px 12px; font-size: 13px;" onclick="addCaseStudyFeature(<?php echo $index; ?>)">+ Add Feature</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Image File</label>
-                                        <div class="image-upload-wrapper">
-                                            <input type="hidden" name="caseStudies[items][<?php echo $index; ?>][image]" id="caseStudy_image_<?php echo $index; ?>" value="<?php echo htmlspecialchars($item['image'] ?? ''); ?>">
-                                            <div class="image-preview-container" id="caseStudy_preview_<?php echo $index; ?>">
-                                                <?php 
-                                                $currentImage = $item['image'] ?? '';
-                                                if ($currentImage): 
-                                                    $imagePath = 'assets/' . $currentImage;
-                                                    if (file_exists($imagePath)):
-                                                ?>
-                                                    <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Preview" class="image-preview">
-                                                <?php else: ?>
-                                                    <div class="image-placeholder">No image</div>
-                                                <?php endif; else: ?>
-                                                    <div class="image-placeholder">No image</div>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="image-upload-controls">
-                                                <input type="file" accept="image/*" class="image-file-input" data-target="caseStudy_image_<?php echo $index; ?>" data-preview="caseStudy_preview_<?php echo $index; ?>" onchange="handleImageUpload(this)">
-                                                <button type="button" class="btn btn-primary" onclick="this.previousElementSibling.click()">Choose Image</button>
-                                                <button type="button" class="btn btn-danger" onclick="removeImage('caseStudy_image_<?php echo $index; ?>', 'caseStudy_preview_<?php echo $index; ?>')">Remove</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="checkbox-group">
-                                            <input type="checkbox" name="caseStudies[items][<?php echo $index; ?>][reverseLayout]" value="1" <?php echo ($item['reverseLayout'] ?? false) ? 'checked' : ''; ?>>
-                                            <label>Reverse Layout</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addCaseStudy()">+ Add Case Study</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FAQ -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>❓ FAQ</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="faq_title">FAQ Title</label>
-                        <input type="text" id="faq_title" name="faq[title]" value="<?php echo htmlspecialchars($jsonArray['faq']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="faq_subText">Sub Text</label>
-                        <textarea id="faq_subText" name="faq[subText]"><?php echo htmlspecialchars($jsonArray['faq']['subText'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>FAQ Items</label>
-                        <div id="faq-container">
-                            <?php foreach ($jsonArray['faq']['items'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Item #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Question</label>
-                                        <input type="text" name="faq[items][<?php echo $index; ?>][question]" value="<?php echo htmlspecialchars($item['question'] ?? ''); ?>">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Answer (Use newlines for paragraphs, '•' for bullets)</label>
-                                        <textarea name="faq[items][<?php echo $index; ?>][answer]" style="min-height: 150px;"><?php echo htmlspecialchars($item['answer'] ?? ''); ?></textarea>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addFaqItem()">+ Add FAQ Item</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contact -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📞 Contact</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="contact_title">Contact Title</label>
-                        <input type="text" id="contact_title" name="contact[title]" value="<?php echo htmlspecialchars($jsonArray['contact']['title'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="contact_subText">Sub Text</label>
-                        <textarea id="contact_subText" name="contact[subText]"><?php echo htmlspecialchars($jsonArray['contact']['subText'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="contact_yearsExp">Years Experience</label>
-                            <input type="text" id="contact_yearsExp" name="contact[yearsExp]" value="<?php echo htmlspecialchars($jsonArray['contact']['yearsExp'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_yearsLabel">Years Label</label>
-                            <input type="text" id="contact_yearsLabel" name="contact[yearsLabel]" value="<?php echo htmlspecialchars($jsonArray['contact']['yearsLabel'] ?? ''); ?>">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="contact_successTitle">Success Title</label>
-                            <input type="text" id="contact_successTitle" name="contact[successTitle]" value="<?php echo htmlspecialchars($jsonArray['contact']['successTitle'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_successSubtitle">Success Subtitle</label>
-                            <input type="text" id="contact_successSubtitle" name="contact[successSubtitle]" value="<?php echo htmlspecialchars($jsonArray['contact']['successSubtitle'] ?? ''); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Company Sizes</label>
-                        <div id="contact-companySizes-container">
-                            <?php foreach ($jsonArray['contact']['companySizes'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Size #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[companySizes][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('companySizes')">+ Add Size</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Industries List</label>
-                        <div id="contact-industries-container">
-                            <?php foreach ($jsonArray['contact']['industries'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Industry #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[industries][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('industries')">+ Add Industry</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Next Steps</label>
-                        <div id="contact-nextSteps-container">
-                            <?php foreach ($jsonArray['contact']['nextSteps'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Step #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[nextSteps][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('nextSteps')">+ Add Step</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Products List</label>
-                        <div id="contact-products-container">
-                            <?php foreach ($jsonArray['contact']['products'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Product #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[products][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('products')">+ Add Product</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Trust Lines (Contact Form)</label>
-                        <div id="contact-trustLines-container">
-                            <?php foreach ($jsonArray['contact']['trustLines'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Line #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[trustLines][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('trustLines')">+ Add Trust Line</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>What Next Steps (Sidebar)</label>
-                        <div id="contact-whatNextSteps-container">
-                            <?php foreach ($jsonArray['contact']['whatNextSteps'] ?? [] as $index => $item): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Step #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="contact[whatNextSteps][<?php echo $index; ?>]" value="<?php echo htmlspecialchars($item); ?>">
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addContactItem('whatNextSteps')">+ Add Step</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Stats</label>
-                        <div id="stats-container">
-                            <?php foreach ($jsonArray['contact']['stats'] ?? [] as $index => $stat): ?>
-                                <div class="array-item" data-index="<?php echo $index; ?>">
-                                    <div class="array-item-header">
-                                        <span class="array-item-title">Stat #<?php echo $index + 1; ?></span>
-                                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label>Number</label>
-                                            <input type="text" name="contact[stats][<?php echo $index; ?>][number]" value="<?php echo htmlspecialchars($stat['number'] ?? ''); ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Label</label>
-                                            <input type="text" name="contact[stats][<?php echo $index; ?>][label]" value="<?php echo htmlspecialchars($stat['label'] ?? ''); ?>">
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addStat()">+ Add Stat</button>
-                    </div>
-                    <div class="form-group">
-                        <label>Form Labels</label>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Name Label</label>
-                                <input type="text" name="contact[formLabels][name]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['name'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Email Label</label>
-                                <input type="text" name="contact[formLabels][email]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['email'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Company Label</label>
-                                <input type="text" name="contact[formLabels][company]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['company'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Role Label</label>
-                                <input type="text" name="contact[formLabels][role]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['role'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Product Label</label>
-                                <input type="text" name="contact[formLabels][product]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['product'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Industry Label</label>
-                                <input type="text" name="contact[formLabels][industry]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['industry'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Company Size Label</label>
-                                <input type="text" name="contact[formLabels][companySize]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['companySize'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Country Label</label>
-                                <input type="text" name="contact[formLabels][country]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['country'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Bottleneck Label</label>
-                                <input type="text" name="contact[formLabels][bottleneck]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['bottleneck'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label>Next Step Label</label>
-                                <input type="text" name="contact[formLabels][nextStep]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['nextStep'] ?? ''); ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Message Label</label>
-                            <input type="text" name="contact[formLabels][message]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['message'] ?? ''); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label>Submit Button Label</label>
-                            <input type="text" name="contact[formLabels][submit]" value="<?php echo htmlspecialchars($jsonArray['contact']['formLabels']['submit'] ?? ''); ?>">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Social Media -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📱 Social Media</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Facebook URL</label>
-                            <input type="text" name="socialMedia[facebook]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['facebook'] ?? ''); ?>" placeholder="https://facebook.com/...">
-                        </div>
-                        <div class="form-group">
-                            <label>Twitter URL</label>
-                            <input type="text" name="socialMedia[twitter]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['twitter'] ?? ''); ?>" placeholder="https://twitter.com/...">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>LinkedIn URL</label>
-                            <input type="text" name="socialMedia[linkedin]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['linkedin'] ?? ''); ?>" placeholder="https://linkedin.com/...">
-                        </div>
-                        <div class="form-group">
-                            <label>Instagram URL</label>
-                            <input type="text" name="socialMedia[instagram]" value="<?php echo htmlspecialchars($jsonArray['socialMedia']['instagram'] ?? ''); ?>" placeholder="https://instagram.com/...">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Location -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📍 Location & Map</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" name="location[address]" value="<?php echo htmlspecialchars($jsonArray['location']['address'] ?? ''); ?>" placeholder="123 Tech Street">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" name="location[city]" value="<?php echo htmlspecialchars($jsonArray['location']['city'] ?? ''); ?>" placeholder="New York">
-                        </div>
-                        <div class="form-group">
-                            <label>Country</label>
-                            <input type="text" name="location[country]" value="<?php echo htmlspecialchars($jsonArray['location']['country'] ?? ''); ?>" placeholder="USA">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="text" name="location[latitude]" value="<?php echo htmlspecialchars($jsonArray['location']['latitude'] ?? ''); ?>" placeholder="40.7128">
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="text" name="location[longitude]" value="<?php echo htmlspecialchars($jsonArray['location']['longitude'] ?? ''); ?>" placeholder="-74.0060">
-                        </div>
-                    </div>
-                    <p style="font-size: 13px; color: #666; margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba;">
-                        💡 <strong>Tip:</strong> For the most accurate map, right-click a place on Google Maps, select the coordinates (e.g., 40.7128, -74.0060), and paste them above.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h2>📄 Footer</h2>
-                </div>
-                <div class="section-content">
-                    <div class="form-group">
-                        <label for="footer_copyright">Copyright Text</label>
-                        <input type="text" id="footer_copyright" name="footer[copyright]" value="<?php echo htmlspecialchars($jsonArray['footer']['copyright'] ?? ''); ?>">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Save Button -->
-            <div class="footer-actions">
-                <button type="submit" class="btn btn-success">💾 Save All Changes</button>
-            </div>
-        </form>
-    </div>
+        <div class="footer-actions">
+            <button type="submit" class="btn btn-success">💾 Save All Changes</button>
+        </div>
+    </form>
 
     <script>
+        // Sortable
+        const contentSections = document.getElementById('content-sections');
+        new Sortable(contentSections, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost'
+        });
+
+        // Accordion
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.section-header') && !e.target.closest('.btn-icon') && !e.target.closest('.toggle-wrapper') && !e.target.closest('.drag-handle')) {
+                const section = e.target.closest('.form-section');
+                section.classList.toggle('active');
+            }
+        });
+
+        function updateOrderInput() {
+            const order = [];
+            document.querySelectorAll('#content-sections .form-section').forEach(el => {
+                const id = el.id.replace('section-', '');
+                order.push(id);
+            });
+            document.getElementById('input-sectionOrder').value = JSON.stringify(order);
+        }
+
+        function renameSection(key) {
+            const labelSpan = document.querySelector(`#section-${key} .section-label`);
+            const currentLabel = labelSpan.textContent;
+            const newLabel = prompt("Enter new name for this section:", currentLabel);
+            if (newLabel && newLabel.trim() !== "") {
+                labelSpan.textContent = newLabel;
+                let input = document.getElementById(`label-${key}`);
+                if (!input) {
+                    input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = `sectionLabels[${key}]`;
+                    input.id = `label-${key}`;
+                    document.getElementById('labels-container').appendChild(input);
+                }
+                input.value = newLabel;
+            }
+        }
+
+        function removeSection(key) {
+            if (confirm("Are you sure you want to remove this section? It will move to the Restore list.")) {
+                const section = document.getElementById(`section-${key}`);
+                const store = document.getElementById('section-store');
+                const select = document.getElementById('add-section-select');
+                
+                store.appendChild(section);
+                
+                // Add to restore dropdown
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = section.querySelector('.section-label').textContent;
+                select.appendChild(opt);
+                
+                document.getElementById('restore-controls').style.display = 'block';
+            }
+        }
+
+        function restoreSection() {
+            const select = document.getElementById('add-section-select');
+            const key = select.value;
+            if (!key) return;
+            
+            const section = document.getElementById(`section-${key}`);
+            const container = document.getElementById('content-sections');
+            
+            if (section) {
+                container.appendChild(section);
+                section.classList.add('active');
+                select.querySelector(`option[value="${key}"]`).remove();
+                if (select.options.length <= 1) {
+                    document.getElementById('restore-controls').style.display = 'none';
+                }
+            }
+        }
+
+        function createNewSection() {
+            const id = prompt("Enter a unique ID for this section (e.g. 'team', 'news'):");
+            if (!id) return;
+            
+            // Validate ID (alphanumeric only)
+            const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
+            if (!cleanId) { alert("Invalid ID"); return; }
+            if (document.getElementById(`section-${cleanId}`)) { alert("ID already exists!"); return; }
+            
+            const title = prompt("Enter Section Title:", "New Section");
+            
+            // Create DOM elements for new custom section
+            const html = `
+            <div class="form-section content-section active" id="section-${cleanId}">
+                <div class="section-header">
+                    <h2><span class="drag-handle">☰</span> <span class="section-label">${title} (Custom)</span></h2>
+                    <div class="header-controls">
+                        <div class="toggle-wrapper" title="Enable/Disable Section">
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="${cleanId}[disabled]" value="1">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-label">Disabled</span>
+                        </div>
+                        <button type="button" class="btn-icon" onclick="renameSection('${cleanId}')" title="Rename">✏️</button>
+                        <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('${cleanId}')" title="Remove">🗑️</button>
+                    </div>
+                </div>
+                <div class="section-content" style="display:block">
+                    <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                    <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
+                    <div class="form-group"><label>Items</label>
+                        <div id="${cleanId}-container"></div>
+                        <button type="button" class="btn-add" onclick="addCustomItem('${cleanId}')">+ Add Item</button>
+                    </div>
+                </div>
+            </div>
+            `;
+            
+            document.getElementById('content-sections').insertAdjacentHTML('beforeend', html);
+            // Add label input
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = `sectionLabels[${cleanId}]`;
+            input.id = `label-${cleanId}`;
+            input.value = title;
+            document.getElementById('labels-container').appendChild(input);
+        }
+
+        function addCustomItem(sectionKey) {
+            // We need a unique index. Use timestamp or count items.
+            const container = document.getElementById(`${sectionKey}-container`);
+            const i = container.children.length + Math.floor(Math.random() * 1000);
+            
+            const html = `
+                <div class="array-item">
+                    <div class="array-item-header"><span>Item (New)</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div>
+                    <div class="form-group"><label>Item Title</label><input type="text" name="${sectionKey}[items][${i}][title]"></div>
+                    <div class="form-group"><label>Item Description</label><textarea name="${sectionKey}[items][${i}][description]"></textarea></div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Helpers
+        function removeArrayItem(btn) { if(confirm('Remove item?')) btn.closest('.array-item').remove(); }
+        let counters = {};
+        function getCount(key) { if(!counters[key]) counters[key]=100; return counters[key]++; }
+        
+        // Add functions for standard sections
+        function addNavLink() {
+            const i = getCount('nav');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Link</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-row"><div class="form-group"><label>Text</label><input type="text" name="header[navLinks][${i}][text]"></div><div class="form-group"><label>URL</label><input type="text" name="header[navLinks][${i}][href]"></div></div></div>`;
+            document.getElementById('navLinks-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addService() {
+             const i = getCount('services');
+             const html = `<div class="array-item"><div class="array-item-header"><span>Service</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><label>Title</label><input type="text" name="services[items][${i}][title]"></div><div class="form-group"><label>Description</label><textarea name="services[items][${i}][description]"></textarea></div><div class="form-row"><div class="form-group"><label>Icon</label><input type="text" name="services[items][${i}][iconClass]"></div><div class="form-group"><label>Color Class</label><input type="text" name="services[items][${i}][colorClass]"></div></div></div>`;
+            document.getElementById('services-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addIndustry() {
+            const i = getCount('ind');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Industry</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-row"><div class="form-group"><label>Name</label><input type="text" name="industries[items][${i}][name]"></div><div class="form-group"><label>Icon</label><input type="text" name="industries[items][${i}][iconClass]"></div></div><div class="form-group"><label>Description</label><textarea name="industries[items][${i}][description]"></textarea></div><div class="form-group"><label>Best Fit</label><input type="text" name="industries[items][${i}][bestFit]"></div><div class="form-group"><label>Color</label><input type="text" name="industries[items][${i}][color]"></div></div>`;
+            document.getElementById('industries-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addTrustItem() {
+            const i = getCount('trust');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Item</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><input type="text" name="trust[items][${i}]"></div></div>`;
+            document.getElementById('trust-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addCaseStudy() {
+            const i = getCount('cs');
+            const html = `<div class="array-item"><div class="array-item-header"><span>CS</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><label>Title</label><input type="text" name="caseStudies[items][${i}][title]"></div><div class="form-group"><label>Description</label><textarea name="caseStudies[items][${i}][description]"></textarea></div><div class="form-row"><div class="form-group"><label>CTA Text</label><input type="text" name="caseStudies[items][${i}][ctaText]"></div><div class="form-group"><label>Icon</label><input type="text" name="caseStudies[items][${i}][iconClass]"></div></div><div class="form-group"><label>Preview Text</label><input type="text" name="caseStudies[items][${i}][previewText]"></div><div class="form-group"><label>Features</label><div id="cs-features-container-${i}"></div><button type="button" class="btn-add" onclick="addCaseStudyFeature(${i})">+ Add Feature</button></div><div class="form-group"><div class="checkbox-group"><input type="checkbox" name="caseStudies[items][${i}][reverseLayout]" value="1"><label>Reverse Layout</label></div></div></div>`;
+            document.getElementById('caseStudies-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addCaseStudyFeature(csI) {
+            const fI = getCount('csf');
+            const html = `<div class="array-item" style="padding:5px"><div class="form-row" style="margin:0"><textarea name="caseStudies[items][${csI}][features][${fI}]" rows="1" style="flex:1"></textarea><button type="button" class="btn-remove" onclick="removeArrayItem(this)">x</button></div></div>`;
+            document.getElementById(`cs-features-container-${csI}`).insertAdjacentHTML('beforeend', html);
+        }
+        function addEngItem() {
+            const i = getCount('eng');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Tile</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><label>Text</label><input type="text" name="engagement[items][${i}][text]"></div><div class="form-row"><div class="form-group"><label>Link Text</label><input type="text" name="engagement[items][${i}][linkText]"></div><div class="form-group"><label>URL</label><input type="text" name="engagement[items][${i}][link]"></div></div></div>`;
+            document.getElementById('eng-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addFaqItem() {
+            const i = getCount('faq');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Item</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><label>Question</label><input type="text" name="faq[items][${i}][question]"></div><div class="form-group"><label>Answer</label><textarea name="faq[items][${i}][answer]"></textarea></div></div>`;
+            document.getElementById('faq-container').insertAdjacentHTML('beforeend', html);
+        }
+        function addPrinciple() {
+            const i = getCount('principles');
+            const html = `<div class="array-item"><div class="array-item-header"><span>Principle</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-group"><input type="text" name="about[principles][${i}]"></div></div>`;
+            document.getElementById('about-principles-container').insertAdjacentHTML('beforeend', html);
+        }
+        
         function openHistory(e) {
             e.preventDefault();
             const historyWindow = window.open('', 'DataHistory', 'width=600,height=800,scrollbars=yes');
-            
-            const content = `
-                <html>
-                <head>
-                    <title>Data Changes History<\/title>
-                    <style>
-                        body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; background: #f5f7fa; }
-                        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
-                        table { width: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-collapse: collapse; overflow: hidden; }
-                        th { background: #f8f9fa; padding: 12px 15px; text-align: left; border-bottom: 2px solid #e9ecef; color: #555; }
-                        td { padding: 10px 15px; border-bottom: 1px solid #eee; color: #333; }
-                        tr:last-child td { border-bottom: none; }
-                        tr:hover { background: #f8f9fa; }
-                        .filename { font-family: monospace; color: #666; }
-                    <\/style>
-                <\/head>
-                <body>
-                    <h1>📜 Data Changes History<\/h1>
-                    <?php if (empty($changeFiles)): ?>
-                        <p>No history found.<\/p>
-                    <?php else: ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date & Time<\/th>
-                                    <th>Filename<\/th>
-                                </tr>
-                            <\/thead>
-                            <tbody>
-                                <?php foreach ($changeFiles as $file): 
-                                    $displayDate = 'Unknown';
-                                    if (preg_match('/data_(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})\.json/', $file, $matches)) {
-                                        $date = $matches[1];
-                                        $time = str_replace('-', ':', $matches[2]);
-                                        $displayDate = date('M d, Y H:i:s', strtotime("$date $time"));
-                                    }
-                                ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($displayDate); ?><\/td>
-                                        <td class="filename"><?php echo htmlspecialchars($file); ?><\/td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <\/tbody>
-                        <\/table>
-                    <?php endif; ?>
-                <\/body>
-                <\/html>
-            `;
-            
+            const content = `<html><head><title>History</title><style>body{font-family:sans-serif;padding:20px;background:#f5f7fa}table{width:100%;background:white;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}</style></head><body><h1>Data Changes</h1><?php if(empty($changeFiles)): ?><p>No history.</p><?php else: ?><table><thead><tr><th>Date</th><th>File</th></tr></thead><tbody><?php foreach($changeFiles as $f): ?><tr><td><?php echo $f; ?></td><td><?php echo $f; ?></td></tr><?php endforeach; ?></tbody></table><?php endif; ?></body></html>`;
             historyWindow.document.write(content);
             historyWindow.document.close();
         }
 
-        // Accordion functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const sectionHeaders = document.querySelectorAll('.section-header');
-            
-            sectionHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    const section = this.parentElement;
-                    
-                    // Close all other sections
-                    document.querySelectorAll('.form-section').forEach(s => {
-                        if (s !== section) {
-                            s.classList.remove('active');
-                        }
-                    });
-
-                    // Toggle current section
-                    section.classList.toggle('active');
-
-                    // Scroll to section if it's being opened
-                    if (section.classList.contains('active')) {
-                        setTimeout(() => {
-                            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 300);
-                    }
-                });
-            });
-
-            // Open first section by default
-            // const firstSection = document.querySelector('.form-section');
-            // if (firstSection) firstSection.classList.add('active');
-        });
-
-        let navLinkIndex = <?php echo count($jsonArray['header']['navLinks'] ?? []); ?>;
-        let aboutPrincipleIndex = <?php echo count($jsonArray['about']['principles'] ?? []); ?>;
-        let serviceIndex = <?php echo count($jsonArray['services']['items'] ?? []); ?>;
-        let industryIndex = <?php echo count($jsonArray['industries']['items'] ?? []); ?>;
-        let trustIndex = <?php echo count($jsonArray['trust']['items'] ?? []); ?>;
-        let engIndex = <?php echo count($jsonArray['engagement']['items'] ?? []); ?>;
-        let caseStudyIndex = <?php echo count($jsonArray['caseStudies']['items'] ?? []); ?>;
-        let statIndex = <?php echo count($jsonArray['contact']['stats'] ?? []); ?>;
-        let faqIndex = <?php echo count($jsonArray['faq']['items'] ?? []); ?>;
-        
-        let contactCompanySizesIndex = <?php echo count($jsonArray['contact']['companySizes'] ?? []); ?>;
-        let contactIndustriesIndex = <?php echo count($jsonArray['contact']['industries'] ?? []); ?>;
-        let contactNextStepsIndex = <?php echo count($jsonArray['contact']['nextSteps'] ?? []); ?>;
-        let contactProductsIndex = <?php echo count($jsonArray['contact']['products'] ?? []); ?>;
-        let contactTrustLinesIndex = <?php echo count($jsonArray['contact']['trustLines'] ?? []); ?>;
-        let contactWhatNextStepsIndex = <?php echo count($jsonArray['contact']['whatNextSteps'] ?? []); ?>;
-
-        function removeArrayItem(btn) {
-            if (confirm('Are you sure you want to remove this item?')) {
-                btn.closest('.array-item').remove();
-            }
-        }
-
-        function addNavLink() {
-            const container = document.getElementById('navLinks-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Link #${navLinkIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Link Text</label>
-                        <input type="text" name="header[navLinks][${navLinkIndex}][text]" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Link URL</label>
-                        <input type="text" name="header[navLinks][${navLinkIndex}][href]" value="">
-                    </div>
-                </div>
-            `;
-            container.appendChild(item);
-            navLinkIndex++;
-        }
-
-        function addPrinciple() {
-            const container = document.getElementById('about-principles-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Principle #${aboutPrincipleIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="about[principles][${aboutPrincipleIndex}]" value="">
-                </div>
-            `;
-            container.appendChild(item);
-            aboutPrincipleIndex++;
-        }
-
-        function addService() {
-            const container = document.getElementById('services-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Service #${serviceIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" name="services[items][${serviceIndex}][title]" value="">
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="services[items][${serviceIndex}][description]"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Icon Class (Font Awesome)</label>
-                        <input type="text" name="services[items][${serviceIndex}][iconClass]" value="" placeholder="fas fa-mobile-alt">
-                    </div>
-                    <div class="form-group">
-                        <label>Color Class</label>
-                        <input type="text" name="services[items][${serviceIndex}][colorClass]" value="" placeholder="green">
-                    </div>
-                </div>
-            `;
-            container.appendChild(item);
-            serviceIndex++;
-        }
-
-        function addIndustry() {
-            const container = document.getElementById('industries-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Industry #${industryIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="industries[items][${industryIndex}][name]" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Icon Class</label>
-                        <input type="text" name="industries[items][${industryIndex}][iconClass]" value="">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Color (Hex)</label>
-                    <input type="text" name="industries[items][${industryIndex}][color]" value="" placeholder="#e74c3c">
-                </div>
-            `;
-            container.appendChild(item);
-            industryIndex++;
-        }
-
-        function addCaseStudyFeature(csIndex) {
-            const container = document.getElementById(`cs-features-container-${csIndex}`);
-            const featureIndex = container.children.length;
-            const item = document.createElement('div');
-            item.className = 'array-item feature-item';
-            item.style.cssText = 'padding: 10px; margin-bottom: 10px; background: #fff;';
-            
-            item.innerHTML = `
-                <div class="form-row" style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 10px;">
-                    <textarea name="caseStudies[items][${csIndex}][features][${featureIndex}]" rows="2" style="flex: 1;"></textarea>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">×</button>
-                </div>
-            `;
-            container.appendChild(item);
-        }
-
-        function addTrustItem() {
-            const container = document.getElementById('trust-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Item #${trustIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="trust[items][${trustIndex}]" value="">
-                </div>
-            `;
-            container.appendChild(item);
-            trustIndex++;
-        }
-
-        function addEngItem() {
-            const container = document.getElementById('eng-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Tile #${engIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <label>Text</label>
-                    <input type="text" name="engagement[items][${engIndex}][text]" value="">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Link Text</label>
-                        <input type="text" name="engagement[items][${engIndex}][linkText]" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Link URL</label>
-                        <input type="text" name="engagement[items][${engIndex}][link]" value="">
-                    </div>
-                </div>
-            `;
-            container.appendChild(item);
-            engIndex++;
-        }
-
-        function addCaseStudy() {
-            const container = document.getElementById('caseStudies-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            const imageId = `caseStudy_image_${caseStudyIndex}`;
-            const previewId = `caseStudy_preview_${caseStudyIndex}`;
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Case Study #${caseStudyIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" name="caseStudies[items][${caseStudyIndex}][title]" value="">
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="caseStudies[items][${caseStudyIndex}][description]"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>CTA Text</label>
-                        <input type="text" name="caseStudies[items][${caseStudyIndex}][ctaText]" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Icon Class</label>
-                        <input type="text" name="caseStudies[items][${caseStudyIndex}][iconClass]" value="">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Preview Text</label>
-                    <input type="text" name="caseStudies[items][${caseStudyIndex}][previewText]" value="">
-                </div>
-                <div class="form-group">
-                    <label>Key Features</label>
-                    <div id="cs-features-container-${caseStudyIndex}"></div>
-                    <button type="button" class="btn-add" style="padding: 6px 12px; font-size: 13px;" onclick="addCaseStudyFeature(${caseStudyIndex})">+ Add Feature</button>
-                </div>
-                <div class="form-group">
-                    <label>Image File</label>
-                    <div class="image-upload-wrapper">
-                        <input type="hidden" name="caseStudies[items][${caseStudyIndex}][image]" id="${imageId}" value="">
-                        <div class="image-preview-container" id="${previewId}">
-                            <div class="image-placeholder">No image</div>
-                        </div>
-                        <div class="image-upload-controls">
-                            <input type="file" accept="image/*" class="image-file-input" data-target="${imageId}" data-preview="${previewId}" onchange="handleImageUpload(this)">
-                            <button type="button" class="btn btn-primary" onclick="this.previousElementSibling.click()">Choose Image</button>
-                            <button type="button" class="btn btn-danger" onclick="removeImage('${imageId}', '${previewId}')">Remove</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" name="caseStudies[items][${caseStudyIndex}][reverseLayout]" value="1">
-                        <label>Reverse Layout</label>
-                    </div>
-                </div>
-            `;
-            container.appendChild(item);
-            caseStudyIndex++;
-        }
-
-        function addStat() {
-            const container = document.getElementById('stats-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Stat #${statIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Number</label>
-                        <input type="text" name="contact[stats][${statIndex}][number]" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Label</label>
-                        <input type="text" name="contact[stats][${statIndex}][label]" value="">
-                    </div>
-                </div>
-            `;
-            container.appendChild(item);
-            statIndex++;
-        }
-
-        function addContactItem(type) {
-            let index, containerId, label;
-            if (type === 'companySizes') {
-                index = contactCompanySizesIndex++;
-                containerId = 'contact-companySizes-container';
-                label = 'Size';
-            } else if (type === 'industries') {
-                index = contactIndustriesIndex++;
-                containerId = 'contact-industries-container';
-                label = 'Industry';
-            } else if (type === 'nextSteps') {
-                index = contactNextStepsIndex++;
-                containerId = 'contact-nextSteps-container';
-                label = 'Step';
-            } else if (type === 'products') {
-                index = contactProductsIndex++;
-                containerId = 'contact-products-container';
-                label = 'Product';
-            } else if (type === 'trustLines') {
-                index = contactTrustLinesIndex++;
-                containerId = 'contact-trustLines-container';
-                label = 'Line';
-            } else if (type === 'whatNextSteps') {
-                index = contactWhatNextStepsIndex++;
-                containerId = 'contact-whatNextSteps-container';
-                label = 'Step';
-            }
-
-            const container = document.getElementById(containerId);
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">${label} #${index + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="contact[${type}][${index}]" value="">
-                </div>
-            `;
-            container.appendChild(item);
-        }
-
-        function addFaqItem() {
-            const container = document.getElementById('faq-container');
-            const item = document.createElement('div');
-            item.className = 'array-item';
-            item.innerHTML = `
-                <div class="array-item-header">
-                    <span class="array-item-title">Item #${faqIndex + 1}</span>
-                    <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
-                </div>
-                <div class="form-group">
-                    <label>Question</label>
-                    <input type="text" name="faq[items][${faqIndex}][question]" value="">
-                </div>
-                <div class="form-group">
-                    <label>Answer (Use newlines for paragraphs, '•' for bullets)</label>
-                    <textarea name="faq[items][${faqIndex}][answer]" style="min-height: 150px;"></textarea>
-                </div>
-            `;
-            container.appendChild(item);
-            faqIndex++;
-        }
-
         document.getElementById('editor-form').addEventListener('submit', async function(e) {
             e.preventDefault();
+            updateOrderInput();
             
             const formData = new FormData(this);
             const data = {};
             
-            // Helper function to set nested value with proper array handling
+            // Nested object creation
             function setNestedValue(obj, keys, value) {
                 let current = obj;
                 for (let i = 0; i < keys.length - 1; i++) {
                     const key = keys[i];
                     const nextKey = keys[i + 1];
-                    
-                    // Determine if next key is numeric (array index)
                     const isNextNumeric = !isNaN(nextKey) && nextKey !== '';
-                    
-                    if (!current[key]) {
-                        current[key] = isNextNumeric ? [] : {};
-                    }
+                    if (!current[key]) current[key] = isNextNumeric ? [] : {};
                     current = current[key];
                 }
-                
                 const lastKey = keys[keys.length - 1];
-                if (lastKey === 'reverseLayout') {
-                    current[lastKey] = value === '1';
-                } else {
-                    current[lastKey] = value;
+                
+                // Boolean checks
+                if (lastKey === 'reverseLayout' || lastKey === 'disabled') {
+                    // Checkbox value '1' sent if checked. 
+                    // However, we need to handle UNCHECKED disabled (false).
+                    // The easiest way is: if data.disabled is not set by this loop, it means it's unchecked (false).
+                    // But we are constructing 'data' from scratch.
+                    // So we only set true if value is present. Default undefined means false essentially.
+                    current[lastKey] = (value === '1');
+                } else if (lastKey === 'sectionOrder' && typeof value === 'string') {
+                     try { current[lastKey] = JSON.parse(value); } catch(e) { current[lastKey] = []; }
                 }
+                else current[lastKey] = value;
             }
-            
-            // Convert FormData to nested object
+
             for (let [key, value] of formData.entries()) {
-                if (key === 'key') continue; // Skip the key field
-                // Parse bracket notation: "header[navLinks][0][text]" -> ["header", "navLinks", "0", "text"]
+                if (key === 'key') continue;
                 const keys = key.split(/[\[\]]/).filter(k => k !== '');
                 setNestedValue(data, keys, value);
             }
-
-            // Clean up arrays - convert sparse arrays to dense arrays
+            
+            // Ensure 'disabled' property exists as false for all sections if not checked
+            // We iterate known sections in data and set disabled=false if missing
+            // Actually, if we just don't set it, it's undefined. In PHP/JS checks, undefined is falsy.
+            // But let's be explicit if needed.
+            
+            // Clean arrays
             function cleanArrays(obj) {
                 for (let key in obj) {
                     if (Array.isArray(obj[key])) {
-                        // Convert sparse array to dense array
-                        const arr = [];
-                        for (let i = 0; i < obj[key].length; i++) {
-                            if (obj[key][i] !== undefined && obj[key][i] !== null) {
-                                arr.push(obj[key][i]);
-                            }
-                        }
-                        // Recursively clean nested objects in arrays
-                        arr.forEach(item => {
-                            if (typeof item === 'object' && item !== null) {
-                                cleanArrays(item);
-                            }
-                        });
-                        obj[key] = arr;
+                        obj[key] = obj[key].filter(item => item !== undefined && item !== null);
+                        obj[key].forEach(item => { if (typeof item === 'object') cleanArrays(item); });
                     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
                         cleanArrays(obj[key]);
                     }
@@ -1818,124 +944,24 @@ if (is_dir($changesDir)) {
             }
             cleanArrays(data);
 
-            const statusMsg = document.getElementById('status-message');
-            statusMsg.style.display = 'block';
-            statusMsg.className = 'status-message';
-            statusMsg.textContent = 'Saving...';
+            Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading() });
 
             try {
                 const response = await fetch('save_json.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        data: JSON.stringify(data, null, 2)
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: JSON.stringify(data, null, 2) })
                 });
-
                 const result = await response.json();
-
                 if (result.success) {
-                    statusMsg.className = 'status-message success';
-                    statusMsg.textContent = '✓ Changes saved successfully!';
-                    setTimeout(() => {
-                        statusMsg.style.display = 'none';
-                    }, 3000);
+                    Swal.fire({ icon: 'success', title: 'Saved!', timer: 1500, showConfirmButton: false });
                 } else {
-                    statusMsg.className = 'status-message error';
-                    statusMsg.textContent = 'Error: ' + (result.error || 'Failed to save');
+                    throw new Error(result.error);
                 }
             } catch (e) {
-                statusMsg.className = 'status-message error';
-                statusMsg.textContent = 'Error: ' + e.message;
+                Swal.fire({ icon: 'error', title: 'Error', text: e.message });
             }
         });
-
-        // Image upload handler
-        async function handleImageUpload(input, fixedFilename = null) {
-            const file = input.files[0];
-            if (!file) return;
-
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file');
-                return;
-            }
-
-            // Validate file size (10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                alert('File size must be less than 10MB');
-                return;
-            }
-
-            const targetInput = document.getElementById(input.dataset.target);
-            const previewId = input.dataset.preview;
-            const previewContainer = document.getElementById(previewId) || input.closest('.image-upload-wrapper').querySelector('.image-preview-container');
-
-            // Show loading state
-            previewContainer.innerHTML = '<div class="image-placeholder">Uploading...</div>';
-
-            const formData = new FormData();
-            formData.append('image', file);
-            if (fixedFilename) {
-                formData.append('fixedFilename', fixedFilename);
-            }
-
-            try {
-                const response = await fetch('upload_image.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    const imageUrl = fixedFilename ? `assets/${fixedFilename}` : result.url;
-                    const imageName = fixedFilename || result.filename;
-                    
-                    // Update hidden input
-                    if (targetInput) {
-                        targetInput.value = imageName;
-                    }
-
-                    // Update preview
-                    previewContainer.innerHTML = `<img src="${imageUrl}?t=${Date.now()}" alt="Preview" class="image-preview" id="${previewId}">`;
-                    
-                    showStatus('Image uploaded successfully!', 'success');
-                } else {
-                    previewContainer.innerHTML = '<div class="image-placeholder">Upload failed</div>';
-                    showStatus('Error: ' + (result.error || 'Upload failed'), 'error');
-                }
-            } catch (e) {
-                previewContainer.innerHTML = '<div class="image-placeholder">Upload failed</div>';
-                showStatus('Error: ' + e.message, 'error');
-            }
-        }
-
-        function removeImage(inputId, previewId) {
-            if (confirm('Are you sure you want to remove this image?')) {
-                const input = document.getElementById(inputId);
-                const previewContainer = document.getElementById(previewId) || input.closest('.image-upload-wrapper').querySelector('.image-preview-container');
-                
-                if (input) {
-                    input.value = '';
-                }
-                if (previewContainer) {
-                    previewContainer.innerHTML = '<div class="image-placeholder">No image</div>';
-                }
-            }
-        }
-
-        function showStatus(message, type) {
-            const statusMsg = document.getElementById('status-message');
-            statusMsg.textContent = message;
-            statusMsg.className = 'status-message ' + type;
-            statusMsg.style.display = 'block';
-            setTimeout(() => {
-                statusMsg.style.display = 'none';
-            }, 3000);
-        }
     </script>
 </body>
 </html>
