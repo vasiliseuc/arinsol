@@ -109,6 +109,9 @@ foreach ($customKeys as $k) {
     }
 }
 
+// Calculate Available Keys for Restore Logic (Standard keys not in current order)
+$availableKeys = array_diff($defaultContentKeys, $currentOrder);
+
 // SECTION LABELS
 $sectionLabels = $jsonArray['sectionLabels'] ?? [];
 function getLabel($key, $default) {
@@ -193,12 +196,26 @@ ob_start(); ?>
 </div>
 <?php $renderedSections['header'] = ob_get_clean();
 
+// MERGE ALL KEYS TO RENDER
+// We need to render ALL standard keys (even if removed/not in order) + any custom keys in order
+$keysToRender = array_unique(array_merge($currentOrder, $defaultContentKeys));
+
 // --- CONTENT SECTIONS ---
-foreach ($currentOrder as $key) {
-    if (!isset($jsonArray[$key])) continue; // Skip if no data
+foreach ($keysToRender as $key) {
+    // If it's a standard key, we always want to render it (either in main list or hidden store)
+    // If it's a custom key, it must exist in jsonArray to be rendered
+    
+    // For standard keys, data might be missing if it was "deleted" from data.json manually or empty. 
+    // But we usually want to render the form with empty values then.
+    // However, the previous logic checked: if (!isset($jsonArray[$key])) continue;
+    
+    // If it's a standard key and data is missing, we should probably initialize it with defaults so it can be restored.
+    $data = $jsonArray[$key] ?? []; 
+    
+    // If it's a CUSTOM key and data is missing, we skip it (it's properly deleted).
+    if (!in_array($key, $defaultContentKeys) && !isset($jsonArray[$key])) continue;
     
     ob_start();
-    $data = $jsonArray[$key];
     $label = getLabel($key, ucfirst($key));
     
     // Check if Standard or Custom
@@ -555,12 +572,23 @@ ob_start(); ?>
         .btn-add:hover { background: #dbeafe; border-color: #93c5fd; }
         
         .btn-remove { 
-            background: transparent; 
-            color: #ef4444; 
-            padding: 2px 6px; 
-            font-size: 0.75rem; 
+            background: #fff5f5; 
+            color: #dc2626; 
+            padding: 4px 10px; 
+            font-size: 0.7rem; 
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            transition: all 0.2s;
         }
-        .btn-remove:hover { background: #fee2e2; border-radius: 2px; }
+        .btn-remove:hover { 
+            background: #fee2e2; 
+            color: #b91c1c;
+            border-color: #fca5a5;
+            box-shadow: 0 1px 2px rgba(220, 38, 38, 0.1);
+        }
         
         /* Header Controls */
         .header-controls { display: flex; align-items: center; gap: 8px; }
@@ -603,6 +631,11 @@ ob_start(); ?>
         
         /* Image Preview */
         .image-preview-container { text-align: center; padding: 10px; background: #f9fafb; border-radius: 4px; border: 1px solid #e5e7eb; margin-bottom: 8px; }
+        
+        /* Hide delete and restore UI elements for now */
+        .btn-remove-section { display: none !important; }
+        #restore-controls { display: none !important; }
+        #add-section-container h4:first-child { display: none; } /* "Restore Removed Section" header */
     </style>
 </head>
 <body>
@@ -712,43 +745,116 @@ ob_start(); ?>
         function renameSection(key) {
             const labelSpan = document.querySelector(`#section-${key} .section-label`);
             const currentLabel = labelSpan.textContent;
-            const newLabel = prompt("Enter new name for this section:", currentLabel);
-            if (newLabel && newLabel.trim() !== "") {
-                labelSpan.textContent = newLabel;
-                let input = document.getElementById(`label-${key}`);
-                if (!input) {
-                    input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = `sectionLabels[${key}]`;
-                    input.id = `label-${key}`;
-                    document.getElementById('labels-container').appendChild(input);
+            
+            Swal.fire({
+                title: 'Rename Section',
+                input: 'text',
+                inputValue: currentLabel,
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value || value.trim() === '') {
+                        return 'You need to write something!';
+                    }
                 }
-                input.value = newLabel;
-            }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const newLabel = result.value;
+                    labelSpan.textContent = newLabel;
+                    let input = document.getElementById(`label-${key}`);
+                    if (!input) {
+                        input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `sectionLabels[${key}]`;
+                        input.id = `label-${key}`;
+                        document.getElementById('labels-container').appendChild(input);
+                    }
+                    input.value = newLabel;
+                }
+            });
         }
 
+        // List of standard section keys (synced with PHP)
+        const standardSectionKeys = <?php echo json_encode($defaultContentKeys); ?>;
+        
         function removeSection(key) {
-            if (confirm("Are you sure you want to remove this section? It will move to the Restore list.")) {
-                const section = document.getElementById(`section-${key}`);
-                const store = document.getElementById('section-store');
-                const select = document.getElementById('add-section-select');
-                
-                store.appendChild(section);
-                
-                // Add to restore dropdown
-                const opt = document.createElement('option');
-                opt.value = key;
-                opt.textContent = section.querySelector('.section-label').textContent;
-                select.appendChild(opt);
-                
-                document.getElementById('restore-controls').style.display = 'block';
+            const isStandard = standardSectionKeys.includes(key);
+            const section = document.getElementById(`section-${key}`);
+            
+            if (!section) {
+                Swal.fire('Error', 'Section element not found.', 'error');
+                return;
+            }
+            
+            if (isStandard) {
+                // Standard Section: Move to restore list
+                Swal.fire({
+                    title: 'Remove Section?',
+                    text: "Remove this section from the page? You can restore it later.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, remove it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const store = document.getElementById('section-store');
+                        const select = document.getElementById('add-section-select');
+                        
+                        // Move inputs to hidden store so they are preserved (not deleted)
+                        store.appendChild(section);
+                        section.classList.remove('active');
+                        
+                        // Add to restore dropdown
+                        const opt = document.createElement('option');
+                        opt.value = key;
+                        opt.textContent = section.querySelector('.section-label').textContent;
+                        select.appendChild(opt);
+                        
+                        document.getElementById('restore-controls').style.display = 'block';
+                    }
+                });
+            } else {
+                // Custom Section: Permanently delete
+                Swal.fire({
+                    title: 'Permanently Delete?',
+                    text: "This cannot be undone after saving.",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 1. Remove all inputs inside the section to ensure they are not submitted
+                        const inputs = section.querySelectorAll('input, textarea, select');
+                        inputs.forEach(input => input.disabled = true);
+                        
+                        // 2. Remove the section DOM entirely
+                        section.remove();
+                        
+                        // 3. Remove label hidden input if exists
+                        const labelInput = document.getElementById(`label-${key}`);
+                        if (labelInput) labelInput.remove();
+                        
+                        // 4. Add a marker to track deleted custom sections (explicitly for JS handler)
+                        const deletedInput = document.createElement('input');
+                        deletedInput.type = 'hidden';
+                        deletedInput.name = `_deletedSections[]`;
+                        deletedInput.value = key;
+                        document.getElementById('labels-container').appendChild(deletedInput);
+                    }
+                });
             }
         }
 
         function restoreSection() {
             const select = document.getElementById('add-section-select');
             const key = select.value;
-            if (!key) return;
+            
+            if (!key) {
+                Swal.fire('Wait', 'Please select a section to restore.', 'info');
+                return;
+            }
             
             const section = document.getElementById(`section-${key}`);
             const container = document.getElementById('content-sections');
@@ -756,60 +862,92 @@ ob_start(); ?>
             if (section) {
                 container.appendChild(section);
                 section.classList.add('active');
-                select.querySelector(`option[value="${key}"]`).remove();
+                
+                // Remove option robustly
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === key) {
+                        select.remove(i);
+                        break;
+                    }
+                }
+                
+                // Reset selection
+                select.value = "";
+                
                 if (select.options.length <= 1) {
                     document.getElementById('restore-controls').style.display = 'none';
                 }
+            } else {
+                Swal.fire('Error', 'Section data not found in page. Please reload.', 'error');
             }
         }
 
         function createNewSection() {
-            const id = prompt("Enter a unique ID for this section (e.g. 'team', 'news'):");
-            if (!id) return;
-            
-            // Validate ID (alphanumeric only)
-            const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
-            if (!cleanId) { alert("Invalid ID"); return; }
-            if (document.getElementById(`section-${cleanId}`)) { alert("ID already exists!"); return; }
-            
-            const title = prompt("Enter Section Title:", "New Section");
-            
-            // Create DOM elements for new custom section
-            const html = `
-            <div class="form-section content-section active" id="section-${cleanId}">
-                <div class="section-header">
-                    <h2><span class="drag-handle">☰</span> <span class="section-label">${title} (Custom)</span></h2>
-                    <div class="header-controls">
-                        <div class="toggle-wrapper" title="Enable/Disable Section">
-                            <label class="toggle-switch">
-                                <input type="checkbox" name="${cleanId}[disabled]" value="1">
-                                <span class="slider"></span>
-                            </label>
-                            <span class="toggle-label">Disabled</span>
-                        </div>
-                        <button type="button" class="btn-icon" onclick="renameSection('${cleanId}')" title="Rename">✏️</button>
-                        <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('${cleanId}')" title="Remove">🗑️</button>
-                    </div>
-                </div>
-                <div class="section-content" style="display:block">
-                    <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
-                    <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
-                    <div class="form-group"><label>Items</label>
-                        <div id="${cleanId}-container"></div>
-                        <button type="button" class="btn-add" onclick="addCustomItem('${cleanId}')">+ Add Item</button>
-                    </div>
-                </div>
-            </div>
-            `;
-            
-            document.getElementById('content-sections').insertAdjacentHTML('beforeend', html);
-            // Add label input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = `sectionLabels[${cleanId}]`;
-            input.id = `label-${cleanId}`;
-            input.value = title;
-            document.getElementById('labels-container').appendChild(input);
+            Swal.fire({
+                title: 'New Section ID',
+                input: 'text',
+                text: 'Enter a unique ID (e.g. "team", "news")',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) return 'You need to write something!';
+                    const cleanId = value.replace(/[^a-zA-Z0-9]/g, '');
+                    if (!cleanId) return 'Invalid ID (alphanumeric only)';
+                    if (document.getElementById(`section-${cleanId}`)) return 'ID already exists!';
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const id = result.value;
+                    const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
+                    
+                    Swal.fire({
+                        title: 'Section Title',
+                        input: 'text',
+                        inputValue: 'New Section',
+                        text: 'Enter display title:'
+                    }).then((titleResult) => {
+                        if (titleResult.isConfirmed) {
+                            const title = titleResult.value || 'New Section';
+                            
+                            // Create DOM elements for new custom section
+                            const html = `
+                            <div class="form-section content-section active" id="section-${cleanId}">
+                                <div class="section-header">
+                                    <h2><span class="drag-handle">☰</span> <span class="section-label">${title} (Custom)</span></h2>
+                                    <div class="header-controls">
+                                        <div class="toggle-wrapper" title="Enable/Disable Section">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" name="${cleanId}[disabled]" value="1">
+                                                <span class="slider"></span>
+                                            </label>
+                                            <span class="toggle-label">Disabled</span>
+                                        </div>
+                                        <button type="button" class="btn-icon" onclick="renameSection('${cleanId}')" title="Rename">✏️</button>
+                                        <button type="button" class="btn-icon btn-remove-section" onclick="removeSection('${cleanId}')" title="Remove">🗑️</button>
+                                    </div>
+                                </div>
+                                <div class="section-content" style="display:block">
+                                    <div class="form-group"><label>Section Title</label><input type="text" name="${cleanId}[title]" value="${title}"></div>
+                                    <div class="form-group"><label>Sub Title</label><input type="text" name="${cleanId}[subText]" value=""></div>
+                                    <div class="form-group"><label>Items</label>
+                                        <div id="${cleanId}-container"></div>
+                                        <button type="button" class="btn-add" onclick="addCustomItem('${cleanId}')">+ Add Item</button>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                            
+                            document.getElementById('content-sections').insertAdjacentHTML('beforeend', html);
+                            // Add label input
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = `sectionLabels[${cleanId}]`;
+                            input.id = `label-${cleanId}`;
+                            input.value = title;
+                            document.getElementById('labels-container').appendChild(input);
+                        }
+                    });
+                }
+            });
         }
 
         function addCustomItem(sectionKey) {
@@ -828,7 +966,21 @@ ob_start(); ?>
         }
 
         // Helpers
-        function removeArrayItem(btn) { if(confirm('Remove item?')) btn.closest('.array-item').remove(); }
+        function removeArrayItem(btn) { 
+            Swal.fire({
+                title: 'Remove item?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.closest('.array-item').remove();
+                }
+            });
+        }
         let counters = {};
         function getCount(key) { if(!counters[key]) counters[key]=100; return counters[key]++; }
         
@@ -920,16 +1072,26 @@ ob_start(); ?>
                 else current[lastKey] = value;
             }
 
+            // Collect deleted section keys
+            const deletedSections = [];
             for (let [key, value] of formData.entries()) {
+                if (key === '_deletedSections[]') {
+                    deletedSections.push(value);
+                    continue;
+                }
                 if (key === 'key') continue;
                 const keys = key.split(/[\[\]]/).filter(k => k !== '');
                 setNestedValue(data, keys, value);
             }
             
-            // Ensure 'disabled' property exists as false for all sections if not checked
-            // We iterate known sections in data and set disabled=false if missing
-            // Actually, if we just don't set it, it's undefined. In PHP/JS checks, undefined is falsy.
-            // But let's be explicit if needed.
+            // Remove deleted custom sections from data
+            deletedSections.forEach(sectionKey => {
+                delete data[sectionKey];
+                // Also remove from sectionLabels if exists
+                if (data.sectionLabels && data.sectionLabels[sectionKey]) {
+                    delete data.sectionLabels[sectionKey];
+                }
+            });
             
             // Clean arrays
             function cleanArrays(obj) {
