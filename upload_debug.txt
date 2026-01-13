@@ -1,0 +1,70 @@
+[2026-01-13 09:21:06] Script started.
+[2026-01-13 09:21:06] Loading config...
+[2026-01-13 09:21:06] Config loaded.
+[2026-01-13 09:21:06] Checking POST/FILES...
+[2026-01-13 09:21:06] FILES: Array
+(
+    [image] => Array
+        (
+            [name] => 1Z472FE69017966641.jpg
+            [full_path] => 1Z472FE69017966641.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\Users\vasilis\AppData\Local\Temp\php11B1.tmp
+            [error] => 0
+            [size] => 113177
+        )
+
+)
+
+[2026-01-13 09:21:06] POST: Array
+(
+    [fixedFilename] => logo.png
+)
+
+[2026-01-13 09:21:06] SERVER CONTENT_LENGTH: 113482
+[2026-01-13 09:21:06] Checking authentication...
+[2026-01-13 09:21:06] Auth success.
+[2026-01-13 09:21:06] File Details - Name: 1Z472FE69017966641.jpg, Tmp: C:\Users\vasilis\AppData\Local\Temp\php11B1.tmp, Size: 113177
+[2026-01-13 09:21:06] Warning: mime_content_type function missing, using header type.
+[2026-01-13 09:21:06] Detected Mime Type: image/jpeg
+[2026-01-13 09:21:06] Using fixed filename: logo.png
+[2026-01-13 09:21:06] Target exists, backing up: C:\Users\vasilis\source\repos\Arinsol\arinsol/assets/logo.png
+[2026-01-13 09:21:06] Backup created: C:\Users\vasilis\source\repos\Arinsol\arinsol/data-changes/image_backup_2026-01-13_09-21-06_logo.png
+[2026-01-13 09:21:06] Moving file to: C:\Users\vasilis\source\repos\Arinsol\arinsol/assets/logo.png
+[2026-01-13 09:21:06] Move successful.
+[2026-01-13 09:21:06] Script finished.
+[2026-01-13 12:28:44] Script started.
+[2026-01-13 12:28:44] Loading config...
+[2026-01-13 12:28:44] Config loaded.
+[2026-01-13 12:28:44] Checking POST/FILES...
+[2026-01-13 12:28:44] FILES: Array
+(
+    [image] => Array
+        (
+            [name] => viber_image_2026-01-10_18-32-21-995.jpg
+            [full_path] => viber_image_2026-01-10_18-32-21-995.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\Users\vasilis\AppData\Local\Temp\phpD35D.tmp
+            [error] => 0
+            [size] => 654171
+        )
+
+)
+
+[2026-01-13 12:28:44] POST: Array
+(
+    [fixedFilename] => logo.png
+)
+
+[2026-01-13 12:28:44] SERVER CONTENT_LENGTH: 654493
+[2026-01-13 12:28:44] Checking authentication...
+[2026-01-13 12:28:44] Auth success.
+[2026-01-13 12:28:44] File Details - Name: viber_image_2026-01-10_18-32-21-995.jpg, Tmp: C:\Users\vasilis\AppData\Local\Temp\phpD35D.tmp, Size: 654171
+[2026-01-13 12:28:44] Warning: mime_content_type function missing, using header type.
+[2026-01-13 12:28:44] Detected Mime Type: image/jpeg
+[2026-01-13 12:28:44] Using fixed filename: logo.png
+[2026-01-13 12:28:44] Target exists, backing up: C:\Users\vasilis\source\repos\Arinsol\arinsol/assets/logo.png
+[2026-01-13 12:28:44] Backup created: C:\Users\vasilis\source\repos\Arinsol\arinsol/data-changes/image_backup_2026-01-13_12-28-44_logo.png
+[2026-01-13 12:28:44] Moving file to: C:\Users\vasilis\source\repos\Arinsol\arinsol/assets/logo.png
+[2026-01-13 12:28:44] Move successful.
+[2026-01-13 12:28:44] Script finished.

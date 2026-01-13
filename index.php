@@ -556,14 +556,16 @@
             // Handle Footer rendering
             try {
                  document.getElementById('footer-copy').innerHTML = data.footer.copyright || '';
-                if (data.footer.termsLink) {
-                    const el = document.getElementById('terms-link');
-                    if (el) el.href = data.footer.termsLink;
-                }
-                if (data.footer.privacyLink) {
-                    const el = document.getElementById('privacy-link');
-                    if (el) el.href = data.footer.privacyLink;
-                }
+                 
+                 const termsLink = data.footer.termsLink || 'terms-conditions.php';
+                 const privacyLink = data.footer.privacyLink || 'privacy-policy.php';
+                 
+                 const tEl = document.getElementById('terms-link');
+                 if (tEl) tEl.href = termsLink;
+                 
+                 const pEl = document.getElementById('privacy-link');
+                 if (pEl) pEl.href = privacyLink;
+
             } catch (e) { console.warn("Error rendering footer:", e); }
             
             // SOCIAL MEDIA
@@ -636,6 +638,18 @@
                         const heroBtn = document.getElementById('hero-cta');
                         heroBtn.textContent = sectionData.ctaText;
                         heroBtn.href = sectionData.ctaLink;
+                        
+                        // Video Handling
+                        const heroVideo = document.querySelector('.hero-video source');
+                        if (heroVideo) {
+                            const videoName = sectionData.video || 'banner_video.mp4';
+                            const videoSrc = 'assets/' + videoName;
+                            // Check if src is different to avoid unnecessary reload
+                            if (!heroVideo.src.endsWith(videoSrc)) {
+                                heroVideo.src = videoSrc;
+                                heroVideo.parentElement.load();
+                            }
+                        }
                         break;
                     
                     case 'about':
@@ -761,7 +775,8 @@
                                         </div>
                                     </div>`;
                                 
-                                const imageFileName = cs.image || (index === 0 ? 'software1.jpg' : 'software2.jpg');
+                                const defaults = ['software1.jpg', 'software2.jpg'];
+                                const imageFileName = cs.image || defaults[index % defaults.length];
                                 const imageHtml = `
                                     <div class="cs-image">
                                         <img src="assets/${imageFileName}" alt="${cs.title || ''}" class="cs-image-img">
@@ -1018,14 +1033,20 @@
                                             <h2>${sectionData.title || ''}</h2>
                                         </div>
                                         <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                                            ${(sectionData.items || []).map(item => `
+                                            ${(sectionData.items || []).map(item => {
+                                                const imgHtml = item.image 
+                                                    ? `<img src="${item.image}" alt="${item.name || ''}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;object-fit:cover;">`
+                                                    : `<div style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;background:#e5e7eb;display:inline-flex;align-items:center;justify-content:center;color:#9ca3af;font-size:2rem;"><i class="fas fa-user"></i></div>`;
+                                                
+                                                return `
                                                 <div class="custom-card" style="text-align:center; padding:30px; background:#f9f9f9;">
-                                                    ${item.image ? `<img src="${item.image}" alt="${item.name || ''}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;object-fit:cover;">` : ''}
+                                                    ${imgHtml}
                                                     <p style="font-style:italic;font-size:1.1rem;color:#555;margin-bottom:20px;">"${item.quote || ''}"</p>
                                                     <h4 style="margin:0;color:#333;font-weight:700;">${item.name || ''}</h4>
                                                     <span style="color:#777;font-size:0.9rem;">${item.role || ''}</span>
                                                 </div>
-                                            `).join('')}
+                                                `;
+                                            }).join('')}
                                         </div>
                                     </div>
                                 `;
@@ -1049,17 +1070,23 @@
                                             <p class="sub-text">${sectionData.subText || ''}</p>
                                         </div>
                                         <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
-                                            ${(sectionData.items || []).map(item => `
+                                            ${(sectionData.items || []).map(item => {
+                                                const imgHtml = item.photo 
+                                                    ? `<img src="${item.photo}" alt="${item.name || ''}" style="width:100%;height:100%;object-fit:cover;">`
+                                                    : `<div style="width:100%;height:100%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:4rem;"><i class="fas fa-user"></i></div>`;
+                                                
+                                                return `
                                                 <div class="custom-card" style="text-align:center;">
                                                     <div style="width:100%;height:250px;background:#eee;border-radius:8px;margin-bottom:15px;overflow:hidden;">
-                                                        ${item.photo ? `<img src="${item.photo}" alt="${item.name || ''}" style="width:100%;height:100%;object-fit:cover;">` : ''}
+                                                        ${imgHtml}
                                                     </div>
                                                     <h3 style="margin:10px 0 5px;font-size:1.2rem;">${item.name || ''}</h3>
                                                     <p style="color:var(--primary);font-weight:600;margin-bottom:10px;">${item.role || ''}</p>
                                                     <p style="font-size:0.9rem;color:#666;margin-bottom:15px;">${item.bio || ''}</p>
                                                     ${item.linkedin ? `<a href="${item.linkedin}" target="_blank" style="color:#0077b5;font-size:1.2rem;"><i class="fab fa-linkedin"></i></a>` : ''}
                                                 </div>
-                                            `).join('')}
+                                                `;
+                                            }).join('')}
                                         </div>
                                     </div>
                                 `;
