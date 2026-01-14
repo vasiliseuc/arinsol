@@ -1,15 +1,19 @@
+<?php
+$cssVersion = file_exists('style.css') ? filemtime('style.css') : '1.0';
+$jsonData = file_exists('data.json') ? file_get_contents('data.json') : '{}';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arinsol.ai</title>
-    <script>
-        const cacheToken = Math.random().toString(36).substring(2, 15);
-        document.write(`<link rel="stylesheet" href="style.css?v=${cacheToken}">`);
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css?v=<?=$cssVersion?>">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <style>
         /* Custom Section Styles */
         .custom-section { background: #fff; }
@@ -53,7 +57,7 @@
             <div class="container header-container">
                 <div class="logo">
                     <a href="/" class="logo-link" title="Home">
-                        <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img">
+                        <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img" loading="lazy">
                     </a>
                 </div>
                 <nav class="main-nav">
@@ -348,32 +352,23 @@
     </div>
 
     <script>
+        const siteData = <?=$jsonData?>;
         document.addEventListener("DOMContentLoaded", () => {
             const loader = document.getElementById('loader-overlay');
             const content = document.getElementById('main-content');
-            const cacheToken = Math.random().toString(36).substring(2, 15);
-
-            // FETCH DATA
-            fetch(`data.json?v=${cacheToken}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("HTTP error " + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    populateSite(data);
-                    
-                    // Simulate a small delay for the loader effect (optional)
-                    setTimeout(() => {
-                        loader.classList.add('hidden');
-                        content.classList.add('visible');
-                    }, 500); 
-                })
-                .catch(err => {
-                    console.error("Error loading JSON data:", err);
-                    document.querySelector('.loader-text').innerText = "Error loading content. Please check console.";
-                });
+            
+            try {
+                populateSite(siteData);
+                
+                // Simulate a small delay for the loader effect (optional)
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    content.classList.add('visible');
+                }, 500);
+            } catch (err) {
+                console.error("Error processing data:", err);
+                document.querySelector('.loader-text').innerText = "Error loading content. Please check console.";
+            }
         });
 
         function populateSite(data) {
@@ -779,7 +774,7 @@
                                 const imageFileName = cs.image || defaults[index % defaults.length];
                                 const imageHtml = `
                                     <div class="cs-image">
-                                        <img src="assets/${imageFileName}" alt="${cs.title || ''}" class="cs-image-img">
+                                        <img src="assets/${imageFileName}" alt="${cs.title || ''}" class="cs-image-img" loading="lazy">
                                     </div>`;
             
                                     row.innerHTML = contentHtml + imageHtml;
@@ -1035,7 +1030,7 @@
                                         <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                                             ${(sectionData.items || []).map(item => {
                                                 const imgHtml = item.image 
-                                                    ? `<img src="${item.image}" alt="${item.name || ''}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;object-fit:cover;">`
+                                                    ? `<img src="${item.image}" alt="${item.name || ''}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;object-fit:cover;" loading="lazy">`
                                                     : `<div style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;background:#e5e7eb;display:inline-flex;align-items:center;justify-content:center;color:#9ca3af;font-size:2rem;"><i class="fas fa-user"></i></div>`;
                                                 
                                                 return `
@@ -1072,7 +1067,7 @@
                                         <div class="custom-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
                                             ${(sectionData.items || []).map(item => {
                                                 const imgHtml = item.photo 
-                                                    ? `<img src="${item.photo}" alt="${item.name || ''}" style="width:100%;height:100%;object-fit:cover;">`
+                                                    ? `<img src="${item.photo}" alt="${item.name || ''}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
                                                     : `<div style="width:100%;height:100%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:4rem;"><i class="fas fa-user"></i></div>`;
                                                 
                                                 return `
