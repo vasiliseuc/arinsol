@@ -992,7 +992,25 @@ ob_start(); ?>
             new Sortable(navLinkList, {
                 animation: 150,
                 handle: '.nav-handle',
-                ghostClass: 'sortable-ghost'
+                ghostClass: 'sortable-ghost',
+                onEnd: function() {
+                    reindexNavLinks();
+                }
+            });
+        }
+
+        function reindexNavLinks() {
+            const container = document.getElementById('navLinks-container');
+            const items = container.querySelectorAll('.array-item');
+            items.forEach((item, index) => {
+                // Update all input/select names within this item
+                item.querySelectorAll('input, textarea, select').forEach(input => {
+                    const name = input.name;
+                    if (name && name.includes('header[navLinks]')) {
+                        // Replace the index in the name
+                        input.name = name.replace(/header\[navLinks\]\[\d+\]/, `header[navLinks][${index}]`);
+                    }
+                });
             });
         }
 
@@ -1218,11 +1236,34 @@ ob_start(); ?>
         }
         function addTestimonialItem(key) { addCustomItem(key); /* simplified for now, user can refine if needed */ }
         function addTeamMember(key) { addCustomItem(key); }
-        function removeArrayItem(btn) { btn.closest('.array-item').remove(); }
+        function removeArrayItem(btn) { 
+            const item = btn.closest('.array-item');
+            const container = item.parentElement;
+            item.remove();
+            // Re-index nav links if it was from that container
+            if (container && container.id === 'navLinks-container') {
+                reindexNavLinks();
+            }
+        }
         
         // Standard Adders
         let c = 100;
-        function addNavLink() { document.getElementById('navLinks-container').insertAdjacentHTML('beforeend', `<div class="array-item"><div class="array-item-header"><span>Link</span><button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button></div><div class="form-row"><div class="form-group"><input name="header[navLinks][${c}][text]" placeholder="Text"></div><div class="form-group"><input name="header[navLinks][${c}][href]" placeholder="URL"></div></div></div>`); c++; }
+        function addNavLink() { 
+            document.getElementById('navLinks-container').insertAdjacentHTML('beforeend', `
+                <div class="array-item">
+                    <div class="array-item-header">
+                        <span class="nav-handle" style="cursor:grab;margin-right:10px;">☰</span>
+                        <span>Link</span>
+                        <button type="button" class="btn-remove" onclick="removeArrayItem(this)">Remove</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Text</label><input name="header[navLinks][${c}][text]" placeholder="Text"></div>
+                        <div class="form-group"><label>URL</label><input name="header[navLinks][${c}][href]" list="section-urls" placeholder="#section"></div>
+                    </div>
+                </div>`); 
+            c++;
+            reindexNavLinks();
+        }
         function addService() { document.getElementById('services-container').insertAdjacentHTML('beforeend', `<div class="array-item"><button type="button" class="btn-remove" onclick="removeArrayItem(this)" style="float:right">x</button><input name="services[items][${c}][title]" placeholder="Title"><textarea name="services[items][${c}][description]" placeholder="Desc"></textarea></div>`); c++; }
         // ... (Keep other adders if needed, they are preserved in HTML logic if simple, else copy full logic)
         // Re-injecting full adders to be safe:

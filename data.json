@@ -18,12 +18,12 @@
         "href": "#services"
       },
       {
-        "text": "Industries",
-        "href": "#industries"
-      },
-      {
         "text": "Case Studies",
         "href": "#case-studies"
+      },
+      {
+        "text": "Industries",
+        "href": "#industries"
       },
       {
         "text": "Contact",
@@ -235,41 +235,16 @@
     "yearsLabel": "YEARS' EXPERIENCE IN IT",
     "successTitle": "Arinsol.ai",
     "successSubtitle": "Success Stories",
-    "companySizes": [
-      "1-10",
-      "11-50",
-      "51-200",
-      "200+"
-    ],
-    "industries": [
-      "Financial Services",
-      "Healthcare",
-      "Legal",
-      "Manufacturing",
-      "Retail",
-      "Technology",
-      "Other"
-    ],
-    "nextSteps": [
-      "Demo",
-      "Pilot",
-      "Quick call"
+    "whatNextSteps": [
+      "We schedule a short call (20–30 minutes).",
+      "We confirm the use case and success metrics.",
+      "We propose the fastest path: demo, pilot, or staged rollout."
     ],
     "products": [
       "ArInAudit (audit execution & planning)",
       "ArInProcess (projects, handovers, delivery visibility)",
       "ArInChat (internal truth, citation-backed answers)",
       "Not sure – help me choose"
-    ],
-    "trustLines": [
-      "We’ll respond within 1 business day.",
-      "Please don’t submit confidential documents here—ask us for an NDA and a secure sharing method.",
-      "Your message is used only to respond to your request."
-    ],
-    "whatNextSteps": [
-      "We schedule a short call (20–30 minutes).",
-      "We confirm the use case and success metrics.",
-      "We propose the fastest path: demo, pilot, or staged rollout."
     ],
     "stats": [
       {
@@ -289,20 +264,11 @@
         "label": "Developers"
       }
     ],
-    "formLabels": {
-      "name": "Name",
-      "email": "Work Email",
-      "company": "Company",
-      "role": "Role",
-      "product": "Interested Product",
-      "industry": "Industry (Optional)",
-      "companySize": "Company Size (Optional)",
-      "country": "Country / Time zone",
-      "bottleneck": "What is your biggest bottleneck? (Optional)",
-      "nextStep": "Preferred next step (Optional)",
-      "message": "Message",
-      "submit": "Submit Request"
-    }
+    "trustLines": [
+      "We’ll respond within 1 business day.",
+      "Please don’t submit confidential documents here—ask us for an NDA and a secure sharing method.",
+      "Your message is used only to respond to your request."
+    ]
   },
   "location": {
     "address": "Nicosia",
