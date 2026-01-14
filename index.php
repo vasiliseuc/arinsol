@@ -1,5 +1,4 @@
 <?php
-$cssVersion = file_exists('style.css') ? filemtime('style.css') : '1.0';
 $jsonData = file_exists('data.json') ? file_get_contents('data.json') : '{}';
 ?>
 <!DOCTYPE html>
@@ -10,8 +9,13 @@ $jsonData = file_exists('data.json') ? file_get_contents('data.json') : '{}';
     <title>Arinsol.ai</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="style.css?v=<?=$cssVersion?>">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        <?php readfile('style.css'); ?>
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <style>
@@ -57,7 +61,7 @@ $jsonData = file_exists('data.json') ? file_get_contents('data.json') : '{}';
             <div class="container header-container">
                 <div class="logo">
                     <a href="/" class="logo-link" title="Home">
-                        <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img" loading="lazy">
+                        <img id="header-logo" src="assets/logo.png" alt="Arinsol.ai" class="logo-img" fetchpriority="high">
                     </a>
                 </div>
                 <nav class="main-nav">
