@@ -773,19 +773,19 @@ ob_start(); ?>
                 </div>
 
                 <!-- Page Editor (Hidden by default) -->
-                <div id="page-editor-container" style="display:none; background:#fff; border-radius:8px; border:1px solid #e5e7eb; overflow:hidden; width:100%;">
+                <div id="page-editor-container" style="display:none; background:#fff; border-radius:8px; border:1px solid #e5e7eb; overflow:hidden; width:100%; margin-bottom:40px;">
                     <div class="section-header" style="margin-bottom:0; padding:15px 20px;">
                         <h2 id="page-editor-title" style="margin:0;">Edit Page</h2>
                     </div>
-                    <div style="display:flex; height:calc(100vh - 180px); min-height:700px;">
+                    <div style="display:flex; max-height:80vh; min-height:600px;">
                         <div style="flex:1; display:flex; flex-direction:column; border-right:1px solid #e5e7eb; min-width:0;">
                             <div style="padding:15px 20px; background:#f9fafb; border-bottom:1px solid #e5e7eb; font-size:0.85rem; font-weight:600; color:#6b7280;">
                                 📝 Editor
                             </div>
-                            <div style="flex:1; padding:20px; overflow-y:auto;">
-                                <textarea id="page-editor-content" rows="30" class="code-editor" style="width:100%; height:100%; font-family:monospace; border:none; resize:none; outline:none;"></textarea>
+                            <div style="flex:1; padding:20px; overflow-y:auto; min-height:0;">
+                                <textarea id="page-editor-content" rows="30" class="code-editor" style="width:100%; min-height:500px; font-family:monospace; border:none; resize:none; outline:none;"></textarea>
                             </div>
-                            <div style="padding:15px 20px; border-top:1px solid #e5e7eb; background:#f9fafb;">
+                            <div style="padding:15px 20px; border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;">
                                 <input type="hidden" id="current-page-file">
                                 <button type="button" class="btn btn-success" onclick="savePageContent()">💾 Save Page</button>
                             </div>
@@ -794,7 +794,7 @@ ob_start(); ?>
                             <div style="padding:15px 20px; background:#f9fafb; border-bottom:1px solid #e5e7eb; font-size:0.85rem; font-weight:600; color:#6b7280;">
                                 👁️ Preview
                             </div>
-                            <iframe id="page-preview-frame" style="flex:1; width:100%; border:none; background:#fff;"></iframe>
+                            <iframe id="page-preview-frame" style="flex:1; width:100%; border:none; background:#fff; min-height:500px;"></iframe>
                         </div>
                     </div>
                 </div>
