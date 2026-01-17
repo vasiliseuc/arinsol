@@ -19,7 +19,8 @@
 
 /* Smooth Scroll for Anchor Links */
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: smooth; /* Makes the scroll animation smooth */
+    scroll-padding-top: 100px; /* HEIGHT OF HEADER + EXTRA SPACE */
 }
 
 * {
@@ -422,26 +423,49 @@ ul { list-style: none; }
 }
 
 /* --- TRUST SECTION --- */
-.trust-section { background: #fff; padding: 60px 0; border-top: 1px solid #f0f0f0; }
+.trust-section { 
+    background: #fff; 
+    padding: 60px 0; 
+    border-top: 1px solid #f0f0f0; 
+}
+
 .trust-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;           /* Changed from grid to flex */
+    flex-wrap: wrap;         /* Allow items to wrap to next line */
+    justify-content: center; /* Center items horizontally */
     gap: 30px;
     max-width: 1000px;
     margin: 0 auto;
 }
+
 .trust-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;      /* Vertically center the icon and text */
     gap: 15px;
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #eee;
     box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    
+    /* Control width */
+    flex: 1 1 300px;          /* Grow, Shrink, Basis (Target width) */
+    max-width: 400px;         /* Prevents a single item from stretching too wide */
+    width: 100%;              /* Ensures responsiveness on mobile */
 }
-.trust-item i { font-size: 1.4rem; margin-top: 3px; }
-.trust-item span { color: #444; font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
+
+.trust-item i { 
+    font-size: 1.4rem; 
+    margin-top: 0;            /* Removed top margin so it aligns via flexbox */
+    color: var(--blue-accent); /* Ensure icon keeps the blue color */
+}
+
+.trust-item span { 
+    color: #444; 
+    font-weight: 500; 
+    font-size: 0.95rem; 
+    line-height: 1.5; 
+}
 
 /* --- ENGAGEMENT SECTION --- */
 .engagement-section { background: #0f172a; color: white; padding: 100px 0; }

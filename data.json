@@ -1,7 +1,7 @@
 {
   "siteMeta": {
     "title": "Arinsol.ai - AI-Powered Workflow Automation Software Solutions",
-    "googleAnalytics": ""
+    "googleAnalytics": "G-3W2EM02G76"
   },
   "customCode": {
     "head": "",
@@ -14,16 +14,20 @@
     "ctaText": "Talk to Experts",
     "navLinks": [
       {
-        "text": "Services",
-        "href": "#services"
+        "text": "About",
+        "href": "#about"
       },
       {
-        "text": "Case Studies",
-        "href": "#case-studies"
+        "text": "Products",
+        "href": "#caseStudies"
       },
       {
         "text": "Industries",
         "href": "#industries"
+      },
+      {
+        "text": "FAQs",
+        "href": "#faq"
       },
       {
         "text": "Contact",
@@ -41,7 +45,7 @@
     "copyright": "&copy; 2025 Arinsol.ai. All Rights Reserved."
   },
   "hero": {
-    "badge": "AI-Powered Workflow Automation Services For SME's ",
+    "badge": "AI-Powered Workflow Automation Products For SME's ",
     "title": "We help businesses scale their operations with unique AI-enabled software solutions.",
     "description": "We don't just build software; We build trust!",
     "video": "",
@@ -246,24 +250,6 @@
       "ArInChat (internal truth, citation-backed answers)",
       "Not sure – help me choose"
     ],
-    "stats": [
-      {
-        "number": "500+",
-        "label": "Happy Clients"
-      },
-      {
-        "number": "1000+",
-        "label": "Solutions Developed"
-      },
-      {
-        "number": "25+",
-        "label": "Countries"
-      },
-      {
-        "number": "100+",
-        "label": "Developers"
-      }
-    ],
     "trustLines": [
       "We’ll respond within 1 business day.",
       "Please don’t submit confidential documents here—ask us for an NDA and a secure sharing method.",
@@ -271,11 +257,11 @@
     ]
   },
   "location": {
-    "address": "Nicosia",
+    "address": "lia Papakiriakou 15, 2415",
     "city": "Nicosia",
     "country": "Cyprus",
-    "latitude": "",
-    "longitude": ""
+    "latitude": "35.157616839066826 ",
+    "longitude": "33.31327894432118"
   },
   "sectionOrder": [
     "hero",
